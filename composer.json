@@ -1,0 +1,38 @@
+{
+    "name": "saritasa/laravel-controllers",
+    "type": "library",
+    "description": "Saritasa controllers for typical operations",
+    "keywords": ["laravel"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sergey Populov",
+            "email": "sergey@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "illuminate/http": "5.*",
+        "illuminate/support": "5.*",
+        "saritasa/transformers": "^1.0",
+        "tymon/jwt-auth": "1.0.*@dev"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.7"
+    },
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4" : {
+            "Saritasa\\Laravel\\Controllers\\": "src/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
