@@ -3,6 +3,7 @@
 namespace Saritasa\Laravel\Controllers\Web;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Saritasa\Laravel\Controllers\BaseController;
 
 /**
  * This class used for markup only.
