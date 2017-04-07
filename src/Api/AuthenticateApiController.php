@@ -3,10 +3,10 @@
 namespace Saritasa\Laravel\Controllers\Api;
 
 use App\Api\V1\Responses\AuthSuccessDTO;
-use App\Exceptions\ModelException;
 use Dingo\Api\Http\Response;
 use Dingo\Api\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -32,7 +32,7 @@ class AuthenticateApiController extends BaseApiController
                 throw new NotFoundHttpException(trans('auth.failed'));
             }
         } catch (JWTException $e) {
-            throw new ModelException(Response::HTTP_INTERNAL_SERVER_ERROR, trans('auth.jwt_error'));
+            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, trans('auth.jwt_error'));
         }
 
         return $this->json(new AuthSuccessDTO($token));
