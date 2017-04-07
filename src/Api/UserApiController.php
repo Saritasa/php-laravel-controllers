@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Api\V1\Controllers;
+namespace Saritasa\Laravel\Controllers\Api;
 
 use App\Models\User;
 use Dingo\Api\Http\Request;

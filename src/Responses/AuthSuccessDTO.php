@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Api\V1\Responses;
+namespace Saritasa\Laravel\Controllers\Responses;
 
 class AuthSuccessDTO extends DtoModel {
 

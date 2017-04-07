@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Api\V1\Responses;
+namespace Saritasa\Laravel\Controllers\Responses;
 
+use App\Models\NotificationSetting;
 use App\Models\NotificationType;
+use Saritasa\Transformers\DtoModel;
 
 class NotificationSettingDTO extends DtoModel
 {
@@ -12,7 +14,7 @@ class NotificationSettingDTO extends DtoModel
 
     protected static $collectionKey = 'settings';
 
-    function __construct($userSetting, NotificationType $notificationType)
+    function __construct(NotificationSetting $userSetting, NotificationType $notificationType)
     {
         $this->id = $notificationType->id;
         $this->name = $notificationType->name;

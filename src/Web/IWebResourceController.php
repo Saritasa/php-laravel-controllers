@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Base;
+namespace Saritasa\Laravel\Controllers\Web;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
