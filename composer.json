@@ -26,6 +26,9 @@
             "Saritasa\\Laravel\\Controllers\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": { "Saritasa\\Laravel\\Controllers\\Tests\\": "tests/" }
+    },
     "config": {
         "preferred-install": "dist",
         "sort-packages": true
