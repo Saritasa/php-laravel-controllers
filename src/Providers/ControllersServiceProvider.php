@@ -2,7 +2,6 @@
 
 namespace Saritasa\Laravel\Controllers\Providers;
 
-use App\Providers\MacroServiceProvider;
 use Illuminate\Support\ServiceProvider;
 
 class ControllersServiceProvider extends ServiceProvider
