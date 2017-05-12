@@ -2,7 +2,7 @@
 
 namespace Saritasa\Laravel\Controllers\Providers;
 
-use Html;
+use Collective\Html\HtmlFacade as HTML;
 use Illuminate\Support\ServiceProvider;
 
 class MacroServiceProvider extends ServiceProvider
