@@ -1,3 +1,7 @@
+1.0.6
+-----
+Rename AuthenticateApiController to JWTAuthApiController
+
 1.0.5
 -----
 Fix DtoModel namespace

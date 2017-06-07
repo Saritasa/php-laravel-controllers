@@ -6,18 +6,16 @@ use Dingo\Api\Http\Response;
 use Saritasa\Exceptions\ServiceException;
 use Saritasa\Laravel\Controllers\Requests\LoginRequest;
 use Saritasa\Laravel\Controllers\Responses\AuthSuccessDTO;
-use Saritasa\Laravel\Controllers\Services\AuthJWTService;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 
 /**
  * Authenticate API Controller
  */
-class AuthenticateApiController extends BaseApiController
+class JWTAuthApiController extends BaseApiController
 {
 
     /**
