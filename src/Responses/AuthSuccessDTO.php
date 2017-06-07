@@ -2,6 +2,8 @@
 
 namespace Saritasa\Laravel\Controllers\Responses;
 
+use Saritasa\Transformers\DtoModel;
+
 class AuthSuccessDTO extends DtoModel {
 
     /**
