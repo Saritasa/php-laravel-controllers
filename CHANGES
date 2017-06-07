@@ -1,7 +1,14 @@
+1.0.3
+-----
+Add validation to BaseApiController
+Remove clones of BaseApiController from related packages
+
 1.0.2
+-----
 - Add TransformException
 
 1.0.1
+-----
 - Fix namespace
 
 1.0.0
