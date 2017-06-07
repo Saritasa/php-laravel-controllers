@@ -2,31 +2,34 @@
 
 namespace Saritasa\Laravel\Controllers\Api;
 
-use App\Api\V1\Responses\AuthSuccessDTO;
 use Dingo\Api\Http\Response;
-use Dingo\Api\Http\Request;
-use Illuminate\Validation\ValidationException;
+use Saritasa\Exceptions\ServiceException;
+use Saritasa\Laravel\Controllers\Requests\LoginRequest;
+use Saritasa\Laravel\Controllers\Responses\AuthSuccessDTO;
+use Saritasa\Laravel\Controllers\Services\AuthJWTService;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 
 /**
- * Authenticate resource representation.
+ * Authenticate API Controller
  */
 class AuthenticateApiController extends BaseApiController
 {
+
     /**
      * Authenticate user
      * Authenticate user by `email` and `password`.
      *
-     * @param Request $request HTTP Request
+     * @param LoginRequest $request HTTP Request
      * @return Response
      */
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $credentials = $this->getValidatedCredentials($request, 'email', 'password');
+        $credentials = $request->only('email', 'password');
         try {
             if (!$token = JWTAuth::attempt($credentials)) {
                 throw new NotFoundHttpException(trans('auth.failed'));
@@ -39,32 +42,30 @@ class AuthenticateApiController extends BaseApiController
     }
 
     /**
-     * Extract from request primary user identifier, password, and validate them against basic rules
-     *
-     * @param Request $request
-     * @param $user_id_field
-     * @param $password_field
-     * @throws ValidationException
-     * @return array
-     */
-    private function getValidatedCredentials(Request $request, $user_id_field, $password_field): array
-    {
-        $credentials = $request->only($user_id_field, $password_field);
-        $this->validate($request, [
-            $user_id_field => 'required',
-            $password_field => 'required'
-        ]);
-        return $credentials;
-    }
-
-
-    /**
      * Logout user
+     *
      * Invalidate access token
      */
     public function logout()
     {
         JWTAuth::invalidate(JWTAuth::getToken());
         return $this->response->noContent();
+    }
+
+    /**
+     * Refresh the access token
+     *
+     * @return Response
+     * @throws ServiceException
+     */
+    public function refreshToken()
+    {
+        try {
+            $token = JWTAuth::getToken();
+            $newToken = JWTAuth::refresh($token);
+            return $this->json(new AuthSuccessDTO($newToken));
+        } catch (JWTException $e) {
+            throw new ServiceException(trans('auth.jwt_refresh_error'), 0, $e);
+        }
     }
 }
