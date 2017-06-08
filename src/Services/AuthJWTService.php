@@ -14,15 +14,16 @@ class AuthJWTService
 {
     /**
      * Authenticate User with JWT
-     * @param array $credentials validated user email and password
+     * @param string $email user email
+     * @param string $password user password
      * @return string JWT token
      * @throws ServiceException
      * @throws ModelNotFoundException
      */
-    public function auth(array $credentials)
+    public function auth(string $email, string $password)
     {
         try {
-            if (!$token = JWTAuth::attempt($credentials)) {
+            if (!$token = JWTAuth::attempt(compact($email, $password))) {
                 throw new ModelNotFoundException('Invalid email or password');
             }
         } catch (JWTException $e) {

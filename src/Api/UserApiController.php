@@ -6,6 +6,7 @@ use App\Models\User;
 use Dingo\Api\Http\Request;
 use Dingo\Api\Http\Response;
 use Saritasa\Api\Controllers\EntityApiController;
+use Saritasa\Laravel\Controllers\Services\AuthJWTService;
 use Saritasa\Transformers\BaseTransformer;
 
 /**
@@ -13,14 +14,17 @@ use Saritasa\Transformers\BaseTransformer;
  */
 class UserApiController extends EntityApiController
 {
+    private $authService;
+
     /**
      * Construct method. Define repo of resource
      *
      * @param BaseTransformer $transformer adds some info from user preferences
      */
-    public function __construct(BaseTransformer $transformer)
+    public function __construct(BaseTransformer $transformer, AuthJWTService $authService)
     {
         parent::__construct(User::class, $transformer);
+        $this->authService = $authService;
     }
 
     public function create(Request $request): Response
@@ -32,7 +36,7 @@ class UserApiController extends EntityApiController
         $rawPassword = $request->get('password');
         $user->password = $rawPassword;
         $user = $this->repo->create($user);
-        $token = \JWTAuth::attempt(['email' => $user->email, 'password' => $rawPassword]);
+        $token = $this->authService->auth($user->email, $rawPassword);
         return $this->json(collect(compact('user', 'token')));
     }
 
