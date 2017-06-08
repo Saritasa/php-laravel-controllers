@@ -6,10 +6,12 @@ use Illuminate\Support\ServiceProvider;
 
 class ControllersServiceProvider extends ServiceProvider
 {
+    protected $defer = false;
+
     public function boot()
     {
-        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', '');
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', '');
+        $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'controllers');
+        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'controllers');
     }
 
     public function register()

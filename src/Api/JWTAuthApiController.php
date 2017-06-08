@@ -30,10 +30,10 @@ class JWTAuthApiController extends BaseApiController
         $credentials = $request->only('email', 'password');
         try {
             if (!$token = JWTAuth::attempt($credentials)) {
-                throw new NotFoundHttpException(trans('auth.failed'));
+                throw new NotFoundHttpException(trans('controllers::auth.failed'));
             }
         } catch (JWTException $e) {
-            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, trans('auth.jwt_error'));
+            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, trans('controllers::auth.jwt_error'));
         }
 
         return $this->json(new AuthSuccessDTO($token));
@@ -63,7 +63,7 @@ class JWTAuthApiController extends BaseApiController
             $newToken = JWTAuth::refresh($token);
             return $this->json(new AuthSuccessDTO($newToken));
         } catch (JWTException $e) {
-            throw new ServiceException(trans('auth.jwt_refresh_error'), 0, $e);
+            throw new ServiceException(trans('controllers::auth.jwt_refresh_error'), 0, $e);
         }
     }
 }
