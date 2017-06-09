@@ -23,7 +23,7 @@ class AuthJWTService
     public function auth(string $email, string $password)
     {
         try {
-            if (!$token = JWTAuth::attempt(compact($email, $password))) {
+            if (!$token = JWTAuth::attempt(compact('email', 'password'))) {
                 throw new ModelNotFoundException('Invalid email or password');
             }
         } catch (JWTException $e) {
