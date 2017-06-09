@@ -1,3 +1,7 @@
+1.0.10
+------
+Add missing auth.failed language value
+
 1.0.9
 -----
 Fix AuthJWTService error, causing authorization fail
