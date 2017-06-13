@@ -15,6 +15,6 @@ class AuthSuccessDTO extends DtoModel {
 
     public function __construct(string $token)
     {
-        $this->token = $token;
+        parent::__construct([ 'token' => $token]);
     }
 }

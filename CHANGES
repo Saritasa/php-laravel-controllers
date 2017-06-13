@@ -1,6 +1,10 @@
 1.0.10
 ------
 Add missing auth.failed language value
+Add controllers:
+- ForgotPasswordApiController
+- RequestResetPasswordApiController
+- ResetPasswordApiController
 
 1.0.9
 -----

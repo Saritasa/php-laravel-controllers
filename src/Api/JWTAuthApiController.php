@@ -7,7 +7,6 @@ use Saritasa\Exceptions\ServiceException;
 use Saritasa\Laravel\Controllers\Requests\LoginRequest;
 use Saritasa\Laravel\Controllers\Responses\AuthSuccessDTO;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -24,16 +23,18 @@ class JWTAuthApiController extends BaseApiController
      *
      * @param LoginRequest $request HTTP Request
      * @return Response
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function login(LoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
         try {
             if (!$token = JWTAuth::attempt($credentials)) {
-                throw new NotFoundHttpException(trans('controllers::auth.failed'));
+                $this->response->errorNotFound(trans('controllers::auth.failed'));
             }
         } catch (JWTException $e) {
-            throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, trans('controllers::auth.jwt_error'));
+            $this->response->errorInternal(trans('controllers::auth.jwt_error'));
         }
 
         return $this->json(new AuthSuccessDTO($token));
@@ -54,7 +55,7 @@ class JWTAuthApiController extends BaseApiController
      * Refresh the access token
      *
      * @return Response
-     * @throws ServiceException
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function refreshToken()
     {
@@ -63,7 +64,7 @@ class JWTAuthApiController extends BaseApiController
             $newToken = JWTAuth::refresh($token);
             return $this->json(new AuthSuccessDTO($newToken));
         } catch (JWTException $e) {
-            throw new ServiceException(trans('controllers::auth.jwt_refresh_error'), 0, $e);
+            $this->response->errorUnauthorized(trans('controllers::auth.jwt_refresh_error'));
         }
     }
 }
