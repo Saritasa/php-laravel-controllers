@@ -70,7 +70,7 @@ Utilizes [Dingo\Api JWT Auth](https://github.com/dingo/api/wiki/Authentication#j
 **Example**: routes\api.php:
 ```php
 app('api.router')->version(config('api.version'), ['namespace' => 'Saritasa\Laravel\Controllers\Api'],
-  function(\Dingo\Api\Routing\ $api) {
+  function (\Dingo\Api\Routing\Router $api) {
     // Authentication
     $api->post('auth', 'AuthController@login');                             // Login
     $api->put('auth', 'AuthController@refreshToken');                       // Refresh expired token
@@ -85,7 +85,7 @@ Utilize native Laravel password management without UI, in JSON API.
 **Example**: routes\api.php:
 ```php
 app('api.router')->version(config('api.version'), ['namespace' => 'Saritasa\Laravel\Controllers\Api'],
-  function(\Dingo\Api\Routing\Router $api) {
+  function (\Dingo\Api\Routing\Router $api) {
     $api->post('auth/password/reset', 'ForgotPasswordApiController@sendResetLinkEmail');
     $api->put('auth/password/reset', 'ResetPasswordApiController@reset');
 });

@@ -2,7 +2,7 @@
     "name": "saritasa/laravel-controllers",
     "type": "library",
     "description": "Saritasa controllers for typical operations",
-    "keywords": ["laravel"],
+    "keywords": ["laravel", "api", "restful"],
     "license": "MIT",
     "authors": [
         {
