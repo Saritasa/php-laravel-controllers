@@ -1,5 +1,8 @@
 {
   "providers": [
+    "Saritasa\\Laravel\\Controllers\\Providers\\ControllersServiceProvider",
+    "Saritasa\\Laravel\\Controllers\\Providers\\MacroServiceProvider",
+    "Saritasa\\Laravel\\Controllers\\Providers\\RevisionsServiceProvider"
   ],
   "aliases": [
     {
