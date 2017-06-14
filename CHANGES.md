@@ -1,3 +1,10 @@
+# Changes History
+
+1.0.11
+------
+Update documentation
+Remove RequestResetPasswordApiController (duplicates ForgotPasswordApiController)
+
 1.0.10
 ------
 Add missing auth.failed language value

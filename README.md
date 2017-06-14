@@ -46,7 +46,7 @@ Recommended to use as base controller for other API controllers.
 * function validate(Request $request, array $rules, array $messages = [], array $customAttributes = [])
 
 **Example**:
-```
+```php
 class UserApiController extends BaseApiController
 {
     public function __construct(UserTransformer $userTransformer) {
@@ -66,9 +66,11 @@ class UserApiController extends BaseApiController
 Authenticate API Controller. Uses JWT authentication
 Utilizes [Dingo\Api JWT Auth](https://github.com/dingo/api/wiki/Authentication#json-web-tokens-jwt)
  settings and underlying [tymon\jwt-auth](https://github.com/tymondesigns/jwt-auth)
-**Example: routes\api.php**:
-```
-app('api.router')->version(config('api.version'), ['namespace' => 'Saritasa\Laravel\Controllers\Api'], function(Router $api) {
+
+**Example**: routes\api.php:
+```php
+app('api.router')->version(config('api.version'), ['namespace' => 'Saritasa\Laravel\Controllers\Api'],
+  function(\Dingo\Api\Routing\ $api) {
     // Authentication
     $api->post('auth', 'AuthController@login');                             // Login
     $api->put('auth', 'AuthController@refreshToken');                       // Refresh expired token
@@ -80,11 +82,12 @@ app('api.router')->version(config('api.version'), ['namespace' => 'Saritasa\Lara
 These controllers are responsible for handling password reset emails.
 Utilize native Laravel password management without UI, in JSON API.
 
-**Example: routes\api.php**:
-```
-app('api.router')->version(config('api.version'), ['namespace' => 'Saritasa\Laravel\Controllers\Api'], function(Router $api) {
-    $api->post('auth/password/reset', 'ForgotPasswordApiController@sendResetLinkEmail')
-    $api->put('auth/password/reset', 'ResetPasswordApiController@reset')
+**Example**: routes\api.php:
+```php
+app('api.router')->version(config('api.version'), ['namespace' => 'Saritasa\Laravel\Controllers\Api'],
+  function(\Dingo\Api\Routing\Router $api) {
+    $api->post('auth/password/reset', 'ForgotPasswordApiController@sendResetLinkEmail');
+    $api->put('auth/password/reset', 'ResetPasswordApiController@reset');
 });
 ```
 
@@ -94,10 +97,12 @@ app('api.router')->version(config('api.version'), ['namespace' => 'Saritasa\Lara
 1. Create fork
 2. Checkout fork
 3. Develop locally as usual. **Code must follow [PSR-1](http://www.php-fig.org/psr/psr-1/), [PSR-2](http://www.php-fig.org/psr/psr-2/)**
-4. Update README.md to describe new or changed functionality. Add changes description to CHANGE file.
+4. Update *README.md* to describe new or changed functionality. Add changes description to *CHANGES.md* file.
 5. When ready, create pull request
 
 ## Resources
 
-* [Bug Tracker](http://github.com/saritasa/php-transformers/issues)
-* [Code](http://github.com/saritasa/php-transformers)
+* [Bug Tracker](http://github.com/saritasa/php-laravel-controllers/issues)
+* [Code](http://github.com/saritasa/php-laravel-controllers)
+* [Changes History](CHANGES.md)
+* [Authors](http://github.com/saritasa/php-laravel-controllers/contributors)
