@@ -12,6 +12,8 @@ use Saritasa\Laravel\Controllers\Responses\MessageDTO;
 
 /**
  * This controller is responsible for handling password reset requests
+ * Utilize native Laravel password management without UI, in API style
+ * https://laravel.com/docs/5.4/passwords
  */
 class ResetPasswordApiController extends BaseApiController
 {
@@ -64,7 +66,5 @@ class ResetPasswordApiController extends BaseApiController
             'password' => $password,
             'remember_token' => Str::random(60),
         ])->save();
-
-        $this->guard()->login($user);
     }
 }

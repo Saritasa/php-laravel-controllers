@@ -7,6 +7,7 @@ use Dingo\Api\Routing\Router;
 
 /**
  * Wrapper for Dingo router, adds concise methods for API URLs registration.
+ *
  * @method void get(string $resource, string $controller, string $action = null, string $route = null) Add POST route
  * @method void post(string $resource, string $controller, string $action = null, string $route = null) Add POST route
  * @method void patch(string $resource, string $controller, string $action = null, string $route = null) Add POST route

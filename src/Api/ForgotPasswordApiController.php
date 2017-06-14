@@ -9,6 +9,9 @@ use Saritasa\Laravel\Controllers\Responses\MessageDTO;
 
 /**
  * This controller is responsible for handling password reset emails
+ *
+ * Utilize native Laravel password management without UI, in API style
+ * https://laravel.com/docs/5.4/passwords
  */
 class ForgotPasswordApiController extends BaseApiController
 {
@@ -51,7 +54,7 @@ class ForgotPasswordApiController extends BaseApiController
      * @param  string  $languageResourceId Resource ID of message to display to user
      * @return void
      */
-    protected function sendResetLinkFailedResponse(Request $request, $languageResourceId)
+    protected function sendResetLinkFailedResponse($request, $languageResourceId)
     {
         $this->response->errorNotFound(trans($languageResourceId));
     }

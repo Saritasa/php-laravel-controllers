@@ -3,16 +3,14 @@
 namespace Saritasa\Laravel\Controllers\Api;
 
 use Dingo\Api\Http\Response;
-use Saritasa\Exceptions\ServiceException;
 use Saritasa\Laravel\Controllers\Requests\LoginRequest;
 use Saritasa\Laravel\Controllers\Responses\AuthSuccessDTO;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 
 /**
- * Authenticate API Controller
+ * Authenticate API Controller. Uses JWT authentication
  */
 class JWTAuthApiController extends BaseApiController
 {
