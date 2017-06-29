@@ -1,5 +1,9 @@
 # Changes History
 
+1.0.12
+------
+Add missing parent constructor call in ForgotPasswordApiController
+
 1.0.11
 ------
 Update documentation

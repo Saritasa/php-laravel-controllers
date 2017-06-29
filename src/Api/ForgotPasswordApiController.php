@@ -6,6 +6,7 @@ use Dingo\Api\Http\Request;
 use Dingo\Api\Http\Response;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Saritasa\Laravel\Controllers\Responses\MessageDTO;
+use Saritasa\Transformers\BaseTransformer;
 
 /**
  * This controller is responsible for handling password reset emails
@@ -30,9 +31,11 @@ class ForgotPasswordApiController extends BaseApiController
 
     /**
      * Create a new controller instance.
+     * @param BaseTransformer $baseTransformer To use as default controller responses transformer
      */
-    public function __construct()
+    public function __construct(BaseTransformer $baseTransformer)
     {
+        parent::__construct($baseTransformer);
         $this->middleware('guest');
     }
 
