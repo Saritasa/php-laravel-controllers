@@ -1,5 +1,9 @@
 # Changes History
 
+2.0.0
+-----
+Get rid of DTO postfix in DTO models: rename AddressDTO, AuthSuccessDTO
+
 1.0.13
 ------
 - Add SuccessMessage and ErrorMessage, use in controller responses

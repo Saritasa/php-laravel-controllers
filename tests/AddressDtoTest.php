@@ -2,13 +2,13 @@
 
 namespace Saritasa\Laravel\Controllers\Tests;
 
-use Saritasa\Laravel\Controllers\Responses\AddressDTO;
+use Saritasa\Laravel\Controllers\Responses\Address;
 
 class AddressDtoTest extends TestCase
 {
     function testConstruct()
     {
-        $address = new AddressDTO([
+        $address = new Address([
             'name' => 'Darth Vader',
             'address' => 'Capitans\'s Bridge',
             'city'  => 'Death Star',

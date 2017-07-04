@@ -4,7 +4,7 @@ namespace Saritasa\Laravel\Controllers\Api;
 
 use Dingo\Api\Http\Response;
 use Saritasa\Laravel\Controllers\Requests\LoginRequest;
-use Saritasa\Laravel\Controllers\Responses\AuthSuccessDTO;
+use Saritasa\Laravel\Controllers\Responses\AuthSuccess;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -35,7 +35,7 @@ class JWTAuthApiController extends BaseApiController
             $this->response->errorInternal(trans('controllers::auth.jwt_error'));
         }
 
-        return $this->json(new AuthSuccessDTO($token));
+        return $this->json(new AuthSuccess($token));
     }
 
     /**
@@ -60,7 +60,7 @@ class JWTAuthApiController extends BaseApiController
         try {
             $token = JWTAuth::getToken();
             $newToken = JWTAuth::refresh($token);
-            return $this->json(new AuthSuccessDTO($newToken));
+            return $this->json(new AuthSuccess($newToken));
         } catch (JWTException $e) {
             $this->response->errorUnauthorized(trans('controllers::auth.jwt_refresh_error'));
         }

@@ -14,7 +14,7 @@ use Saritasa\Transformers\DtoModel;
  * @property-read string $state State
  * @property-read string $zip Zip Code
  */
-class AddressDTO extends DtoModel
+class Address extends DtoModel
 {
     protected $name;
     protected $address;
