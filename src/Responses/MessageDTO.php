@@ -7,7 +7,7 @@ use Saritasa\Transformers\DtoModel;
 /**
  * Message DTO class.
  * @deprecated Use more specific ErrorMessageDTO or SuccessMessageDTO class
- * @see ErrorMessageDTO, SuccessMessageDTO
+ * @see ErrorMessage, SuccessMessage
  */
 class MessageDTO extends DtoModel {
 
@@ -21,7 +21,7 @@ class MessageDTO extends DtoModel {
     /**
      * Message DTO class.
      * @deprecated Use more specific ErrorMessageDTO or SuccessMessageDTO class
-     * @see ErrorMessageDTO, SuccessMessageDTO
+     * @see ErrorMessage, SuccessMessage
      */
     public function __construct(string $message)
     {

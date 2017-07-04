@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Dingo\Api\Http\Request;
 use Illuminate\Support\Str;
-use Saritasa\Laravel\Controllers\Responses\ErrorMessageDTO;
-use Saritasa\Laravel\Controllers\Responses\SuccessMessageDTO;
+use Saritasa\Laravel\Controllers\Responses\ErrorMessage;
+use Saritasa\Laravel\Controllers\Responses\SuccessMessage;
 
 /**
  * This controller is responsible for handling password reset requests
@@ -39,7 +39,7 @@ class ResetPasswordApiController extends BaseApiController
      */
     protected function sendResetResponse($response)
     {
-        return $this->json(new SuccessMessageDTO(trans($response)));
+        return $this->json(new SuccessMessage(trans($response)));
     }
 
     /**
@@ -51,7 +51,7 @@ class ResetPasswordApiController extends BaseApiController
      */
     protected function sendResetFailedResponse(Request $request, $response)
     {
-        return $this->json(new ErrorMessageDTO($response));
+        return $this->json(new ErrorMessage($response));
     }
 
     /**

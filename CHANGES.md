@@ -2,7 +2,7 @@
 
 1.0.13
 ------
-- Add SuccessMessageDTO and ErrorMessageDTO, use in controller responses
+- Add SuccessMessage and ErrorMessage, use in controller responses
 - Mark MessageDTO as deprecated
 
 1.0.12

@@ -4,7 +4,7 @@ namespace Saritasa\Laravel\Controllers\Responses;
 
 use Saritasa\Transformers\DtoModel;
 
-class ErrorMessageDTO extends DtoModel
+class ErrorMessage extends DtoModel
 {
     /**
      * Error message text

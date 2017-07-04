@@ -4,7 +4,7 @@ namespace Saritasa\Laravel\Controllers\Responses;
 
 use Saritasa\Transformers\DtoModel;
 
-class SuccessMessageDTO extends DtoModel
+class SuccessMessage extends DtoModel
 {
     /**
      * Message text

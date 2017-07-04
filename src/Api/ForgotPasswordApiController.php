@@ -5,7 +5,7 @@ namespace Saritasa\Laravel\Controllers\Api;
 use Dingo\Api\Http\Request;
 use Dingo\Api\Http\Response;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
-use Saritasa\Laravel\Controllers\Responses\SuccessMessageDTO;
+use Saritasa\Laravel\Controllers\Responses\SuccessMessage;
 use Saritasa\Transformers\BaseTransformer;
 
 /**
@@ -47,7 +47,7 @@ class ForgotPasswordApiController extends BaseApiController
      */
     protected function sendResetLinkResponse($languageResourceId)
     {
-        return $this->json(new SuccessMessageDTO(trans($languageResourceId)));
+        return $this->json(new SuccessMessage(trans($languageResourceId)));
     }
 
     /**
