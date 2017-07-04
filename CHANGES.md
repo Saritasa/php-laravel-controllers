@@ -1,5 +1,10 @@
 # Changes History
 
+1.0.13
+------
+- Add SuccessMessageDTO and ErrorMessageDTO, use in controller responses
+- Mark MessageDTO as deprecated
+
 1.0.12
 ------
 Add missing parent constructor call in ForgotPasswordApiController
