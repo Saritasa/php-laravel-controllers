@@ -1,5 +1,9 @@
 # Changes History
 
+2.0.1
+-----
+Fix ResetPasswordController namespace
+
 2.0.0
 -----
 Get rid of DTO postfix in DTO models: rename AddressDTO, AuthSuccessDTO
