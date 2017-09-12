@@ -2,6 +2,7 @@
 
 namespace Saritasa\Laravel\Controllers\Api;
 
+use InvalidArgumentException;
 use Saritasa\Exceptions\ConfigurationException;
 use Dingo\Api\Routing\Router;
 
@@ -65,7 +66,7 @@ class ApiResourceRegistrar
                 $actions = $this->asArray($options[$verb]);
                 if (!is_array($actions)) {
                     $t = gettype($actions);
-                    throw new \InvalidArgumentException("\$options['$verb'] must contain string or array. $t was given");
+                    throw new InvalidArgumentException("\$options['$verb'] must contain string or array. $t was given");
                 }
 
                 foreach ($actions as $action => $i) {

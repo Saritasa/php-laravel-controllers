@@ -14,7 +14,7 @@ class BaseMarkupController extends BaseController
 
     use HandlesAuthorization;
 
-    function __construct()
+    public function __construct()
     {
         if (!static::isEnabled()) {
             $this->deny("This feature can be available during development only");

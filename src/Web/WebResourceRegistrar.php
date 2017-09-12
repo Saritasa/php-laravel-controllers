@@ -2,17 +2,19 @@
 
 namespace Saritasa\Laravel\Controllers\Web;
 
+use InvalidArgumentException;
 use Saritasa\Exceptions\ConfigurationException;
 use Illuminate\Routing\Router;
 
 /**
  * Wrapper for Illuminate router, adds concise methods for URLs registration.
  *
- * @method void get(string $resource, string $controller, string $action = null, string $route = null) Add GET route
- * @method void post(string $resource, string $controller, string $action = null, string $route = null) Add POST route
- * @method void patch(string $resource, string $controller, string $action = null, string $route = null) Add PATCH route
- * @method void put(string $resource, string $controller, string $action = null, string $route = null) Add PUT route
- * @method void delete(string $resource, string $controller, string $action = null, string $route = null) Add DELETE route
+ * @method void get(string $resource, string $controller, string $action = null, string $route = null)  New GET route
+ * @method void post(string $resource, string $controller, string $action = null, string $route = null) New POST route
+ * @method void patch(string $resource, string $controller, string $action = null, string $route = null) New PATCH route
+ * @method void put(string $resource, string $controller, string $action = null, string $route = null)   New PUT route
+ * @method void delete(string $resource, string $controller, string $action = null, string $route = null) New DELETE
+ *                                                                                                        route
  */
 class WebResourceRegistrar
 {
@@ -44,7 +46,8 @@ class WebResourceRegistrar
      * Registers controller methods
      *
      * index -   as GET /resourceName - page, that displays list of resource entities
-     * indexData as GET /resourceName (for AJAX requests only) - gets data for index page (usually paginated data in JSON, ex. for DataTables)
+     * indexData as GET /resourceName (for AJAX requests only) - gets data for index page
+     *           (usually paginated data in JSON, ex. for DataTables)
      * create -  as POST /resourceName - page, that displays new entity form
      * store -   as POST /resourceName (for AJAX requests only) method, that validates and creates new entity
      * show -    as GET /resourceName/{id} - page, that displays existing entity (usually in read-only mode)
@@ -74,7 +77,7 @@ class WebResourceRegistrar
                 $actions = $this->asArray($options[$verb]);
                 if (!is_array($actions)) {
                     $t = gettype($actions);
-                    throw new \InvalidArgumentException("\$options['$verb'] must contain string or array. $t was given");
+                    throw new InvalidArgumentException("\$options['$verb'] must contain string or array. $t was given");
                 }
 
                 foreach ($actions as $action) {
