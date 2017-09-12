@@ -4,7 +4,8 @@ namespace Saritasa\Laravel\Controllers\Responses;
 
 use Saritasa\Transformers\DtoModel;
 
-class AuthSuccess extends DtoModel {
+class AuthSuccess extends DtoModel
+{
 
     /**
      * Authentication token

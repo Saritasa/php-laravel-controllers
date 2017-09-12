@@ -63,6 +63,6 @@ class AuthJWTService
      */
     public function getUser()
     {
-       return JWTAuth::parseToken()->authenticate();
+        return JWTAuth::parseToken()->authenticate();
     }
 }

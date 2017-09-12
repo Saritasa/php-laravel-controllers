@@ -54,9 +54,9 @@ class ApiResourceRegistrar
         $routes = [];
         if (!$options || !count($options)) {
             $routes = $this->default;
-        } else if (isset($options['only'])) {
+        } elseif (isset($options['only'])) {
             $routes = array_intersect_key($this->default, $this->asArray($options['only']));
-        } else if (isset($options['except'])) {
+        } elseif (isset($options['except'])) {
             $routes = array_diff_key($this->default, $this->asArray($options['except']));
         }
 

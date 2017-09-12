@@ -17,7 +17,7 @@ class RevisionsServiceProvider extends ServiceProvider
         $filename = public_path() . '/assets/sum.md5';
         $revisions = is_file($filename) ? file($filename) : [];
         $files = [];
-        foreach ($revisions AS $file) {
+        foreach ($revisions as $file) {
             $file = explode('  ', $file);
             $files[str_replace(public_path() . '/', '', trim($file[1]))] = trim($file[0]);
         }

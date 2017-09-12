@@ -8,7 +8,6 @@ use Saritasa\Laravel\Controllers\Responses\AuthSuccess;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-
 /**
  * Authenticate API Controller. Uses JWT authentication
  */
