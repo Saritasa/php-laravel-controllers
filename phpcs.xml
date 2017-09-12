@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<ruleset name="PHP_CodeSniffer">
+    <description>The for Saritasa package</description>
+
+    <file>src</file>
+
+    <exclude-pattern>*.json</exclude-pattern>
+    <exclude-pattern>*.xml</exclude-pattern>
+
+    <arg name="colors"/>
+    <arg value="p"/>
+
+    <rule ref="PSR2"/>
+</ruleset>
