@@ -1,5 +1,10 @@
 # Changes History
 
+2.0.2
+-----
+- BaseApiController inherited from BaseController, this gets AuthorizesRequests trait
+- BaseController does not uses DispatchesJobs trait
+
 2.0.1
 -----
 Fix ResetPasswordController namespace
