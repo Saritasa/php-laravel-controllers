@@ -1,5 +1,9 @@
 # Changes History
 
+2.0.4
+-----
+Fix controllers inheritance (override validate method was incompatible)
+
 2.0.3
 -----
 Trim slashes from resource controller route names in Api/Web route registrars

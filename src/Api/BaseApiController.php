@@ -8,8 +8,10 @@ use Dingo\Api\Http\Response;
 use Dingo\Api\Routing\Helpers;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Routing\Controller;
 use Saritasa\DingoApi\Exceptions\ValidationException;
-use Saritasa\Laravel\Controllers\BaseController;
 use Saritasa\Transformers\BaseTransformer;
 use Saritasa\Transformers\IDataTransformer;
 
@@ -18,9 +20,9 @@ use Saritasa\Transformers\IDataTransformer;
  *
  * @property User $user
  */
-abstract class BaseApiController extends BaseController
+abstract class BaseApiController extends Controller
 {
-    use Helpers;
+    use Helpers, AuthorizesRequests, ValidatesRequests;
 
     /**
      * @var IDataTransformer
