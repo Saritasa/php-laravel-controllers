@@ -1,5 +1,9 @@
 # Changes History
 
+2.0.3
+-----
+Trim slashes from resource controller route names in Api/Web route registrars
+
 2.0.2
 -----
 - BaseApiController inherited from BaseController, this gets AuthorizesRequests trait

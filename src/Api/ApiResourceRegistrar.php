@@ -78,7 +78,7 @@ class ApiResourceRegistrar
         foreach ($routes as $action => $opt) {
             $verb = $opt['verb'];
             $this->api->$verb($resourceName.$opt['route'], [
-                'as' => $resourceName.'.'.$action,
+                'as' => trim($resourceName.'.'.$action),
                 'uses' => $controller.'@'.$action
             ]);
         }

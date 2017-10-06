@@ -90,7 +90,7 @@ class WebResourceRegistrar
             $verb = $opt['verb'];
             $route = $resourceName.$opt['route'];
             $routeOptions = [
-                'as' => $resourceName.'.'.$action,
+                'as' => trim($resourceName.'.'.$action, '/'),
                 'uses' => $controller.'@'.$action
             ];
             if (isset($opt['ajax']) && $opt['ajax'] === true) {
