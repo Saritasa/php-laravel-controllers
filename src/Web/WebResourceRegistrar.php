@@ -19,7 +19,7 @@ use Illuminate\Routing\Router;
 class WebResourceRegistrar
 {
     /**
-     * @var Router
+     * @var Router Original Laravel router service
      */
     private $router;
 
@@ -37,6 +37,11 @@ class WebResourceRegistrar
 
     const VERBS = ['get', 'post', 'put', 'patch', 'delete'];
 
+    /**
+     * Wrapper for Illuminate router, adds concise methods for URLs registration.
+     *
+     * @param Router $router Original Laravel router service to wrap
+     */
     public function __construct(Router $router)
     {
         $this->router = $router;
@@ -56,9 +61,9 @@ class WebResourceRegistrar
      * update -  as PUT /resourceName/{id} (for AJAX requests only) - method, that validates and saves edited changes
      * destroy - as DELETE /resourceName/{id} (for AJAX requests only) - delete entity
      *
-     * @param string $resourceName
-     * @param string $controller
-     * @param array $options
+     * @param string $resourceName URI of resource
+     * @param string $controller FQDN Class name of Controller, which contains action method
+     * @param array $options options, passed to router on route registration
      */
     public function resource(string $resourceName, string $controller, array $options = [])
     {

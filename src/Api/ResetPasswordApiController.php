@@ -34,7 +34,7 @@ class ResetPasswordApiController extends BaseApiController
     /**
      * Get the response for a successful password reset.
      *
-     * @param  string  $response
+     * @param  string  $response ID of language resource to send as response
      * @return Response
      */
     protected function sendResetResponse($response)
@@ -45,8 +45,8 @@ class ResetPasswordApiController extends BaseApiController
     /**
      * Get the response for a failed password reset.
      *
-     * @param  Request $request
-     * @param  string  $response
+     * @param  Request $request HTTP Request instance
+     * @param  string  $response Response text
      * @return Response
      */
     protected function sendResetFailedResponse(Request $request, $response)
@@ -57,8 +57,8 @@ class ResetPasswordApiController extends BaseApiController
     /**
      * Reset the given user's password.
      *
-     * @param  Model|Authenticatable $user
-     * @param  string  $password
+     * @param  Model|Authenticatable $user User, who wants to reset password
+     * @param  string  $password           New Password
      * @return void
      */
     protected function resetPassword($user, $password)

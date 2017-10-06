@@ -14,6 +14,7 @@ class AuthJWTService
 {
     /**
      * Authenticate User with JWT
+     *
      * @param string $email user email
      * @param string $password user password
      * @return string JWT token
@@ -42,6 +43,7 @@ class AuthJWTService
 
     /**
      * Refresh the JWT access token
+     *
      * @return string new JWT token
      * @throws ServiceException
      */
@@ -59,6 +61,7 @@ class AuthJWTService
 
     /**
      * Get current authenticated user
+     *
      * @return \App\Models\User
      */
     public function getUser()

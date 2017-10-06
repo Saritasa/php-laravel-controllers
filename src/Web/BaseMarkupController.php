@@ -56,7 +56,8 @@ class BaseMarkupController extends BaseController
 
     /**
      * Markup controller is enabled, when app in debug mode or this is a development environment
-     * @return bool
+     *
+     * @return boolean
      */
     public static function isEnabled(): bool
     {

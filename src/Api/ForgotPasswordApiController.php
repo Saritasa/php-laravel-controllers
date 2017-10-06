@@ -31,6 +31,7 @@ class ForgotPasswordApiController extends BaseApiController
 
     /**
      * Create a new controller instance.
+     *
      * @param BaseTransformer $baseTransformer To use as default controller responses transformer
      */
     public function __construct(BaseTransformer $baseTransformer)
@@ -53,7 +54,7 @@ class ForgotPasswordApiController extends BaseApiController
     /**
      * Get the response for a failed password reset link.
      *
-     * @param  Request $request
+     * @param  Request $request HTTP Request
      * @param  string  $languageResourceId Resource ID of message to display to user
      * @return void
      */

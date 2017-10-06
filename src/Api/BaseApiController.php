@@ -25,7 +25,7 @@ abstract class BaseApiController extends Controller
     use Helpers, AuthorizesRequests, ValidatesRequests;
 
     /**
-     * @var IDataTransformer
+     * @var IDataTransformer default Fractal/Transformer instance to use
      */
     protected $transformer;
 
@@ -64,14 +64,14 @@ abstract class BaseApiController extends Controller
      *
      * @param Request $request - Dingo/Api request (unlike in generic Laravel Controller)
      * @param array $rules - Laravel-style rules for validation https://laravel.com/docs/validation
-     * @param array $messages
-     * @param array $customAttributes
+     * @param array $messages Messages to use for specified fields, if they fail validation
+     * @param array $customAttributes How to name validated attributes in messages, visible to user
      *
      * @throws ValidationException - when input data in request does not match expected rules
      */
     public function validate(Request $request, array $rules, array $messages = [], array $customAttributes = [])
     {
-        /** @var Validator $validator */
+        /** @var Validator $validator Validator instance */
         $validator = $this->getValidationFactory()->make($request->all(), $rules, $messages, $customAttributes);
 
         if ($validator->fails()) {

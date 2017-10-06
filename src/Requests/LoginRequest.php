@@ -10,7 +10,8 @@ class LoginRequest extends FormRequest
 {
     /**
      * Allow all users access here.
-     * @return bool
+     *
+     * @return boolean
      */
     public function authorize()
     {
@@ -20,6 +21,7 @@ class LoginRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     *
      * @return array
      */
     public function rules()

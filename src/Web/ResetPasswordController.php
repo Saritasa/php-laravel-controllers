@@ -41,8 +41,8 @@ class ResetPasswordController extends BaseController
     /**
      * Reset the given user's password.
      *
-     * @param  Model|Authenticatable $user
-     * @param  string  $password
+     * @param  Model|Authenticatable $user User, who wants to reset password
+     * @param  string  $password           New Password
      * @return void
      */
     protected function resetPassword($user, $password)

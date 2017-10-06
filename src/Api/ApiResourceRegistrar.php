@@ -18,7 +18,7 @@ use Dingo\Api\Routing\Router;
 class ApiResourceRegistrar
 {
     /**
-     * @var Router
+     * @var Router Original Dingo/API router service
      */
     private $api;
 
@@ -32,6 +32,11 @@ class ApiResourceRegistrar
     
     const VERBS = ['get', 'post', 'put', 'patch', 'delete'];
 
+    /**
+     * Wrapper for Dingo router, adds concise methods for API URLs registration.
+     *
+     * @param Router $api Original Dingo/API router service to wrap
+     */
     public function __construct(Router $api)
     {
         $this->api = $api;
@@ -46,9 +51,9 @@ class ApiResourceRegistrar
      * update -  as PUT /resourceName/{id}
      * destroy - as DELETE /resourceName/{id}
      *
-     * @param string $resourceName
-     * @param string $controller
-     * @param array $options
+     * @param string $resourceName URI of resource
+     * @param string $controller FQDN Class name of Controller, which contains action method
+     * @param array $options options, passed to router on route registration
      */
     public function resource(string $resourceName, string $controller, array $options = [])
     {
@@ -94,6 +99,8 @@ class ApiResourceRegistrar
     }
 
     /**
+     * Actually called method, when user calls verb methods
+     *
      * @param string $verb - one of GET / POST / PUT / DELETE
      * @param string $path - URL path
      * @param string $controller Class, containing action method
