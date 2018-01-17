@@ -1,5 +1,9 @@
 # Changes History
 
+2.0.5
+-----
+Enable Laravel's package discovery https://laravel.com/docs/5.5/packages#package-discovery
+
 2.0.4
 -----
 Fix controllers inheritance (override validate method was incompatible)
