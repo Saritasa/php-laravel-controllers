@@ -5,6 +5,9 @@ namespace Saritasa\Laravel\Controllers\Providers;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 
+/*
+ * @deprecated 2.0.5 Use Laravel Mix recommended https://laravel.com/docs/mix
+ */
 class RevisionsServiceProvider extends ServiceProvider
 {
     /**

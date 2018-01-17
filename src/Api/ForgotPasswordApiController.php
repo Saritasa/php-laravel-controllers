@@ -58,7 +58,7 @@ class ForgotPasswordApiController extends BaseApiController
      * @param  string  $languageResourceId Resource ID of message to display to user
      * @return void
      */
-    protected function sendResetLinkFailedResponse($request, $languageResourceId)
+    protected function sendResetLinkFailedResponse(Request $request, $languageResourceId)
     {
         $this->response->errorNotFound(trans($languageResourceId));
     }

@@ -32,7 +32,7 @@ abstract class BaseApiController extends Controller
     /**
      * Base API controller, utilizing helpers from Dingo/API package
      *
-     * @param IDataTransformer $transformer - default transformer to apply to handled entity.
+     * @param IDataTransformer $transformer default transformer to apply to handled entity.
      * If not provided, BaseTransformer is used
      *
      * @see BaseTransformer - default transformer
@@ -45,7 +45,7 @@ abstract class BaseApiController extends Controller
     /**
      * Shortcut for work with Dingo/Api $this->response methods
      *
-     * @param $data - Model or collection to be returned in response
+     * @param mixed $data Model or collection to be returned in response
      * @param IDataTransformer|null $transformer Transformer to use.
      * If omitted, default transformer for this controller will be used.
      * * @return Response
@@ -62,8 +62,8 @@ abstract class BaseApiController extends Controller
     /**
      * Validates request and throws exception, if input data in request doesn't match expected rules
      *
-     * @param Request $request - Dingo/Api request (unlike in generic Laravel Controller)
-     * @param array $rules - Laravel-style rules for validation https://laravel.com/docs/validation
+     * @param Request $request Dingo/Api request (unlike in generic Laravel Controller)
+     * @param array $rules Laravel-style rules for validation https://laravel.com/docs/validation
      * @param array $messages Messages to use for specified fields, if they fail validation
      * @param array $customAttributes How to name validated attributes in messages, visible to user
      *
