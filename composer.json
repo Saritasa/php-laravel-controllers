@@ -37,6 +37,12 @@
     "extra": {
         "branch-alias": {
             "dev-master": "2.0.x-dev"
+        },
+        "laravel": {
+            "providers": [
+                "Saritasa\\Laravel\\Controllers\\Providers\\ControllersServiceProvider",
+                "Saritasa\\Laravel\\Controllers\\Providers\\MacroServiceProvider"
+            ]
         }
     }
 }
