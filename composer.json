@@ -15,7 +15,7 @@
         "illuminate/http": "5.*",
         "illuminate/support": "5.*",
         "saritasa/transformers": "^1.0",
-        "tymon/jwt-auth": "1.0.*@dev"
+        "tymon/jwt-auth": "1.0.*@rc"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.0",
