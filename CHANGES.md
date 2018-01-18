@@ -1,7 +1,5 @@
 # Changes History
 
-[![Build Status](https://travis-ci.org/Saritasa/php-laravel-controllers.svg?branch=master)](https://travis-ci.org/Saritasa/php-controllers)
-
 2.0.6
 -----
 Do not require minimum-stability of packages
