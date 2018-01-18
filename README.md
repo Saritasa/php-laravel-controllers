@@ -1,5 +1,8 @@
 # Laravel Controllers
 
+[![Build Status](https://travis-ci.org/Saritasa/php-laravel-controllers.svg?branch=master)](https://travis-ci.org/Saritasa/php-laravel-controllers)
+[![codecov](https://codecov.io/gh/Saritasa/php-laravel-controllers/branch/master/graph/badge.svg)](https://codecov.io/gh/Saritasa/php-laravel-controllers)
+
 Controllers for common UI and endpoints in Laravel,
 like API authentication, password change, login page, etc.
 

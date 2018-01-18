@@ -14,7 +14,7 @@ install:
 
 script:
   - vendor/bin/phpcs
-  - vendor/bin/phpunit
+  - vendor/bin/phpunit --coverage-clover=coverage.xml
 
 after_success:
-  - travis_retry php vendor/bin/coveralls
+  - bash <(curl -s https://codecov.io/bash)
