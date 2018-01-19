@@ -1,5 +1,9 @@
 # Changes History
 
+2.0.7
+-----
+Explicitly add [dingo/api](https://github.com/dingo/api) as dependency
+
 2.0.6
 -----
 Do not require minimum-stability of packages
