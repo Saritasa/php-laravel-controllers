@@ -116,13 +116,6 @@ class ApiResourceRegistrar
         }
     }
 
-    /**
-     * @param $name
-     * @param $arguments
-     *
-     * @return mixed
-     * @throws ConfigurationException
-     */
     public function __call($name, $arguments)
     {
         if (in_array($name, static::VERBS)) {
