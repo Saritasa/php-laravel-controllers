@@ -1,5 +1,10 @@
 # Changes History
 
+2.1.0
+-----
+Add model binding in ApiResourceRegistrar::resource
+Add ApiResourceRegistrar test
+
 2.0.7
 -----
 Explicitly add [dingo/api](https://github.com/dingo/api) as dependency

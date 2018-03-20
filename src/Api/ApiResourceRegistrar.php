@@ -54,8 +54,9 @@ class ApiResourceRegistrar
      * @param string $resourceName URI of resource
      * @param string $controller FQDN Class name of Controller, which contains action method
      * @param array $options options, passed to router on route registration
+     * @param string $modelClass Model class short name to bind in controller method instead id.
      */
-    public function resource(string $resourceName, string $controller, array $options = [])
+    public function resource(string $resourceName, string $controller, array $options = [], string $modelClass = null)
     {
         $routes = [];
         if (!$options || !count($options)) {
@@ -80,15 +81,48 @@ class ApiResourceRegistrar
             }
         }
 
+        if ($modelClass) {
+            $modelClass = $this->resolveModelClass($modelClass);
+        }
+
         foreach ($routes as $action => $opt) {
             $verb = $opt['verb'];
-            $this->api->$verb($resourceName.$opt['route'], [
+            $route = $opt['route'];
+            if ($modelClass) {
+                $route = str_replace('{id}', "{{$modelClass}}", $opt['route']);
+            }
+            $this->api->$verb($resourceName.$route, [
                 'as' => trim($resourceName.'.'.$action),
                 'uses' => $controller.'@'.$action
             ]);
         }
     }
 
+    /**
+     * Resolves model class name. Ex: App\Models\User -> User.
+     * If class not existing return given parameter.
+     *
+     * @param string $modelClass Class name to resolve.
+     *
+     * @return string
+     */
+    protected function resolveModelClass(string $modelClass): string
+    {
+        try {
+            $reflectionClass = new \ReflectionClass($modelClass);
+            return $reflectionClass->getShortName();
+        } catch (\ReflectionException $exception) {
+            return ucfirst($modelClass);
+        }
+    }
+
+    /**
+     * @param $name
+     * @param $arguments
+     *
+     * @return mixed
+     * @throws ConfigurationException
+     */
     public function __call($name, $arguments)
     {
         if (in_array($name, static::VERBS)) {
@@ -131,7 +165,14 @@ class ApiResourceRegistrar
         return $this->api->$verb($path ?: $action, ['uses' => $controller.'@'.$action, 'as' => $route]);
     }
 
-    private function asArray($value): array
+    /**
+     * Converts params to needed form.
+     *
+     * @param array|string $value Params ro converts
+     *
+     * @return array|null
+     */
+    private function asArray($value)
     {
         if (is_array($value)) {
             return $value;
