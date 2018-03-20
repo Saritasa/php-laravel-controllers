@@ -12,9 +12,9 @@
     ],
     "require": {
         "php": ">=7.0",
-        "illuminate/http": "5.*",
+        "dingo/api": "2.0.0-alpha1",
         "illuminate/support": "5.*",
-        "saritasa/dingo-api-custom": "^1.0",
+        "saritasa/dingo-api-custom": "^2.0",
         "saritasa/transformers": "^1.0",
         "tymon/jwt-auth": "1.0.*@rc"
     },
