@@ -2,7 +2,9 @@
 
 2.1.0
 -----
-Add model binding in ApiResourceRegistrar::resource
+Add model binding in ApiResourceRegistrar and WebResourceRegistrar
+Add custom realization of Illuminate\Routing\Contracts\ControllerDispatcher
+Add custom realization of Illuminate\Contracts\Routing\Registrar
 Add ApiResourceRegistrar test
 
 2.0.7

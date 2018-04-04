@@ -2,18 +2,23 @@
 
 namespace Saritasa\Laravel\Controllers\Api;
 
+use Dingo\Api\Routing\Router;
 use InvalidArgumentException;
 use Saritasa\Exceptions\ConfigurationException;
-use Dingo\Api\Routing\Router;
 
 /**
  * Wrapper for Dingo router, adds concise methods for API URLs registration.
  *
- * @method void get(string $resource, string $controller, string $action = null, string $route = null) Add POST route
- * @method void post(string $resource, string $controller, string $action = null, string $route = null) Add POST route
- * @method void patch(string $resource, string $controller, string $action = null, string $route = null) Add POST route
- * @method void put(string $resource, string $controller, string $action = null, string $route = null) Add POST route
- * @method void delete(string $resource, string $controller, string $action = null, string $route = null) Add POST route
+ * @method void get(string $resource, string $controller, string $action = null, string $route = null, array $mapping = [])
+ * Add GET route
+ * @method void post(string $resource, string $controller, string $action = null, string $route = null, array $mapping = [])
+ * Add POST route
+ * @method void patch(string $resource, string $controller, string $action = null, string $route = null, array $mapping = [])
+ * Add PATCH route
+ * @method void put(string $resource, string $controller, string $action = null, string $route = null, array $mapping = [])
+ * Add PUT route
+ * @method void delete(string $resource, string $controller, string $action = null, string $route = null, array $mapping = [])
+ * DELETE POST route
  */
 class ApiResourceRegistrar
 {
@@ -29,7 +34,7 @@ class ApiResourceRegistrar
         'update' => ['verb' => 'put', 'route' => '/{id}'],
         'destroy' => ['verb' => 'delete', 'route' => '/{id}']
     ];
-    
+
     const VERBS = ['get', 'post', 'put', 'patch', 'delete'];
 
     /**
@@ -54,10 +59,18 @@ class ApiResourceRegistrar
      * @param string $resourceName URI of resource
      * @param string $controller FQDN Class name of Controller, which contains action method
      * @param array $options options, passed to router on route registration
-     * @param string $modelClass Model class short name to bind in controller method instead id.
+     * @param string $modelClass Model to resolve binding
+     * @param string $modelName Model parameter name
+     *
+     * @throws \ReflectionException
      */
-    public function resource(string $resourceName, string $controller, array $options = [], string $modelClass = null)
-    {
+    public function resource(
+        string $resourceName,
+        string $controller,
+        array $options = [],
+        string $modelClass = null,
+        string $modelName = null
+    ) {
         $routes = [];
         if (!$options || !count($options)) {
             $routes = $this->default;
@@ -76,50 +89,52 @@ class ApiResourceRegistrar
                 }
 
                 foreach ($actions as $action => $i) {
-                    $routes[$action] = ['verb' => $verb, 'route' => '/'.$action];
+                    $routes[$action] = ['verb' => $verb, 'route' => '/' . $action];
                 }
             }
         }
 
+        $mapping = [];
+
         if ($modelClass) {
-            $modelClass = $this->resolveModelClass($modelClass);
+            $modelName = lcfirst($modelName ?? $this->resolveModelClass($modelClass));
+            $mapping[$modelName] = $modelClass;
         }
 
         foreach ($routes as $action => $opt) {
             $verb = $opt['verb'];
             $route = $opt['route'];
-            if ($modelClass) {
-                $route = str_replace('{id}', "{{$modelClass}}", $opt['route']);
+            if ($modelName) {
+                $route = str_replace('{id}', "{{$modelName}}", $opt['route']);
             }
-            $this->api->$verb($resourceName.$route, [
-                'as' => trim($resourceName.'.'.$action),
-                'uses' => $controller.'@'.$action
+
+            $this->api->$verb($resourceName . $route, [
+                'as' => trim($resourceName . '.' . $action),
+                'uses' => $controller . '@' . $action,
+                'mapping' => $mapping,
             ]);
         }
     }
 
     /**
      * Resolves model class name. Ex: App\Models\User -> User.
-     * If class not existing return given parameter.
      *
      * @param string $modelClass Class name to resolve.
      *
      * @return string
+     * @throws \ReflectionException
      */
     protected function resolveModelClass(string $modelClass): string
     {
-        try {
-            $reflectionClass = new \ReflectionClass($modelClass);
-            return $reflectionClass->getShortName();
-        } catch (\ReflectionException $exception) {
-            return ucfirst($modelClass);
-        }
+        $reflectionClass = new \ReflectionClass($modelClass);
+        return $reflectionClass->getShortName();
     }
 
     public function __call($name, $arguments)
     {
         if (in_array($name, static::VERBS)) {
             array_splice($arguments, 0, 0, [$name]);
+
             return call_user_func_array([$this, 'action'], $arguments);
         }
         throw new ConfigurationException("Unknown HTTP verb $name used for route $arguments[0]");
@@ -133,12 +148,19 @@ class ApiResourceRegistrar
      * @param string $controller Class, containing action method
      * @param string|null $action method, which will be executed on route hit
      * @param string|null $route - route name
+     * @param array $mapping Model bindings mapping
      * @return mixed
      */
-    private function action(string $verb, string $path, string $controller, string $action = null, string $route = null)
-    {
+    private function action(
+        string $verb,
+        string $path,
+        string $controller,
+        string $action = null,
+        string $route = null,
+        array $mapping = []
+    ) {
         $pos = strrpos($path, '/', -1);
-        $pathLastSegment = $pos ? substr($path, $pos+1) : $path;
+        $pathLastSegment = $pos ? substr($path, $pos + 1) : $path;
 
         if (!$action) {
             $action = $pathLastSegment;
@@ -147,7 +169,7 @@ class ApiResourceRegistrar
             $route = strtolower(str_replace('/', '.', $path));
             // Small piece of magic: make auto-named routes look nicer
             if ($pathLastSegment != $action) {
-                if (strrpos($route, '.'.$pathLastSegment, -1) === false) {
+                if (strrpos($route, '.' . $pathLastSegment, -1) === false) {
                     $route = "$route.$action";
                 } else {
                     $route = str_replace('.' . $pathLastSegment, '.' . $action, $route);
@@ -155,7 +177,10 @@ class ApiResourceRegistrar
             }
             $route = strtolower($route);
         }
-        return $this->api->$verb($path ?: $action, ['uses' => $controller.'@'.$action, 'as' => $route]);
+        return $this->api->$verb(
+            $path ?? $action,
+            ['uses' => $controller . '@' . $action, 'as' => $route, 'mapping' => $mapping]
+        );
     }
 
     /**

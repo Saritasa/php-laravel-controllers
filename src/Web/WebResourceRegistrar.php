@@ -2,18 +2,18 @@
 
 namespace Saritasa\Laravel\Controllers\Web;
 
+use Illuminate\Routing\Router;
 use InvalidArgumentException;
 use Saritasa\Exceptions\ConfigurationException;
-use Illuminate\Routing\Router;
 
 /**
  * Wrapper for Illuminate router, adds concise methods for URLs registration.
  *
- * @method void get(string $resource, string $controller, string $action = null, string $route = null)  New GET route
- * @method void post(string $resource, string $controller, string $action = null, string $route = null) New POST route
- * @method void patch(string $resource, string $controller, string $action = null, string $route = null) New PATCH route
- * @method void put(string $resource, string $controller, string $action = null, string $route = null)   New PUT route
- * @method void delete(string $resource, string $controller, string $action = null, string $route = null) New DELETE
+ * @method void get(string $resource, string $controller, string $action = null, string $route = null, array $mapping = [])  New GET route
+ * @method void post(string $resource, string $controller, string $action = null, string $route = null, array $mapping = []) New POST route
+ * @method void patch(string $resource, string $controller, string $action = null, string $route = null, array $mapping = []) New PATCH route
+ * @method void put(string $resource, string $controller, string $action = null, string $route = null, array $mapping = [])   New PUT route
+ * @method void delete(string $resource, string $controller, string $action = null, string $route = null, array $mapping = []) New DELETE
  *                                                                                                        route
  */
 class WebResourceRegistrar
@@ -64,9 +64,18 @@ class WebResourceRegistrar
      * @param string $resourceName URI of resource
      * @param string $controller FQDN Class name of Controller, which contains action method
      * @param array $options options, passed to router on route registration
+     * @param string $modelClass Model to resolve binding
+     * @param string $modelName Model parameter name
+     *
+     * @throws \ReflectionException
      */
-    public function resource(string $resourceName, string $controller, array $options = [])
-    {
+    public function resource(
+        string $resourceName,
+        string $controller,
+        array $options = [],
+        string $modelClass = null,
+        string $modelName = null
+    ) {
         $controller = $this->removeNamespace($controller);
         $routes = [];
         if (!$options || !count($options)) {
@@ -86,23 +95,45 @@ class WebResourceRegistrar
                 }
 
                 foreach ($actions as $action) {
-                    $routes[$action] = ['verb' => $verb, 'route' => '/'.$action];
+                    $routes[$action] = ['verb' => $verb, 'route' => '/' . $action];
                 }
             }
         }
 
+        $mapping = [];
+
+        if ($modelClass) {
+            $modelName = lcfirst($modelName ?? $this->resolveModelClass($modelClass));
+            $mapping[$modelName] = $modelClass;
+        }
+
         foreach ($routes as $action => $opt) {
             $verb = $opt['verb'];
-            $route = $resourceName.$opt['route'];
+            $route = $resourceName . $opt['route'];
             $routeOptions = [
-                'as' => trim($resourceName.'.'.$action, '/'),
-                'uses' => $controller.'@'.$action
+                'as' => trim($resourceName . '.' . $action, '/'),
+                'uses' => $controller . '@' . $action,
+                'mapping' => $mapping,
             ];
             if (isset($opt['ajax']) && $opt['ajax'] === true) {
                 $routeOptions['prefix'] = 'ajax';
             }
             $this->router->$verb($route, $routeOptions);
         }
+    }
+
+    /**
+     * Resolves model class name. Ex: App\Models\User -> User.
+     *
+     * @param string $modelClass Class name to resolve.
+     *
+     * @return string
+     * @throws \ReflectionException
+     */
+    protected function resolveModelClass(string $modelClass): string
+    {
+        $reflectionClass = new \ReflectionClass($modelClass);
+        return $reflectionClass->getShortName();
     }
 
     public function __call($name, $arguments)
@@ -120,13 +151,20 @@ class WebResourceRegistrar
      * @param string $controller Class, containing action method
      * @param string|null $action method, which will be executed on route hit
      * @param string|null $route - route name
+     * @param array $mapping Model bindings mapping
      * @return mixed
      */
-    private function action(string $verb, string $path, string $controller, string $action = null, string $route = null)
-    {
+    private function action(
+        string $verb,
+        string $path,
+        string $controller,
+        string $action = null,
+        string $route = null,
+        array $mapping = []
+    ) {
         $controller = $this->removeNamespace($controller);
         $pos = strrpos($path, '/', -1);
-        $pathLastSegment = $pos ? substr($path, $pos+1) : $path;
+        $pathLastSegment = $pos ? substr($path, $pos + 1) : $path;
 
         if (!$action) {
             $action = $pathLastSegment;
@@ -135,7 +173,7 @@ class WebResourceRegistrar
             $route = strtolower(str_replace('/', '.', $path));
             // Small piece of magic: make auto-named routes look nicer
             if ($pathLastSegment != $action) {
-                if (strrpos($route, '.'.$pathLastSegment, -1) === false) {
+                if (strrpos($route, '.' . $pathLastSegment, -1) === false) {
                     $route = "$route.$action";
                 } else {
                     $route = str_replace('.' . $pathLastSegment, '.' . $action, $route);
@@ -143,7 +181,10 @@ class WebResourceRegistrar
             }
             $route = trim(strtolower($route), '.');
         }
-        return $this->router->$verb($path, ['uses' => $controller.'@'.$action, 'as' => $route]);
+        return $this->router->$verb(
+            $path,
+            ['uses' => $controller . '@' . $action, 'as' => $route, 'mapping' => $mapping]
+        );
     }
 
     private function asArray($value): array
@@ -164,15 +205,15 @@ class WebResourceRegistrar
     private function asMap($value): array
     {
         $arr = is_array($value) ? $value : $this->asArray($value);
-        return $arr == null ? null: array_flip($arr);
+        return $arr == null ? null : array_flip($arr);
     }
 
     private function removeNamespace(string $controllerClass)
     {
         $controllerClass = trim($controllerClass, '\t\n\0\\');
-        $bsIndex = strrpos($controllerClass, '\\') ;
+        $bsIndex = strrpos($controllerClass, '\\');
         if ($bsIndex !== false) {
-            return substr($controllerClass, $bsIndex+1);
+            return substr($controllerClass, $bsIndex + 1);
         }
         return $controllerClass;
     }
