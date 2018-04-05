@@ -16,7 +16,7 @@ use Saritasa\Transformers\BaseTransformer;
 use Saritasa\Transformers\IDataTransformer;
 
 /**
- * Base API controller, utilizing helpers from Dingo/API package
+ * Base API controller, utilizing helpers from Dingo/API package.
  *
  * @property User $user
  */
@@ -25,12 +25,14 @@ abstract class BaseApiController extends Controller
     use Helpers, AuthorizesRequests, ValidatesRequests;
 
     /**
-     * @var IDataTransformer default Fractal/Transformer instance to use
+     * Default Fractal/Transformer instance to use
+     *
+     * @var IDataTransformer
      */
     protected $transformer;
 
     /**
-     * Base API controller, utilizing helpers from Dingo/API package
+     * Base API controller, utilizing helpers from Dingo/API package.
      *
      * @param IDataTransformer $transformer default transformer to apply to handled entity.
      * If not provided, BaseTransformer is used
@@ -43,7 +45,7 @@ abstract class BaseApiController extends Controller
     }
 
     /**
-     * Shortcut for work with Dingo/Api $this->response methods
+     * Shortcut for work with Dingo/Api $this->response methods.
      *
      * @param mixed $data Model or collection to be returned in response
      * @param IDataTransformer|null $transformer Transformer to use.
@@ -60,7 +62,7 @@ abstract class BaseApiController extends Controller
     }
 
     /**
-     * Validates request and throws exception, if input data in request doesn't match expected rules
+     * Validates request and throws exception, if input data in request doesn't match expected rules.
      *
      * @param Request $request Dingo/Api request (unlike in generic Laravel Controller)
      * @param array $rules Laravel-style rules for validation https://laravel.com/docs/validation
