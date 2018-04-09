@@ -4,38 +4,34 @@ namespace Saritasa\Laravel\Controllers\Api;
 
 use Dingo\Api\Routing\Router;
 use InvalidArgumentException;
-use Saritasa\Exceptions\ConfigurationException;
 
 /**
  * Wrapper for Dingo router, adds concise methods for API URLs registration.
- *
- * @method void get(string $resource, string $controller, string $action = null, string $route = null, array $mapping = [])
- * Add GET route
- * @method void post(string $resource, string $controller, string $action = null, string $route = null, array $mapping = [])
- * Add POST route
- * @method void patch(string $resource, string $controller, string $action = null, string $route = null, array $mapping = [])
- * Add PATCH route
- * @method void put(string $resource, string $controller, string $action = null, string $route = null, array $mapping = [])
- * Add PUT route
- * @method void delete(string $resource, string $controller, string $action = null, string $route = null, array $mapping = [])
- * DELETE POST route
  */
-class ApiResourceRegistrar
+final class ApiResourceRegistrar
 {
+    private const GET = 'get';
+    private const POST = 'post';
+    private const PUT = 'put';
+    private const PATCH = 'patch';
+    private const DELETE = 'delete';
+
     /**
-     * @var Router Original Dingo/API router service
+     * Original Dingo/API router service.
+     *
+     * @var Router
      */
     private $api;
 
     private $default = [
-        'index' => ['verb' => 'get', 'route' => ''],
-        'create' => ['verb' => 'post', 'route' => ''],
-        'show' => ['verb' => 'get', 'route' => '/{id}'],
-        'update' => ['verb' => 'put', 'route' => '/{id}'],
-        'destroy' => ['verb' => 'delete', 'route' => '/{id}']
+        'index' => ['verb' => self::GET, 'route' => ''],
+        'create' => ['verb' => self::POST, 'route' => ''],
+        'show' => ['verb' => self::GET, 'route' => '/{id}'],
+        'update' => ['verb' => self::PUT, 'route' => '/{id}'],
+        'destroy' => ['verb' => self::DELETE, 'route' => '/{id}']
     ];
 
-    const VERBS = ['get', 'post', 'put', 'patch', 'delete'];
+    public const VERBS = [self::GET, self::POST, self::PUT, self::PATCH, self::DELETE];
 
     /**
      * Wrapper for Dingo router, adds concise methods for API URLs registration.
@@ -62,6 +58,8 @@ class ApiResourceRegistrar
      * @param string $modelClass Model to resolve binding
      * @param string $modelName Model parameter name
      *
+     * @return void
+     *
      * @throws \ReflectionException
      */
     public function resource(
@@ -70,7 +68,7 @@ class ApiResourceRegistrar
         array $options = [],
         string $modelClass = null,
         string $modelName = null
-    ) {
+    ): void {
         $routes = [];
         if (!$options || !count($options)) {
             $routes = $this->default;
@@ -97,7 +95,7 @@ class ApiResourceRegistrar
         $mapping = [];
 
         if ($modelClass) {
-            $modelName = lcfirst($modelName ?? $this->resolveModelClass($modelClass));
+            $modelName = lcfirst($modelName ?? $this->getShortClassName($modelClass));
             $mapping[$modelName] = $modelClass;
         }
 
@@ -117,46 +115,142 @@ class ApiResourceRegistrar
     }
 
     /**
-     * Resolves model class name. Ex: App\Models\User -> User.
+     * Add get route.
+     *
+     * @param string $path URL path
+     * @param string $controller Class, containing action method
+     * @param string|null $action Method, which will be executed on route hit
+     * @param string|null $route Route name
+     * @param array $mapping Model bindings mapping
+     *
+     * @return void
+     */
+    public function get(
+        string $path,
+        string $controller,
+        ?string $action = null,
+        ?string $route = null,
+        array $mapping = []
+    ): void {
+        $this->action(static::GET, $path, $controller, $action, $route, $mapping);
+    }
+
+    /**
+     * Add post route.
+     *
+     * @param string $path URL path
+     * @param string $controller Class, containing action method
+     * @param string|null $action Method, which will be executed on route hit
+     * @param string|null $route Route name
+     * @param array $mapping Model bindings mapping
+     *
+     * @return void
+     */
+    public function post(
+        string $path,
+        string $controller,
+        ?string $action = null,
+        ?string $route = null,
+        array $mapping = []
+    ): void {
+        $this->action(static::POST, $path, $controller, $action, $route, $mapping);
+    }
+
+    /**
+     * Add patch route.
+     *
+     * @param string $path URL path
+     * @param string $controller Class, containing action method
+     * @param string|null $action Method, which will be executed on route hit
+     * @param string|null $route Route name
+     * @param array $mapping Model bindings mapping
+     *
+     * @return void
+     */
+    public function patch(
+        string $path,
+        string $controller,
+        ?string $action = null,
+        ?string $route = null,
+        array $mapping = []
+    ): void {
+        $this->action(static::PATCH, $path, $controller, $action, $route, $mapping);
+    }
+
+    /**
+     * Add put route.
+     *
+     * @param string $path URL path
+     * @param string $controller Class, containing action method
+     * @param string|null $action Method, which will be executed on route hit
+     * @param string|null $route Route name
+     * @param array $mapping Model bindings mapping
+     *
+     * @return void
+     */
+    public function put(
+        string $path,
+        string $controller,
+        ?string $action = null,
+        ?string $route = null,
+        array $mapping = []
+    ): void {
+        $this->action(static::PUT, $path, $controller, $action, $route, $mapping);
+    }
+
+    /**
+     * Add delete route.
+     *
+     * @param string $path URL path
+     * @param string $controller Class, containing action method
+     * @param string|null $action Method, which will be executed on route hit
+     * @param string|null $route Route name
+     * @param array $mapping Model bindings mapping
+     *
+     * @return void
+     */
+    public function delete(
+        string $path,
+        string $controller,
+        ?string $action = null,
+        ?string $route = null,
+        array $mapping = []
+    ): void {
+        $this->action(static::DELETE, $path, $controller, $action, $route, $mapping);
+    }
+
+    /**
+     * Resolve model class name. Ex: App\Models\User -> User.
      *
      * @param string $modelClass Class name to resolve.
      *
      * @return string
      * @throws \ReflectionException
      */
-    protected function resolveModelClass(string $modelClass): string
+    protected function getShortClassName(string $modelClass): string
     {
         $reflectionClass = new \ReflectionClass($modelClass);
         return $reflectionClass->getShortName();
-    }
-
-    public function __call($name, $arguments)
-    {
-        if (in_array($name, static::VERBS)) {
-            array_splice($arguments, 0, 0, [$name]);
-
-            return call_user_func_array([$this, 'action'], $arguments);
-        }
-        throw new ConfigurationException("Unknown HTTP verb $name used for route $arguments[0]");
     }
 
     /**
      * Actually called method, when user calls verb methods
      *
      * @param string $verb - one of GET / POST / PUT / DELETE
-     * @param string $path - URL path
+     * @param string $path URL path
      * @param string $controller Class, containing action method
-     * @param string|null $action method, which will be executed on route hit
-     * @param string|null $route - route name
+     * @param string|null $action Method, which will be executed on route hit
+     * @param string|null $route Route name
      * @param array $mapping Model bindings mapping
+     *
      * @return mixed
      */
     private function action(
         string $verb,
         string $path,
         string $controller,
-        string $action = null,
-        string $route = null,
+        ?string $action = null,
+        ?string $route = null,
         array $mapping = []
     ) {
         $pos = strrpos($path, '/', -1);
@@ -168,7 +262,7 @@ class ApiResourceRegistrar
         if (!$route) {
             $route = strtolower(str_replace('/', '.', $path));
             // Small piece of magic: make auto-named routes look nicer
-            if ($pathLastSegment != $action) {
+            if ($pathLastSegment !== $action) {
                 if (strrpos($route, '.' . $pathLastSegment, -1) === false) {
                     $route = "$route.$action";
                 } else {
@@ -179,7 +273,7 @@ class ApiResourceRegistrar
         }
         return $this->api->$verb(
             $path ?? $action,
-            ['uses' => $controller . '@' . $action, 'as' => $route, 'mapping' => $mapping]
+            ['uses' => "$controller@$action", 'as' => $route, 'mapping' => $mapping]
         );
     }
 
@@ -190,7 +284,7 @@ class ApiResourceRegistrar
      *
      * @return array|null
      */
-    private function asArray($value)
+    private function asArray($value): ?array
     {
         if (is_array($value)) {
             return $value;
