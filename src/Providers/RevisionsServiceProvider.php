@@ -26,13 +26,4 @@ class RevisionsServiceProvider extends ServiceProvider
         }
         Config::set('revision.files', $files);
     }
-
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
-    {
-    }
 }

@@ -99,6 +99,64 @@ app('api.router')->version(config('api.version'), ['namespace' => 'Saritasa\Lara
 });
 ```
 
+## Routes registration examples:
+
+### Simple route
+```php
+$registrar->get('users', ApiController::class, 'list');
+```
+In this case ApiController::list will be calling with default dependency injection.
+
+### Route with parameters
+```php
+
+// Controller exmaple
+class ApiController
+{
+    public function show(int $id)
+    {
+    }
+}
+
+// Route example
+$registrar->get('users/{id}', ApiController::class, 'show');
+```
+In this case ApiController::show will receive directly parameter from url. Ex: /user/5
+
+### Route with binding on controller side
+```php
+// Controller exmaple
+class ApiController
+{
+    public function show(User $user)
+	{
+	}
+}
+
+// Route example
+$registrar->get('users/{user}', ApiController::class, 'show');
+```
+In this case ApiController::show try to find Model user by id and if not exists throws ModelNotFoundException.
+
+### Route with binding on route side
+```php
+// Controller exmaple
+class ApiController
+{
+    public function show(Model $user)
+	{
+	}
+}
+
+// Route example
+$registrar->get('users/{user}', ApiController::class, 'show', null, ['user' => User::class]);
+```
+In this case no matter what type hint in controller, container will be trying to give object of class that you pass in router registrart.
+So if method has type hinting of class which not a parent for given in router, TypeError will be thrown.
+
+#### Note:
+In 2 last cases classes which uses for model bindings must implement Illuminate\Contracts\Routing\UrlRoutable otherwise this parameters
+will be ignored.
 
 ## Contributing
 

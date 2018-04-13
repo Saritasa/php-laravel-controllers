@@ -1,5 +1,14 @@
 # Changes History
 
+2.1.0
+-----
+Add model binding in ApiResourceRegistrar and WebResourceRegistrar
+Add custom implementation of Illuminate\Routing\Contracts\ControllerDispatcher
+Add custom implementation of Illuminate\Contracts\Routing\Registrar
+Improve unit tests
+Improve documentation.
+Deleted deprecated classes.
+
 2.0.7
 -----
 Explicitly add [dingo/api](https://github.com/dingo/api) as dependency
