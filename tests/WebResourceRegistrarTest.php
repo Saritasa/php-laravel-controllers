@@ -2,23 +2,19 @@
 
 namespace Saritasa\Laravel\Controllers\Tests;
 
-use Dingo\Api\Routing\Router;
+use Illuminate\Contracts\Routing\Registrar;
 use Mockery\MockInterface;
-use InvalidArgumentException;
-use Saritasa\Laravel\Controllers\Api\ApiResourceRegistrar;
 use Saritasa\Laravel\Controllers\BaseController;
+use Saritasa\Laravel\Controllers\Web\WebResourceRegistrar;
 
-/**
- * Api resource registrar test
- */
-class ApiResourceRegistrarTest extends TestCase
+class WebResourceRegistrarTest extends TestCase
 {
     /** @var MockInterface */
     protected $routerMock;
 
     public function setUp()
     {
-        $this->routerMock = \Mockery::mock(Router::class);
+        $this->routerMock = \Mockery::mock(Registrar::class);
     }
 
     /**
@@ -27,7 +23,7 @@ class ApiResourceRegistrarTest extends TestCase
     public function testCreateDefaultResource()
     {
         $resourceName = str_random();
-        $controllerName = str_random();
+        $controllerName = 'controller';
 
         $this->routerMock->shouldReceive('get')
             ->andReturnUsing(
@@ -40,11 +36,45 @@ class ApiResourceRegistrarTest extends TestCase
                     ], $options);
                 },
                 function (string $resource, array $options) use ($resourceName, $controllerName) {
+                    $this->assertEquals("$resourceName", $resource);
+                    $this->assertEquals([
+                        'as' => "$resourceName.indexData",
+                        'uses' => "$controllerName@indexData",
+                        'mapping' => [],
+                        'prefix' => 'ajax',
+                    ], $options);
+                },
+                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                    $this->assertEquals("$resourceName/create", $resource);
+                    $this->assertEquals([
+                        'as' => "$resourceName.create",
+                        'uses' => "$controllerName@create",
+                        'mapping' => [],
+                    ], $options);
+                },
+                function (string $resource, array $options) use ($resourceName, $controllerName) {
                     $this->assertEquals("$resourceName/{id}", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.show",
                         'uses' => "$controllerName@show",
                         'mapping' => []
+                    ], $options);
+                },
+                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                    $this->assertEquals("$resourceName/{id}", $resource);
+                    $this->assertEquals([
+                        'as' => "$resourceName.read",
+                        'uses' => "$controllerName@read",
+                        'mapping' => [],
+                        'prefix' => 'ajax',
+                    ], $options);
+                },
+                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                    $this->assertEquals("$resourceName/{id}/edit", $resource);
+                    $this->assertEquals([
+                        'as' => "$resourceName.edit",
+                        'uses' => "$controllerName@edit",
+                        'mapping' => [],
                     ], $options);
                 }
             );
@@ -53,9 +83,10 @@ class ApiResourceRegistrarTest extends TestCase
                 function (string $resource, array $options) use ($resourceName, $controllerName) {
                     $this->assertEquals($resourceName, $resource);
                     $this->assertEquals([
-                        'as' => "$resourceName.create",
-                        'uses' => "$controllerName@create",
-                        'mapping' => []
+                        'as' => "$resourceName.store",
+                        'uses' => "$controllerName@store",
+                        'mapping' => [],
+                        'prefix' => 'ajax',
                     ], $options);
                 }
             );
@@ -66,7 +97,8 @@ class ApiResourceRegistrarTest extends TestCase
                     $this->assertEquals([
                         'as' => "$resourceName.update",
                         'uses' => "$controllerName@update",
-                        'mapping' => []
+                        'mapping' => [],
+                        'prefix' => 'ajax',
                     ], $options);
                 }
             );
@@ -77,12 +109,13 @@ class ApiResourceRegistrarTest extends TestCase
                     $this->assertEquals([
                         'as' => "$resourceName.destroy",
                         'uses' => "$controllerName@destroy",
-                        'mapping' => []
+                        'mapping' => [],
+                        'prefix' => 'ajax',
                     ], $options);
                 }
             );
 
-        $registrar = new ApiResourceRegistrar($this->routerMock);
+        $registrar = new WebResourceRegistrar($this->routerMock);
         $registrar->resource($resourceName, $controllerName);
     }
 
@@ -92,7 +125,7 @@ class ApiResourceRegistrarTest extends TestCase
     public function testCreateResourceWithOptions()
     {
         $resourceName = str_random();
-        $controllerName = str_random();
+        $controllerName = 'controller';
         $options = [
             'only' => 'show',
         ];
@@ -109,7 +142,7 @@ class ApiResourceRegistrarTest extends TestCase
                 }
             );
 
-        $registrar = new ApiResourceRegistrar($this->routerMock);
+        $registrar = new WebResourceRegistrar($this->routerMock);
         $registrar->resource($resourceName, $controllerName, $options);
     }
 
@@ -119,9 +152,10 @@ class ApiResourceRegistrarTest extends TestCase
     public function testCreateResourceWithModelBindingDefaultName()
     {
         $resourceName = str_random();
-        $controllerName = str_random();
+        $controllerName = 'controller';
         $options = [
-            ApiResourceRegistrar::OPTION_ONLY => ['show', 'update', 'destroy',],
+            'only' => ['show', 'update', 'destroy'],
+            'get' => [],
         ];
         $className = BaseController::class;
         $shortName = lcfirst((new \ReflectionClass($className))->getShortName());
@@ -135,6 +169,7 @@ class ApiResourceRegistrarTest extends TestCase
                     $className
                 ) {
                     $this->assertEquals("$resourceName/{{$shortName}}", $resource);
+
                     $this->assertEquals([
                         'as' => "$resourceName.show",
                         'uses' => "$controllerName@show",
@@ -155,7 +190,8 @@ class ApiResourceRegistrarTest extends TestCase
                     $this->assertEquals([
                         'as' => "$resourceName.update",
                         'uses' => "$controllerName@update",
-                        'mapping' => [$shortName => $className]
+                        'mapping' => [$shortName => $className],
+                        'prefix' => 'ajax',
                     ], $options);
                 }
             );
@@ -171,81 +207,15 @@ class ApiResourceRegistrarTest extends TestCase
                     $this->assertEquals([
                         'as' => "$resourceName.destroy",
                         'uses' => "$controllerName@destroy",
-                        'mapping' => [$shortName => $className]
+                        'mapping' => [$shortName => $className],
+                        'prefix' => 'ajax',
                     ],
                         $options);
                 }
             );
 
-        $registrar = new ApiResourceRegistrar($this->routerMock);
+        $registrar = new WebResourceRegistrar($this->routerMock);
         $registrar->resource($resourceName, $controllerName, $options, $className);
-    }
-
-    /**
-     * Test resource method with model binding.
-     */
-    public function testCreateResourceWithModelBindingWithCustomName()
-    {
-        $resourceName = str_random();
-        $controllerName = str_random();
-        $options = [
-           ApiResourceRegistrar::OPTION_EXPECT => ['index', 'create',],
-        ];
-        $className = BaseController::class;
-        $customName = lcfirst(str_random());
-
-        $this->routerMock->shouldReceive('get')
-            ->andReturnUsing(
-                function (string $resource, array $options) use (
-                    $resourceName,
-                    $controllerName,
-                    $customName,
-                    $className
-                ) {
-                    $this->assertEquals("$resourceName/{{$customName}}", $resource);
-                    $this->assertEquals([
-                        'as' => "$resourceName.show",
-                        'uses' => "$controllerName@show",
-                        'mapping' => [$customName => $className]
-                    ], $options);
-                }
-            );
-
-        $this->routerMock->shouldReceive('put')
-            ->andReturnUsing(
-                function (string $resource, array $options) use (
-                    $resourceName,
-                    $controllerName,
-                    $customName,
-                    $className
-                ) {
-                    $this->assertEquals("$resourceName/{{$customName}}", $resource);
-                    $this->assertEquals([
-                        'as' => "$resourceName.update",
-                        'uses' => "$controllerName@update",
-                        'mapping' => [$customName => $className]
-                    ], $options);
-                }
-            );
-        $this->routerMock->shouldReceive('delete')
-            ->andReturnUsing(
-                function (string $resource, array $options) use (
-                    $resourceName,
-                    $controllerName,
-                    $customName,
-                    $className
-                ) {
-                    $this->assertEquals("$resourceName/{{$customName}}", $resource);
-                    $this->assertEquals([
-                        'as' => "$resourceName.destroy",
-                        'uses' => "$controllerName@destroy",
-                        'mapping' => [$customName => $className]
-                    ], $options);
-                }
-            );
-
-        $registrar = new ApiResourceRegistrar($this->routerMock);
-        $registrar->resource($resourceName, $controllerName, $options, $className, $customName);
     }
 
     public function testExceptionWillThrownWithBadOptions()
@@ -255,8 +225,8 @@ class ApiResourceRegistrarTest extends TestCase
         $options = [
             'get' => false,
         ];
-        $this->expectException(InvalidArgumentException::class);
-        $registrar = new ApiResourceRegistrar($this->routerMock);
+        $this->expectException(\InvalidArgumentException::class);
+        $registrar = new WebResourceRegistrar($this->routerMock);
         $registrar->resource($resourceName, $controllerName, $options);
     }
 
@@ -286,7 +256,7 @@ class ApiResourceRegistrarTest extends TestCase
                 }
             );
 
-        $registrar = new ApiResourceRegistrar($this->routerMock);
+        $registrar = new WebResourceRegistrar($this->routerMock);
         $registrar->get($expectedPath, $controllerName, $action, $routeName, $mapping);
     }
 
@@ -315,7 +285,7 @@ class ApiResourceRegistrarTest extends TestCase
                     }
                 );
 
-            $registrar = new ApiResourceRegistrar($this->routerMock);
+            $registrar = new WebResourceRegistrar($this->routerMock);
             $registrar->$verb($expectedPath, $controllerName, null, $routeName, $mapping);
         }
     }
@@ -323,7 +293,7 @@ class ApiResourceRegistrarTest extends TestCase
     public function testActionWithEmptyAction()
     {
         $expectedPath = str_random();
-        $controllerName = str_random();
+        $controllerName = 'controller';
         $mapping = [str_random() => str_random()];
         $routeName = str_random();
         foreach ($this->getVerbs() as $verb) {
@@ -344,14 +314,14 @@ class ApiResourceRegistrarTest extends TestCase
                     }
                 );
 
-            $registrar = new ApiResourceRegistrar($this->routerMock);
+            $registrar = new WebResourceRegistrar($this->routerMock);
             $registrar->$verb($expectedPath, $controllerName, null, $routeName, $mapping);
         }
     }
 
     public function testActionWithEmptyRoute()
     {
-        $controllerName = str_random();
+        $controllerName = 'controller';
         $mapping = [str_random() => str_random()];
         $action = str_random();
         $expectedPath = str_random();
@@ -375,14 +345,14 @@ class ApiResourceRegistrarTest extends TestCase
                     }
                 );
 
-            $registrar = new ApiResourceRegistrar($this->routerMock);
+            $registrar = new WebResourceRegistrar($this->routerMock);
             $registrar->$verb($expectedPath, $controllerName, $action, null, $mapping);
         }
     }
 
     public function testActionWithEmptyRouteAndAction()
     {
-        $controllerName = str_random();
+        $controllerName = 'controller';
         $mapping = [str_random() => str_random()];
         $expectedPath = str_random();
         $action = $expectedPath;
@@ -406,7 +376,7 @@ class ApiResourceRegistrarTest extends TestCase
                     }
                 );
 
-            $registrar = new ApiResourceRegistrar($this->routerMock);
+            $registrar = new WebResourceRegistrar($this->routerMock);
             $registrar->$verb($expectedPath, $controllerName, $action, null, $mapping);
         }
     }

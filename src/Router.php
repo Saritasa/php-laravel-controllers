@@ -10,7 +10,7 @@ use Illuminate\Routing\Route;
 use ReflectionParameter;
 
 /**
- * Custom application router.
+ * Custom application router which use route mapping to resolve model binding.
  */
 class Router extends LaravelRouter
 {
@@ -32,7 +32,7 @@ class Router extends LaravelRouter
          * @var ReflectionParameter $parameter
          */
         foreach ($route->signatureParameters(UrlRoutable::class) as $parameter) {
-            if (!$parameterName = $this->getParameterName($parameter->name, $parameters)) {
+            if (!$parameterName = $this->getParameterName($parameter->getName(), $parameters)) {
                 continue;
             }
 
@@ -42,7 +42,7 @@ class Router extends LaravelRouter
                 continue;
             }
 
-            $modelClass = $mapping[$parameterName] ?? $parameter->getClass()->name;
+            $modelClass = $mapping[$parameterName] ?? $parameter->getClass()->getName();
 
             $instance = $this->container->make($modelClass);
 
@@ -58,10 +58,10 @@ class Router extends LaravelRouter
      * Return the parameter name if it exists in the given parameters.
      *
      * @param string $name Router parameter to check
-     * @param array $parameters Expected parameters
+     * @param array $parameters Available parameters
      * @return string|null
      */
-    protected function getParameterName(string $name, array $parameters)
+    protected function getParameterName(string $name, array $parameters): ?string
     {
         if (array_key_exists($name, $parameters)) {
             return $name;

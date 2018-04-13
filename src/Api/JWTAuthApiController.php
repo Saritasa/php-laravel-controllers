@@ -80,9 +80,10 @@ class JWTAuthApiController extends BaseApiController
     {
         try {
             $newToken = $this->jwtAuth->refresh();
-            return $this->json(new AuthSuccess($newToken));
         } catch (JWTException $e) {
             $this->response->errorUnauthorized(trans('controllers::auth.jwt_refresh_error'));
         }
+
+        return $this->json(new AuthSuccess($newToken));
     }
 }

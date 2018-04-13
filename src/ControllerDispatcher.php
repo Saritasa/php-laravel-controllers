@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace Saritasa\Laravel\Controllers;
 
 use Illuminate\Routing\ControllerDispatcher as LaravelControllerDispatcher;
 use ReflectionFunctionAbstract;
@@ -25,7 +25,7 @@ class ControllerDispatcher extends LaravelControllerDispatcher
 
         foreach ($reflector->getParameters() as $key => $parameter) {
             // If we resolved route parameter, we should not touch it
-            if (isset($parameters[$parameter->name])) {
+            if (isset($parameters[$parameter->getName()])) {
                 continue;
             }
 
@@ -34,11 +34,10 @@ class ControllerDispatcher extends LaravelControllerDispatcher
                 $parameters
             );
 
-            if (! is_null($instance)) {
+            if (!is_null($instance)) {
                 $instanceCount++;
                 $this->spliceIntoParameters($parameters, $key, $instance);
-            } elseif (! isset($values[$key - $instanceCount]) &&
-                $parameter->isDefaultValueAvailable()) {
+            } elseif (!isset($values[$key - $instanceCount]) && $parameter->isDefaultValueAvailable()) {
                 $this->spliceIntoParameters($parameters, $key, $parameter->getDefaultValue());
             }
         }

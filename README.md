@@ -119,11 +119,11 @@ class ApiController
 }
 
 // Route example
-$registrar->get('user/{id}', ApiController::class, 'show');
+$registrar->get('users/{id}', ApiController::class, 'show');
 ```
 In this case ApiController::show will receive directly parameter from url. Ex: /user/5
 
-###Route with binding on controller side
+### Route with binding on controller side
 ```php
 // Controller exmaple
 class ApiController
@@ -134,11 +134,11 @@ class ApiController
 }
 
 // Route example
-$registrar->get('user/{user}', ApiController::class, 'show');
+$registrar->get('users/{user}', ApiController::class, 'show');
 ```
 In this case ApiController::show try to find Model user by id and if not exists throws ModelNotFoundException.
 
-###Route with binding on route side
+### Route with binding on route side
 ```php
 // Controller exmaple
 class ApiController
@@ -149,13 +149,13 @@ class ApiController
 }
 
 // Route example
-$registrar->get('user/{user}', ApiController::class, 'show', null, ['user' => User::class]);
+$registrar->get('users/{user}', ApiController::class, 'show', null, ['user' => User::class]);
 ```
 In this case no matter what type hint in controller, container will be trying to give object of class that you pass in router registrart.
 So if method has type hinting of class which not a parent for given in router, TypeError will be thrown.
 
-####Note:
-In 2 last cases classes which uses for model bindings must implements Illuminate\Contracts\Routing\UrlRoutable otherwise this parameters
+#### Note:
+In 2 last cases classes which uses for model bindings must implement Illuminate\Contracts\Routing\UrlRoutable otherwise this parameters
 will be ignored.
 
 ## Contributing

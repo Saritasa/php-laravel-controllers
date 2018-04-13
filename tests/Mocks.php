@@ -14,4 +14,11 @@ class Mocks
         app()->instance('translator', $translator);
         return $translator;
     }
+
+    public static function mockReflectionParameter(string $parameterName): MockInterface
+    {
+        $parameter = \Mockery::mock(\ReflectionParameter::class);
+        $parameter->shouldReceive('getName')->andReturn($parameterName);
+        return $parameter;
+    }
 }

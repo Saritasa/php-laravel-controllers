@@ -70,10 +70,16 @@ abstract class BaseApiController extends Controller
      * @param array $customAttributes How to name validated attributes in messages, visible to user
      *
      * @throws ValidationException - when input data in request does not match expected rules
+     *
+     * @return void
      */
-    public function validate(Request $request, array $rules, array $messages = [], array $customAttributes = [])
+    public function validate(Request $request, array $rules, array $messages = [], array $customAttributes = []): void
     {
-        /** @var Validator $validator Validator instance */
+        /**
+         * Validator instance.
+         *
+         * @var Validator $validator
+         */
         $validator = $this->getValidationFactory()->make($request->all(), $rules, $messages, $customAttributes);
 
         if ($validator->fails()) {

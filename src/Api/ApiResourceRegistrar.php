@@ -10,6 +10,8 @@ use InvalidArgumentException;
  */
 final class ApiResourceRegistrar
 {
+    public const OPTION_ONLY = 'only';
+    public const OPTION_EXPECT = 'expect';
     private const GET = 'get';
     private const POST = 'post';
     private const PUT = 'put';
@@ -70,26 +72,12 @@ final class ApiResourceRegistrar
         string $modelName = null
     ): void {
         $routes = [];
-        if (!$options || !count($options)) {
+        if (count($options) === 0) {
             $routes = $this->default;
-        } elseif (isset($options['only'])) {
-            $routes = array_intersect_key($this->default, $this->asArray($options['only']));
-        } elseif (isset($options['except'])) {
-            $routes = array_diff_key($this->default, $this->asArray($options['except']));
-        }
-
-        foreach (static::VERBS as $verb) {
-            if (isset($options[$verb])) {
-                $actions = $this->asArray($options[$verb]);
-                if (!is_array($actions)) {
-                    $t = gettype($actions);
-                    throw new InvalidArgumentException("\$options['$verb'] must contain string or array. $t was given");
-                }
-
-                foreach ($actions as $action => $i) {
-                    $routes[$action] = ['verb' => $verb, 'route' => '/' . $action];
-                }
-            }
+        } elseif (isset($options[static::OPTION_ONLY])) {
+            $routes = array_intersect_key($this->default, $this->asArray($options[static::OPTION_ONLY]));
+        } elseif (isset($options[static::OPTION_EXPECT])) {
+            $routes = array_diff_key($this->default, $this->asArray($options[static::OPTION_EXPECT]));
         }
 
         $mapping = [];
@@ -97,6 +85,20 @@ final class ApiResourceRegistrar
         if ($modelClass) {
             $modelName = lcfirst($modelName ?? $this->getShortClassName($modelClass));
             $mapping[$modelName] = $modelClass;
+        }
+
+        foreach (static::VERBS as $verb) {
+            if (isset($options[$verb])) {
+                $actions = $this->asArray($options[$verb]);
+                if (!is_array($actions)) {
+                    $t = gettype($actions);
+                    throw new InvalidArgumentException("{$options[$verb]} must contain string or array. $t was given");
+                }
+
+                foreach ($actions as $action => $i) {
+                    $routes[$action] = ['verb' => $verb, 'route' => "/$action"];
+                }
+            }
         }
 
         foreach ($routes as $action => $opt) {
@@ -234,13 +236,13 @@ final class ApiResourceRegistrar
     }
 
     /**
-     * Actually called method, when user calls verb methods
+     * Actually called method, when user calls verb methods.
      *
      * @param string $verb - one of GET / POST / PUT / DELETE
      * @param string $path URL path
      * @param string $controller Class, containing action method
      * @param string|null $action Method, which will be executed on route hit
-     * @param string|null $route Route name
+     * @param string|null $routeName Route name
      * @param array $mapping Model bindings mapping
      *
      * @return mixed
@@ -250,7 +252,7 @@ final class ApiResourceRegistrar
         string $path,
         string $controller,
         ?string $action = null,
-        ?string $route = null,
+        ?string $routeName = null,
         array $mapping = []
     ) {
         $pos = strrpos($path, '/', -1);
@@ -259,36 +261,37 @@ final class ApiResourceRegistrar
         if (!$action) {
             $action = $pathLastSegment;
         }
-        if (!$route) {
-            $route = strtolower(str_replace('/', '.', $path));
+        if (!$routeName) {
+            $routeName = strtolower(str_replace('/', '.', $path));
             // Small piece of magic: make auto-named routes look nicer
             if ($pathLastSegment !== $action) {
-                if (strrpos($route, '.' . $pathLastSegment, -1) === false) {
-                    $route = "$route.$action";
+                if (strrpos($routeName, '.' . $pathLastSegment, -1) === false) {
+                    $routeName = "$routeName.$action";
                 } else {
-                    $route = str_replace('.' . $pathLastSegment, '.' . $action, $route);
+                    $routeName = str_replace('.' . $pathLastSegment, '.' . $action, $routeName);
                 }
             }
-            $route = strtolower($route);
+            $routeName = strtolower($routeName);
         }
         return $this->api->$verb(
             $path ?? $action,
-            ['uses' => "$controller@$action", 'as' => $route, 'mapping' => $mapping]
+            ['uses' => "$controller@$action", 'as' => $routeName, 'mapping' => $mapping]
         );
     }
 
     /**
      * Converts params to needed form.
      *
-     * @param array|string $value Params ro converts
+     * @param array|string $value Params to converts
      *
      * @return array|null
      */
     private function asArray($value): ?array
     {
         if (is_array($value)) {
-            return $value;
+            return array_flip($value);
         }
+
         if (is_string($value)) {
             $keys = explode(',', $value);
             return array_flip($keys);
