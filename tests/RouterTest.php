@@ -5,9 +5,12 @@ namespace Saritasa\Laravel\Controllers\Tests;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Routing\UrlRoutable;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Model;
+use Saritasa\Exceptions\ModelNotFoundException;
 use Illuminate\Routing\Route;
 use Mockery\MockInterface;
+use Saritasa\Contracts\IRepository;
+use Saritasa\Contracts\IRepositoryFactory;
 use Saritasa\Laravel\Controllers\Router;
 
 class RouterTest extends TestCase
@@ -18,13 +21,16 @@ class RouterTest extends TestCase
     protected $route;
     /** @var MockInterface */
     protected $containerMock;
+    /** @var MockInterface */
+    protected $repositoryFactoryMock;
 
     public function setUp()
     {
         parent::setUp();
         $this->containerMock = \Mockery::mock(Container::class);
         $dispatcherMock = \Mockery::mock(Dispatcher::class);
-        $this->router = \Mockery::mock(Router::class, [$dispatcherMock, $this->containerMock])
+        $this->repositoryFactoryMock = \Mockery::mock(IRepositoryFactory::class);
+        $this->router = \Mockery::mock(Router::class, [$this->repositoryFactoryMock, $dispatcherMock, $this->containerMock])
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
         $this->route = \Mockery::mock(Route::class);
@@ -76,19 +82,24 @@ class RouterTest extends TestCase
             ->withArgs([UrlRoutable::class])
             ->andReturn([$firstParameter]);
 
-        $tempModelMock = \Mockery::mock(TempModel::class);
+        $expectedModel = new TempModel(['id' => $nameParameter]);
 
-        $this->containerMock->shouldReceive('make')->withArgs([TempModel::class])->andReturn($tempModelMock);
-        $tempModelMock->shouldReceive('resolveRouteBinding')
-            ->withArgs([$nameParameter])
-            ->andSet('id', $nameParameter)
-            ->andReturnSelf();
+        $repositoryMock = \Mockery::mock(IRepository::class);
+
+        $this->repositoryFactoryMock
+            ->shouldReceive('getRepository')
+            ->withArgs([TempModel::class])
+            ->andReturn($repositoryMock);
+
+        $repositoryMock->shouldReceive('findOrFail')->withArgs([$nameParameter])->andReturnUsing(function(string $value) {
+            return new TempModel(['id' => $value]);
+        });
 
         $this->route->shouldReceive('setParameter')->andReturnUsing(function (string $name, $actualModel) use (
-            $tempModelMock
+            $expectedModel
         ) {
             $this->assertEquals('name', $name);
-            $this->assertEquals($tempModelMock, $actualModel);
+            $this->assertEquals($expectedModel, $actualModel);
         });
 
         $result = $this->router->substituteImplicitBindings($this->route);
@@ -112,13 +123,17 @@ class RouterTest extends TestCase
             ->withArgs([UrlRoutable::class])
             ->andReturn([$firstParameter]);
 
-        $tempModelMock = \Mockery::mock(TempModel::class);
-
-        $this->containerMock->shouldReceive('make')->withArgs([$className])->andReturn($tempModelMock);
-        $tempModelMock->shouldReceive('resolveRouteBinding')
+        $repositoryMock = \Mockery::mock(IRepository::class);
+        $repositoryMock->shouldReceive('getModelClass')->withArgs([])->andReturn($className);
+        $repositoryMock->shouldReceive('findOrFail')
             ->withArgs([$nameParameter])
-            ->andReturnNull();
-        $this->expectExceptionObject((new ModelNotFoundException())->setModel(get_class($tempModelMock)));
+            ->andThrow(new ModelNotFoundException($repositoryMock, $nameParameter));
+        $this->repositoryFactoryMock
+            ->shouldReceive('getRepository')
+            ->withArgs([$className])
+            ->andReturn($repositoryMock);
+
+        $this->expectException(ModelNotFoundException::class);
         $this->router->substituteImplicitBindings($this->route);
     }
 
@@ -137,6 +152,7 @@ class RouterTest extends TestCase
         $this->route->shouldReceive('getAction')->withArgs(['mapping'])->andReturn([]);
 
         $nameParameter = rand(0, 100);
+        $expectedModel = new TempModel(['id' => $nameParameter]);
 
         $this->route->shouldReceive('parameters')->withArgs([])->andReturn([
             'name' => $nameParameter,
@@ -144,20 +160,22 @@ class RouterTest extends TestCase
         $this->route->shouldReceive('signatureParameters')
             ->withArgs([UrlRoutable::class])
             ->andReturn([$firstParameter]);
+        $repositoryMock = \Mockery::mock(IRepository::class);
 
-        $tempModelMock = \Mockery::mock(TempModel::class);
+        $this->repositoryFactoryMock
+            ->shouldReceive('getRepository')
+            ->withArgs([$className])
+            ->andReturn($repositoryMock);
 
-        $this->containerMock->shouldReceive('make')->withArgs([$className])->andReturn($tempModelMock);
-        $tempModelMock->shouldReceive('resolveRouteBinding')
-            ->withArgs([$nameParameter])
-            ->andSet('id', $nameParameter)
-            ->andReturnSelf();
+        $repositoryMock->shouldReceive('findOrFail')->withArgs([$nameParameter])->andReturnUsing(function(string $value) {
+            return new TempModel(['id' => $value]);
+        });
 
         $this->route->shouldReceive('setParameter')->andReturnUsing(function (string $name, $actualModel) use (
-            $tempModelMock
+            $expectedModel
         ) {
             $this->assertEquals('name', $name);
-            $this->assertEquals($tempModelMock, $actualModel);
+            $this->assertEquals($expectedModel, $actualModel);
         });
 
         $result = $this->router->substituteImplicitBindings($this->route);
@@ -170,17 +188,7 @@ class RouterTest extends TestCase
     }
 }
 
-class TempModel implements UrlRoutable
+class TempModel extends Model
 {
-    public function getRouteKey()
-    {
-    }
-
-    public function getRouteKeyName()
-    {
-    }
-
-    public function resolveRouteBinding($value)
-    {
-    }
+    protected $fillable = ['id'];
 }

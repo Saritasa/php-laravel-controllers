@@ -2,24 +2,46 @@
 
 namespace Saritasa\Laravel\Controllers;
 
+use Illuminate\Container\Container;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Routing\UrlRoutable;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Saritasa\Exceptions\ModelNotFoundException;
 use Illuminate\Routing\Router as LaravelRouter;
 use Illuminate\Support\Str;
 use Illuminate\Routing\Route;
 use ReflectionParameter;
+use Saritasa\Contracts\IRepositoryFactory;
+use Saritasa\Exceptions\RepositoryException;
 
 /**
  * Custom application router which use route mapping to resolve model binding.
  */
 class Router extends LaravelRouter
 {
+    protected $repositoryFactory;
+
+    /**
+     * Custom application router which use route mapping to resolve model binding.
+     *
+     * @param IRepositoryFactory $repositoryFactory
+     * @param Dispatcher $dispatcher
+     * @param Container $container
+     */
+    public function __construct(IRepositoryFactory $repositoryFactory, Dispatcher $dispatcher, Container $container)
+    {
+        parent::__construct($dispatcher, $container);
+        $this->repositoryFactory = $repositoryFactory;
+    }
+
     /**
      * Substitute the implicit Eloquent model bindings for the route.
      *
      * @param Route $route Current route
      *
      * @return void
+     *
+     * @throws ModelNotFoundException
+     * @throws RepositoryException
      */
     public function substituteImplicitBindings($route)
     {
@@ -43,12 +65,7 @@ class Router extends LaravelRouter
             }
 
             $modelClass = $mapping[$parameterName] ?? $parameter->getClass()->getName();
-
-            $instance = $this->container->make($modelClass);
-
-            if (!$model = $instance->resolveRouteBinding($parameterValue)) {
-                throw (new ModelNotFoundException())->setModel(get_class($instance));
-            }
+            $model = $this->repositoryFactory->getRepository($modelClass)->findOrFail($parameterValue);
 
             $route->setParameter($parameterName, $model);
         }

@@ -4,6 +4,7 @@ namespace Saritasa\Laravel\Controllers\Api;
 
 use Dingo\Api\Routing\Router;
 use InvalidArgumentException;
+use Saritasa\Laravel\Contracts\IResourceController;
 
 /**
  * Wrapper for Dingo router, adds concise methods for API URLs registration.
@@ -85,6 +86,12 @@ final class ApiResourceRegistrar
         if ($modelClass) {
             $modelName = lcfirst($modelName ?? $this->getShortClassName($modelClass));
             $mapping[$modelName] = $modelClass;
+            $controllerInstance = app()->make($controller);
+            if (!$controllerInstance instanceof IResourceController) {
+                throw new \Exception();
+            }
+            $controllerInstance->setModelClass($modelClass);
+            app()->instance($controller, $controllerInstance);
         }
 
         foreach (static::VERBS as $verb) {

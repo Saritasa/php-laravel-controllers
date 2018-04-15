@@ -16,7 +16,8 @@
         "illuminate/support": "5.*",
         "saritasa/dingo-api-custom": "^2.0",
         "saritasa/transformers": "^1.0",
-        "tymon/jwt-auth": "1.0.*@rc"
+        "tymon/jwt-auth": "1.0.*@rc",
+        "saritasa/laravel-repositories": "dev-master"
     },
     "require-dev": {
         "mockery/mockery": "^1.0",
@@ -47,5 +48,11 @@
                 "Saritasa\\Laravel\\Controllers\\Providers\\MacroServiceProvider"
             ]
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/veeeeeRySeXy/php-laravel-repositories"
+        }
+    ]
 }
