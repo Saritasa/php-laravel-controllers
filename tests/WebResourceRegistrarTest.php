@@ -233,7 +233,7 @@ class WebResourceRegistrarTest extends TestCase
     public function testActionMethodWithAllParams()
     {
         $expectedPath = str_random();
-        $controllerName = str_random();
+        $controllerName = 'controller';
         $mapping = [str_random() => str_random()];
         $action = str_random();
         $routeName = str_random();

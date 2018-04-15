@@ -25,7 +25,7 @@ class JWTAuthApiController extends BaseApiController
     /**
      * Authenticate API Controller. Uses JWT authentication.
      *
-     * @param JWTAuth $jwtAuth Jwt auth service
+     * @param JWTAuth $jwtAuth Jwt guard
      * @param IDataTransformer $transformer default transformer to apply to handled entity.
      */
     public function __construct(JWTAuth $jwtAuth, IDataTransformer $transformer = null)
@@ -62,11 +62,17 @@ class JWTAuthApiController extends BaseApiController
      * Invalidate access token.
      *
      * @return Response
+     *
+     * @throws HttpException
      */
     public function logout(): Response
     {
-        $this->jwtAuth->invalidate();
-        return $this->response->noContent();
+        try {
+            $this->jwtAuth->parseToken()->invalidate();
+            return $this->response->noContent();
+        } catch (JWTException $exception) {
+            $this->response->errorUnauthorized(trans('controllers::auth.jwt_refresh_error'));
+        }
     }
 
     /**
@@ -79,7 +85,7 @@ class JWTAuthApiController extends BaseApiController
     public function refreshToken(): Response
     {
         try {
-            $newToken = $this->jwtAuth->refresh();
+            $newToken = $this->jwtAuth->parseToken()->refresh();
         } catch (JWTException $e) {
             $this->response->errorUnauthorized(trans('controllers::auth.jwt_refresh_error'));
         }

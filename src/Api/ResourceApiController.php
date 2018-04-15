@@ -2,7 +2,6 @@
 
 namespace Saritasa\Laravel\Controllers\Api;
 
-use Dingo\Api\Http\FormRequest;
 use Dingo\Api\Http\Request;
 use Dingo\Api\Http\Response;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +10,7 @@ use Saritasa\DingoApi\Traits\PaginatedOutput;
 use Saritasa\DTO\SortOptions;
 use Saritasa\Enums\PagingType;
 use Saritasa\Exceptions\RepositoryException;
-use Saritasa\Laravel\Contracts\IResourceController;
+use Saritasa\Laravel\Controllers\Contracts\IResourceController;
 use Saritasa\Transformers\IDataTransformer;
 
 class ResourceApiController extends BaseApiController implements IResourceController
@@ -45,13 +44,13 @@ class ResourceApiController extends BaseApiController implements IResourceContro
     /**
      * Returns models collection by given params.
      *
-     * @param FormRequest $request Current request
+     * @param Request $request Current request
      *
      * @return Response
      *
      * @throws \Throwable
      */
-    public function index(FormRequest $request): Response
+    public function index(Request $request): Response
     {
         $repository = $this->repositoryFactory->getRepository($this->modelClass);
 
@@ -80,17 +79,17 @@ class ResourceApiController extends BaseApiController implements IResourceContro
     /**
      * Creates new model.
      *
-     * @param FormRequest $request Current request
+     * @param Request $request Current request
      *
      * @return Response
      *
      * @throws RepositoryException
      */
-    public function create(FormRequest $request): Response
+    public function create(Request $request): Response
     {
-        $model = $this->repositoryFactory
-            ->getRepository($this->modelClass)
-            ->create(new $this->modelClass($request->toArray()));
+        $repository = $this->repositoryFactory->getRepository($this->modelClass);
+        $this->validate($request, $repository->getModelValidationRules());
+        $model = $repository->create(new $this->modelClass($request->toArray()));
         return $this->json($model, $this->transformer);
     }
 
@@ -118,7 +117,9 @@ class ResourceApiController extends BaseApiController implements IResourceContro
      */
     public function update(Request $request, Model $model): Response
     {
-        $this->repositoryFactory->getRepository($this->modelClass)->save($model->fill($request->toArray()));
+        $repository = $this->repositoryFactory->getRepository($this->modelClass);
+        $this->validate($request, $repository->getModelValidationRules());
+        $repository->save($model->fill($request->toArray()));
         return $this->response->item($model, $this->transformer);
     }
 

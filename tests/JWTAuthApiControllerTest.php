@@ -137,7 +137,7 @@ class JWTAuthApiControllerTest extends TestCase
         $responseFactoryMock = \Mockery::mock(ResponseFactory::class);
 
         $responseFactoryMock->shouldReceive('noContent')->withArgs([])->andReturn($expectedResult);
-
+        $this->jwtAuthMock->shouldReceive('parseToken')->withArgs([])->andReturnSelf();
         $this->jwtAuthMock->shouldReceive('invalidate')->withArgs([])->andReturnNull();
 
         $jwtApiController = \Mockery::mock(JWTAuthApiController::class, [$this->jwtAuthMock])
@@ -155,7 +155,7 @@ class JWTAuthApiControllerTest extends TestCase
     public function testRefreshTokenSuccess()
     {
         $newToken = str_random();
-
+        $this->jwtAuthMock->shouldReceive('parseToken')->withArgs([])->andReturnSelf();
         $this->jwtAuthMock->shouldReceive('refresh')->withArgs([])->andReturn($newToken);
 
         $authSuccess = new AuthSuccess($newToken);
@@ -188,7 +188,7 @@ class JWTAuthApiControllerTest extends TestCase
         $exception = new HttpException(100, $message);
 
         $responseFactoryMock->shouldReceive('errorUnauthorized')->withArgs([$message])->andThrow($exception);
-
+        $this->jwtAuthMock->shouldReceive('parseToken')->withArgs([])->andReturnSelf();
         $this->jwtAuthMock->shouldReceive('refresh')->withArgs([])->andThrow(new JWTException());
 
         $jwtApiController = \Mockery::mock(JWTAuthApiController::class, [$this->jwtAuthMock])

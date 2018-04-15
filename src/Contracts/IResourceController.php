@@ -1,6 +1,6 @@
 <?php
 
-namespace Saritasa\Laravel\Contracts;
+namespace Saritasa\Laravel\Controllers\Contracts;
 
 interface IResourceController
 {

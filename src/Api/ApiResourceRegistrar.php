@@ -3,8 +3,9 @@
 namespace Saritasa\Laravel\Controllers\Api;
 
 use Dingo\Api\Routing\Router;
+use Illuminate\Contracts\Foundation\Application;
 use InvalidArgumentException;
-use Saritasa\Laravel\Contracts\IResourceController;
+use Saritasa\Laravel\Controllers\Contracts\IResourceController;
 
 /**
  * Wrapper for Dingo router, adds concise methods for API URLs registration.
@@ -26,6 +27,13 @@ final class ApiResourceRegistrar
      */
     private $api;
 
+    /**
+     * Application to build implementations.
+     *
+     * @var Application
+     */
+    private $app;
+
     private $default = [
         'index' => ['verb' => self::GET, 'route' => ''],
         'create' => ['verb' => self::POST, 'route' => ''],
@@ -40,10 +48,12 @@ final class ApiResourceRegistrar
      * Wrapper for Dingo router, adds concise methods for API URLs registration.
      *
      * @param Router $api Original Dingo/API router service to wrap
+     * @param Application $application
      */
-    public function __construct(Router $api)
+    public function __construct(Router $api, Application $application)
     {
         $this->api = $api;
+        $this->app = $application;
     }
 
     /**
@@ -86,12 +96,12 @@ final class ApiResourceRegistrar
         if ($modelClass) {
             $modelName = lcfirst($modelName ?? $this->getShortClassName($modelClass));
             $mapping[$modelName] = $modelClass;
-            $controllerInstance = app()->make($controller);
+            $controllerInstance = $this->app->make($controller);
             if (!$controllerInstance instanceof IResourceController) {
                 throw new \Exception();
             }
             $controllerInstance->setModelClass($modelClass);
-            app()->instance($controller, $controllerInstance);
+            $this->app->instance($controller, $controllerInstance);
         }
 
         foreach (static::VERBS as $verb) {

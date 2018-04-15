@@ -3,10 +3,12 @@
 namespace Saritasa\Laravel\Controllers\Tests;
 
 use Dingo\Api\Routing\Router;
+use Illuminate\Contracts\Foundation\Application;
 use Mockery\MockInterface;
 use InvalidArgumentException;
 use Saritasa\Laravel\Controllers\Api\ApiResourceRegistrar;
 use Saritasa\Laravel\Controllers\BaseController;
+use Saritasa\Laravel\Controllers\Contracts\IResourceController;
 
 /**
  * Api resource registrar test
@@ -16,9 +18,13 @@ class ApiResourceRegistrarTest extends TestCase
     /** @var MockInterface */
     protected $routerMock;
 
+        /** @var MockInterface */
+    protected $applicationMock;
+
     public function setUp()
     {
         $this->routerMock = \Mockery::mock(Router::class);
+        $this->applicationMock = \Mockery::mock(Application::class);
     }
 
     /**
@@ -82,7 +88,7 @@ class ApiResourceRegistrarTest extends TestCase
                 }
             );
 
-        $registrar = new ApiResourceRegistrar($this->routerMock);
+        $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock);
         $registrar->resource($resourceName, $controllerName);
     }
 
@@ -109,7 +115,7 @@ class ApiResourceRegistrarTest extends TestCase
                 }
             );
 
-        $registrar = new ApiResourceRegistrar($this->routerMock);
+        $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock);
         $registrar->resource($resourceName, $controllerName, $options);
     }
 
@@ -177,7 +183,11 @@ class ApiResourceRegistrarTest extends TestCase
                 }
             );
 
-        $registrar = new ApiResourceRegistrar($this->routerMock);
+        $controllerMock = \Mockery::mock(IResourceController::class);
+        $controllerMock->shouldReceive('setModelClass')->withArgs([$className])->andReturnNull();
+        $this->applicationMock->shouldReceive('make')->withArgs([$controllerName])->andReturn($controllerMock);
+        $this->applicationMock->shouldReceive('instance')->withArgs([$controllerName, $controllerMock])->andReturnNull();
+        $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock);
         $registrar->resource($resourceName, $controllerName, $options, $className);
     }
 
@@ -244,7 +254,12 @@ class ApiResourceRegistrarTest extends TestCase
                 }
             );
 
-        $registrar = new ApiResourceRegistrar($this->routerMock);
+        $controllerMock = \Mockery::mock(IResourceController::class);
+        $controllerMock->shouldReceive('setModelClass')->withArgs([$className])->andReturnNull();
+        $this->applicationMock->shouldReceive('make')->withArgs([$controllerName])->andReturn($controllerMock);
+        $this->applicationMock->shouldReceive('instance')->withArgs([$controllerName, $controllerMock])->andReturnNull();
+
+        $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock);
         $registrar->resource($resourceName, $controllerName, $options, $className, $customName);
     }
 
@@ -256,7 +271,7 @@ class ApiResourceRegistrarTest extends TestCase
             'get' => false,
         ];
         $this->expectException(InvalidArgumentException::class);
-        $registrar = new ApiResourceRegistrar($this->routerMock);
+        $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock);
         $registrar->resource($resourceName, $controllerName, $options);
     }
 
@@ -286,7 +301,7 @@ class ApiResourceRegistrarTest extends TestCase
                 }
             );
 
-        $registrar = new ApiResourceRegistrar($this->routerMock);
+        $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock);
         $registrar->get($expectedPath, $controllerName, $action, $routeName, $mapping);
     }
 
@@ -315,7 +330,7 @@ class ApiResourceRegistrarTest extends TestCase
                     }
                 );
 
-            $registrar = new ApiResourceRegistrar($this->routerMock);
+            $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock);
             $registrar->$verb($expectedPath, $controllerName, null, $routeName, $mapping);
         }
     }
@@ -344,7 +359,7 @@ class ApiResourceRegistrarTest extends TestCase
                     }
                 );
 
-            $registrar = new ApiResourceRegistrar($this->routerMock);
+            $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock);
             $registrar->$verb($expectedPath, $controllerName, null, $routeName, $mapping);
         }
     }
@@ -375,7 +390,7 @@ class ApiResourceRegistrarTest extends TestCase
                     }
                 );
 
-            $registrar = new ApiResourceRegistrar($this->routerMock);
+            $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock);
             $registrar->$verb($expectedPath, $controllerName, $action, null, $mapping);
         }
     }
@@ -406,7 +421,7 @@ class ApiResourceRegistrarTest extends TestCase
                     }
                 );
 
-            $registrar = new ApiResourceRegistrar($this->routerMock);
+            $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock, $this->applicationMock);
             $registrar->$verb($expectedPath, $controllerName, $action, null, $mapping);
         }
     }
