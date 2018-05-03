@@ -1,5 +1,9 @@
 # Changes History
 
+2.0.8
+-----
+Add [laravelcollective/html](https://github.com/LaravelCollective/html) as dependency
+
 2.0.7
 -----
 Explicitly add [dingo/api](https://github.com/dingo/api) as dependency
