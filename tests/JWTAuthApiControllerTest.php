@@ -1,14 +1,14 @@
 <?php
 
-namespace Saritasa\Laravel\Controllers\Tests;
+namespace Saritasa\LaravelControllers\Tests;
 
 use Dingo\Api\Http\Response;
 use Dingo\Api\Http\Response\Factory as ResponseFactory;
-use Illuminate\Contracts\Translation\Translator;
+use Mockery;
 use Mockery\MockInterface;
-use Saritasa\Laravel\Controllers\Api\JWTAuthApiController;
-use Saritasa\Laravel\Controllers\Requests\LoginRequest;
-use Saritasa\Laravel\Controllers\Responses\AuthSuccess;
+use Saritasa\LaravelControllers\Api\JWTAuthApiController;
+use Saritasa\LaravelControllers\Requests\LoginRequest;
+use Saritasa\LaravelControllers\Responses\AuthSuccess;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\JWTAuth;
@@ -18,23 +18,46 @@ use Tymon\JWTAuth\JWTAuth;
  */
 class JWTAuthApiControllerTest extends TestCase
 {
-    /** @var MockInterface */
+    /**
+     * JWT auth mock.
+     *
+     * @var MockInterface|JWTAuth
+     */
     protected $jwtAuthMock;
 
-    public function setUp()
+    /**
+     * JWT auth mock.
+     *
+     * @var MockInterface|JWTAuthApiController
+     */
+    protected $jwtApiController;
+
+    /**
+     * Prepare tests for run.
+     *
+     * @return void
+     */
+    public function setUp(): void
     {
         parent::setUp();
-        $this->jwtAuthMock = \Mockery::mock(JWTAuth::class);
+        $this->jwtAuthMock = Mockery::mock(JWTAuth::class);
+        $this->jwtApiController = Mockery::mock(JWTAuthApiController::class, [$this->jwtAuthMock])
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
     }
 
-    public function testLoginSuccess()
+    /**
+     * Test success login.
+     *
+     * @return void
+     */
+    public function testLoginSuccess(): void
     {
         $credentials = [
             'email' => str_random(),
             'password' => str_random(),
         ];
-        $loginRequestMock = \Mockery::mock(LoginRequest::class);
-        $loginRequestMock->shouldReceive('only')->withArgs(['email', 'password'])->andReturn($credentials);
+        $loginRequestMock = $this->makeLoginRequestMock($credentials);
 
         $token = str_random();
         $this->jwtAuthMock
@@ -48,10 +71,8 @@ class JWTAuthApiControllerTest extends TestCase
             });
         $authSuccess = new AuthSuccess($token);
         $expectedResult = new Response(json_encode(['token' => $token]));
-        $jwtApiController = \Mockery::mock(JWTAuthApiController::class, [$this->jwtAuthMock])
-            ->makePartial()
-            ->shouldAllowMockingProtectedMethods();
-        $jwtApiController
+
+        $this->jwtApiController
             ->shouldReceive('json')
             ->andReturnUsing(function (AuthSuccess $actualSuccess) use (
                 $authSuccess,
@@ -61,98 +82,103 @@ class JWTAuthApiControllerTest extends TestCase
                 return $expectedResult;
             });
 
-        $actualResult = $jwtApiController->login($loginRequestMock);
+        $actualResult = $this->jwtApiController->login($loginRequestMock);
         $this->assertEquals($expectedResult, $actualResult);
     }
 
-    public function testLoginError()
+    /**
+     * Test when login error.
+     *
+     * @return void
+     */
+    public function testLoginError(): void
     {
         $message = str_random();
-        $translator = \Mockery::mock(Translator::class);
-        $translator->shouldReceive('trans')->andReturn($message);
-        app()->instance('translator', $translator);
+        Mocks::mockTranslator($message);
         $credentials = [
             'email' => str_random(),
             'password' => str_random(),
         ];
-        $loginRequestMock = \Mockery::mock(LoginRequest::class);
-        $loginRequestMock->shouldReceive('only')->withArgs(['email', 'password'])->andReturn($credentials);
-        $responseFactoryMock = \Mockery::mock(ResponseFactory::class);
+        $loginRequestMock = $this->makeLoginRequestMock($credentials);
+        $responseFactoryMock = Mockery::mock(ResponseFactory::class);
         $exception = new HttpException(100, $message);
 
         $responseFactoryMock->shouldReceive('errorNotFound')->withArgs([$message])->andThrow($exception);
 
         $this->jwtAuthMock->shouldReceive('attempt')->withArgs([$credentials])->andReturnFalse();
 
-        $jwtApiController = \Mockery::mock(JWTAuthApiController::class, [$this->jwtAuthMock])
-            ->makePartial()
-            ->shouldAllowMockingProtectedMethods();
-        $jwtApiController
+        $this->jwtApiController
             ->shouldReceive('response')
             ->andSet('response', $responseFactoryMock)
             ->andReturn($responseFactoryMock);
 
         $this->expectExceptionObject($exception);
 
-        $jwtApiController->login($loginRequestMock);
+        $this->jwtApiController->login($loginRequestMock);
     }
 
-    public function testLoginConvertsJwtExceptionInHttpException()
+    /**
+     * Test convert of JWT exception in http when create token error.
+     *
+     * @return void
+     */
+    public function testLoginConvertsJwtExceptionInHttpException(): void
     {
         $message = str_random();
-        $translator = \Mockery::mock(Translator::class);
-        $translator->shouldReceive('trans')->andReturn($message);
-        app()->instance('translator', $translator);
+        Mocks::mockTranslator($message);
         $credentials = [
             'email' => str_random(),
             'password' => str_random(),
         ];
 
-        $loginRequestMock = \Mockery::mock(LoginRequest::class);
-        $loginRequestMock->shouldReceive('only')->withArgs(['email', 'password'])->andReturn($credentials);
+        $loginRequestMock = $this->makeLoginRequestMock($credentials);
 
-        $responseFactoryMock = \Mockery::mock(ResponseFactory::class);
+        $responseFactoryMock = Mockery::mock(ResponseFactory::class);
         $exception = new HttpException(100, $message);
 
         $responseFactoryMock->shouldReceive('errorInternal')->withArgs([$message])->andThrow($exception);
 
         $this->jwtAuthMock->shouldReceive('attempt')->withArgs([$credentials])->andThrow(new JWTException());
 
-        $jwtApiController = \Mockery::mock(JWTAuthApiController::class, [$this->jwtAuthMock])
-            ->makePartial()
-            ->shouldAllowMockingProtectedMethods();
-        $jwtApiController
+        $this->jwtApiController
             ->shouldReceive('response')
             ->andSet('response', $responseFactoryMock)
             ->andReturn($responseFactoryMock);
 
         $this->expectExceptionObject($exception);
 
-        $jwtApiController->login($loginRequestMock);
+        $this->jwtApiController->login($loginRequestMock);
     }
 
-    public function testLogout()
+    /**
+     * Test logout action.
+     *
+     * @return void
+     */
+    public function testLogout(): void
     {
         $expectedResult = new Response(null, 204);
-        $responseFactoryMock = \Mockery::mock(ResponseFactory::class);
+        $responseFactoryMock = Mockery::mock(ResponseFactory::class);
 
         $responseFactoryMock->shouldReceive('noContent')->withArgs([])->andReturn($expectedResult);
         $this->jwtAuthMock->shouldReceive('parseToken')->withArgs([])->andReturnSelf();
         $this->jwtAuthMock->shouldReceive('invalidate')->withArgs([])->andReturnNull();
 
-        $jwtApiController = \Mockery::mock(JWTAuthApiController::class, [$this->jwtAuthMock])
-            ->makePartial()
-            ->shouldAllowMockingProtectedMethods();
-        $jwtApiController
+        $this->jwtApiController
             ->shouldReceive('response')
             ->andSet('response', $responseFactoryMock)
             ->andReturn($responseFactoryMock);
 
-        $actualResult = $jwtApiController->logout();
+        $actualResult = $this->jwtApiController->logout();
         $this->assertEquals($expectedResult, $actualResult);
     }
 
-    public function testRefreshTokenSuccess()
+    /**
+     * Test refresh token success.
+     *
+     * @return void
+     */
+    public function testRefreshTokenSuccess(): void
     {
         $newToken = str_random();
         $this->jwtAuthMock->shouldReceive('parseToken')->withArgs([])->andReturnSelf();
@@ -160,10 +186,8 @@ class JWTAuthApiControllerTest extends TestCase
 
         $authSuccess = new AuthSuccess($newToken);
         $expectedResult = new Response(json_encode(['token' => $newToken]));
-        $jwtApiController = \Mockery::mock(JWTAuthApiController::class, [$this->jwtAuthMock])
-            ->makePartial()
-            ->shouldAllowMockingProtectedMethods();
-        $jwtApiController
+
+        $this->jwtApiController
             ->shouldReceive('json')
             ->andReturnUsing(function (AuthSuccess $actualSuccess) use (
                 $authSuccess,
@@ -173,33 +197,48 @@ class JWTAuthApiControllerTest extends TestCase
                 return $expectedResult;
             });
 
-        $actualResult = $jwtApiController->refreshToken();
+        $actualResult = $this->jwtApiController->refreshToken();
         $this->assertEquals($expectedResult, $actualResult);
     }
 
-    public function testRefreshTokenConvertsJwtExceptionInHttpException()
+    /**
+     * Test convert of JWT exception in http when refresh token error.
+     *
+     * @return void
+     */
+    public function testRefreshTokenConvertsJwtExceptionInHttpException(): void
     {
         $message = str_random();
-        $translator = \Mockery::mock(Translator::class);
-        $translator->shouldReceive('trans')->andReturn($message);
-        app()->instance('translator', $translator);
+        Mocks::mockTranslator($message);
 
-        $responseFactoryMock = \Mockery::mock(ResponseFactory::class);
+        $responseFactoryMock = Mockery::mock(ResponseFactory::class);
         $exception = new HttpException(100, $message);
 
         $responseFactoryMock->shouldReceive('errorUnauthorized')->withArgs([$message])->andThrow($exception);
         $this->jwtAuthMock->shouldReceive('parseToken')->withArgs([])->andReturnSelf();
         $this->jwtAuthMock->shouldReceive('refresh')->withArgs([])->andThrow(new JWTException());
 
-        $jwtApiController = \Mockery::mock(JWTAuthApiController::class, [$this->jwtAuthMock])
-            ->makePartial()
-            ->shouldAllowMockingProtectedMethods();
-        $jwtApiController->shouldReceive('response')->andSet('response',
-            $responseFactoryMock)->andReturn($responseFactoryMock);
+        $this->jwtApiController->shouldReceive('response')->andSet(
+            'response',
+            $responseFactoryMock
+        )->andReturn($responseFactoryMock);
 
         $this->expectExceptionObject($exception);
 
-        $jwtApiController->refreshToken();
+        $this->jwtApiController->refreshToken();
     }
 
+    /**
+     * Make mock of login request with given credentials.
+     *
+     * @param array $credentials Credentials to make login request mock
+     *
+     * @return MockInterface|LoginRequest
+     */
+    protected function makeLoginRequestMock(array $credentials): MockInterface
+    {
+        $loginRequestMock = Mockery::mock(LoginRequest::class);
+        $loginRequestMock->shouldReceive('only')->withArgs(['email', 'password'])->andReturn($credentials);
+        return $loginRequestMock;
+    }
 }

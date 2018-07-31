@@ -3,6 +3,7 @@
     <description>The for Saritasa package</description>
 
     <file>src</file>
+    <file>tests</file>
 
     <exclude-pattern>*.json</exclude-pattern>
     <exclude-pattern>*.xml</exclude-pattern>

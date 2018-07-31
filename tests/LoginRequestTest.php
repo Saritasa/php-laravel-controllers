@@ -1,26 +1,50 @@
 <?php
 
-namespace Saritasa\Laravel\Controllers\Tests;
+namespace Saritasa\LaravelControllers\Tests;
 
-use Saritasa\Laravel\Controllers\Requests\LoginRequest;
+use Mockery;
+use Mockery\MockInterface;
+use Saritasa\LaravelControllers\Requests\LoginRequest;
 
+/**
+ * Tests for login request.
+ */
 class LoginRequestTest extends TestCase
 {
+    /**
+     * Login request mock.
+     *
+     * @var MockInterface|LoginRequest
+     */
     protected $loginRequest;
 
-    public function setUp()
+    /**
+     * Prepare tests for run.
+     *
+     * @return void
+     */
+    public function setUp(): void
     {
         parent::setUp();
-        $this->loginRequest = \Mockery::mock(LoginRequest::class)
-            ->makePartial();
+        $this->loginRequest = Mockery::mock(LoginRequest::class)->makePartial();
     }
 
-    public function testAuthorize()
+    /**
+     * Test authorize method.
+     *
+     * @return void
+     */
+    public function testAuthorize(): void
     {
         $this->assertTrue($this->loginRequest->authorize());
     }
 
-    public function testRules()
+    /**
+     * Test that request has valid rules.
+     *
+     * @return void
+     */
+    public function testRules(): void
     {
         $this->assertEquals([
             'email'    => 'required|email',

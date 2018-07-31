@@ -1,42 +1,60 @@
 <?php
 
-namespace Saritasa\Laravel\Controllers\Tests;
+namespace Saritasa\LaravelControllers\Tests;
 
 use Dingo\Api\Routing\Router;
-use Illuminate\Contracts\Foundation\Application;
+use Mockery;
 use Mockery\MockInterface;
 use InvalidArgumentException;
-use Saritasa\Laravel\Controllers\Api\ApiResourceRegistrar;
-use Saritasa\Laravel\Controllers\BaseController;
-use Saritasa\Laravel\Controllers\Contracts\IResourceController;
+use ReflectionClass;
+use ReflectionException;
+use Saritasa\LaravelControllers\Api\ApiResourceRegistrar;
+use Saritasa\LaravelControllers\BaseController;
 
 /**
- * Api resource registrar test
+ * Tests for api resource registrar.
  */
 class ApiResourceRegistrarTest extends TestCase
 {
-    /** @var MockInterface */
+    /**
+     * Router instance mock.
+     *
+     * @var MockInterface|Router
+     */
     protected $routerMock;
 
-        /** @var MockInterface */
-    protected $applicationMock;
-
-    public function setUp()
+    /**
+     * Prepare tests for run.
+     *
+     * @return void
+     */
+    public function setUp(): void
     {
-        $this->routerMock = \Mockery::mock(Router::class);
-        $this->applicationMock = \Mockery::mock(Application::class);
+        $this->routerMock = Mockery::mock(Router::class);
     }
 
     /**
-     * Test resource method with default parameters.
+     * Test creation of default resource.
+     *
+     * @throws ReflectionException
+     *
+     * @return void
      */
-    public function testCreateDefaultResource()
+    public function testCreateDefaultResource(): void
     {
         $resourceName = str_random();
         $controllerName = str_random();
 
         $this->routerMock->shouldReceive('get')
             ->andReturnUsing(
+                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                    $this->assertEquals("$resourceName/count", $resource);
+                    $this->assertEquals([
+                        'as' => "$resourceName.count",
+                        'uses' => "$controllerName@count",
+                        'mapping' => []
+                    ], $options);
+                },
                 function (string $resource, array $options) use ($resourceName, $controllerName) {
                     $this->assertEquals($resourceName, $resource);
                     $this->assertEquals([
@@ -88,14 +106,18 @@ class ApiResourceRegistrarTest extends TestCase
                 }
             );
 
-        $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock);
+        $registrar = new ApiResourceRegistrar($this->routerMock);
         $registrar->resource($resourceName, $controllerName);
     }
 
     /**
-     * Test resource method with custom options.
+     * Test crfeation of resource with passing additional options.
+     *
+     * @return void
+     *
+     * @throws ReflectionException
      */
-    public function testCreateResourceWithOptions()
+    public function testCreateResourceWithOptions(): void
     {
         $resourceName = str_random();
         $controllerName = str_random();
@@ -115,14 +137,18 @@ class ApiResourceRegistrarTest extends TestCase
                 }
             );
 
-        $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock);
+        $registrar = new ApiResourceRegistrar($this->routerMock);
         $registrar->resource($resourceName, $controllerName, $options);
     }
 
     /**
-     * Test resource method with model binding.
+     * Test creation of resource with default model binding.
+     *
+     * @throws ReflectionException
+     *
+     * @return void
      */
-    public function testCreateResourceWithModelBindingDefaultName()
+    public function testCreateResourceWithModelBindingDefaultName(): void
     {
         $resourceName = str_random();
         $controllerName = str_random();
@@ -130,11 +156,14 @@ class ApiResourceRegistrarTest extends TestCase
             ApiResourceRegistrar::OPTION_ONLY => ['show', 'update', 'destroy',],
         ];
         $className = BaseController::class;
-        $shortName = lcfirst((new \ReflectionClass($className))->getShortName());
+        $shortName = lcfirst((new ReflectionClass($className))->getShortName());
 
         $this->routerMock->shouldReceive('get')
             ->andReturnUsing(
-                function (string $resource, array $options) use (
+                function (
+                    string $resource,
+                    array $options
+                ) use (
                     $resourceName,
                     $controllerName,
                     $shortName,
@@ -151,7 +180,10 @@ class ApiResourceRegistrarTest extends TestCase
 
         $this->routerMock->shouldReceive('put')
             ->andReturnUsing(
-                function (string $resource, array $options) use (
+                function (
+                    string $resource,
+                    array $options
+                ) use (
                     $resourceName,
                     $controllerName,
                     $shortName,
@@ -167,46 +199,54 @@ class ApiResourceRegistrarTest extends TestCase
             );
         $this->routerMock->shouldReceive('delete')
             ->andReturnUsing(
-                function (string $resource, array $options) use (
+                function (
+                    string $resource,
+                    array $options
+                ) use (
                     $resourceName,
                     $controllerName,
                     $shortName,
                     $className
                 ) {
                     $this->assertEquals("$resourceName/{{$shortName}}", $resource);
-                    $this->assertEquals([
+                    $this->assertEquals(
+                        [
                         'as' => "$resourceName.destroy",
                         'uses' => "$controllerName@destroy",
                         'mapping' => [$shortName => $className]
-                    ],
-                        $options);
+                        ],
+                        $options
+                    );
                 }
             );
 
-        $controllerMock = \Mockery::mock(IResourceController::class);
-        $controllerMock->shouldReceive('setModelClass')->withArgs([$className])->andReturnNull();
-        $this->applicationMock->shouldReceive('make')->withArgs([$controllerName])->andReturn($controllerMock);
-        $this->applicationMock->shouldReceive('instance')->withArgs([$controllerName, $controllerMock])->andReturnNull();
-        $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock);
+        $registrar = new ApiResourceRegistrar($this->routerMock);
         $registrar->resource($resourceName, $controllerName, $options, $className);
     }
 
     /**
-     * Test resource method with model binding.
+     * Test creation of resource with custom model binding.
+     *
+     * @return void
+     *
+     * @throws ReflectionException
      */
-    public function testCreateResourceWithModelBindingWithCustomName()
+    public function testCreateResourceWithModelBindingWithCustomName(): void
     {
         $resourceName = str_random();
         $controllerName = str_random();
         $options = [
-           ApiResourceRegistrar::OPTION_EXPECT => ['index', 'create',],
+            ApiResourceRegistrar::OPTION_EXPECT => ['index', 'create', 'count'],
         ];
         $className = BaseController::class;
         $customName = lcfirst(str_random());
 
         $this->routerMock->shouldReceive('get')
             ->andReturnUsing(
-                function (string $resource, array $options) use (
+                function (
+                    string $resource,
+                    array $options
+                ) use (
                     $resourceName,
                     $controllerName,
                     $customName,
@@ -223,7 +263,10 @@ class ApiResourceRegistrarTest extends TestCase
 
         $this->routerMock->shouldReceive('put')
             ->andReturnUsing(
-                function (string $resource, array $options) use (
+                function (
+                    string $resource,
+                    array $options
+                ) use (
                     $resourceName,
                     $controllerName,
                     $customName,
@@ -239,7 +282,10 @@ class ApiResourceRegistrarTest extends TestCase
             );
         $this->routerMock->shouldReceive('delete')
             ->andReturnUsing(
-                function (string $resource, array $options) use (
+                function (
+                    string $resource,
+                    array $options
+                ) use (
                     $resourceName,
                     $controllerName,
                     $customName,
@@ -254,16 +300,18 @@ class ApiResourceRegistrarTest extends TestCase
                 }
             );
 
-        $controllerMock = \Mockery::mock(IResourceController::class);
-        $controllerMock->shouldReceive('setModelClass')->withArgs([$className])->andReturnNull();
-        $this->applicationMock->shouldReceive('make')->withArgs([$controllerName])->andReturn($controllerMock);
-        $this->applicationMock->shouldReceive('instance')->withArgs([$controllerName, $controllerMock])->andReturnNull();
-
-        $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock);
+        $registrar = new ApiResourceRegistrar($this->routerMock);
         $registrar->resource($resourceName, $controllerName, $options, $className, $customName);
     }
 
-    public function testExceptionWillThrownWithBadOptions()
+    /**
+     * Test that exception will be thrown if not valid options passed.
+     *
+     * @throws ReflectionException
+     *
+     * @return void
+     */
+    public function testExceptionWillThrownWithBadOptions(): void
     {
         $resourceName = str_random();
         $controllerName = str_random();
@@ -271,11 +319,16 @@ class ApiResourceRegistrarTest extends TestCase
             'get' => false,
         ];
         $this->expectException(InvalidArgumentException::class);
-        $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock);
+        $registrar = new ApiResourceRegistrar($this->routerMock);
         $registrar->resource($resourceName, $controllerName, $options);
     }
 
-    public function testActionMethodWithAllParams()
+    /**
+     * Test action method with passing all available params.
+     *
+     * @return void
+     */
+    public function testActionMethodWithAllParams(): void
     {
         $expectedPath = str_random();
         $controllerName = str_random();
@@ -285,7 +338,10 @@ class ApiResourceRegistrarTest extends TestCase
 
         $this->routerMock->shouldReceive('get')
             ->andReturnUsing(
-                function (string $path, array $options) use (
+                function (
+                    string $path,
+                    array $options
+                ) use (
                     $expectedPath,
                     $controllerName,
                     $mapping,
@@ -301,11 +357,16 @@ class ApiResourceRegistrarTest extends TestCase
                 }
             );
 
-        $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock);
+        $registrar = new ApiResourceRegistrar($this->routerMock);
         $registrar->get($expectedPath, $controllerName, $action, $routeName, $mapping);
     }
 
-    public function testActionsWithEmptyAction()
+    /**
+     * Test action method with empty action param.
+     *
+     * @return void
+     */
+    public function testActionsWithEmptyAction(): void
     {
         $expectedPath = str_random();
         $controllerName = str_random();
@@ -315,7 +376,10 @@ class ApiResourceRegistrarTest extends TestCase
         foreach ($this->getVerbs() as $verb) {
             $this->routerMock->shouldReceive($verb)
                 ->andReturnUsing(
-                    function (string $path, array $options) use (
+                    function (
+                        string $path,
+                        array $options
+                    ) use (
                         $expectedPath,
                         $controllerName,
                         $mapping,
@@ -330,41 +394,17 @@ class ApiResourceRegistrarTest extends TestCase
                     }
                 );
 
-            $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock);
+            $registrar = new ApiResourceRegistrar($this->routerMock);
             $registrar->$verb($expectedPath, $controllerName, null, $routeName, $mapping);
         }
     }
 
-    public function testActionWithEmptyAction()
-    {
-        $expectedPath = str_random();
-        $controllerName = str_random();
-        $mapping = [str_random() => str_random()];
-        $routeName = str_random();
-        foreach ($this->getVerbs() as $verb) {
-            $this->routerMock->shouldReceive($verb)
-                ->andReturnUsing(
-                    function (string $path, array $options) use (
-                        $expectedPath,
-                        $controllerName,
-                        $mapping,
-                        $routeName
-                    ) {
-                        $this->assertEquals($expectedPath, $path);
-                        $this->assertEquals([
-                            'as' => $routeName,
-                            'uses' => "$controllerName@$expectedPath",
-                            'mapping' => $mapping
-                        ], $options);
-                    }
-                );
-
-            $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock);
-            $registrar->$verb($expectedPath, $controllerName, null, $routeName, $mapping);
-        }
-    }
-
-    public function testActionWithEmptyRoute()
+    /**
+     * Test action method with empty route param.
+     *
+     * @return void
+     */
+    public function testActionWithEmptyRoute(): void
     {
         $controllerName = str_random();
         $mapping = [str_random() => str_random()];
@@ -374,7 +414,10 @@ class ApiResourceRegistrarTest extends TestCase
         foreach ($this->getVerbs() as $verb) {
             $this->routerMock->shouldReceive($verb)
                 ->andReturnUsing(
-                    function (string $path, array $options) use (
+                    function (
+                        string $path,
+                        array $options
+                    ) use (
                         $expectedPath,
                         $controllerName,
                         $mapping,
@@ -390,12 +433,17 @@ class ApiResourceRegistrarTest extends TestCase
                     }
                 );
 
-            $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock);
+            $registrar = new ApiResourceRegistrar($this->routerMock);
             $registrar->$verb($expectedPath, $controllerName, $action, null, $mapping);
         }
     }
 
-    public function testActionWithEmptyRouteAndAction()
+    /**
+     * Test action method with empty action and route param.
+     *
+     * @return void
+     */
+    public function testActionWithEmptyRouteAndAction(): void
     {
         $controllerName = str_random();
         $mapping = [str_random() => str_random()];
@@ -405,7 +453,10 @@ class ApiResourceRegistrarTest extends TestCase
         foreach ($this->getVerbs() as $verb) {
             $this->routerMock->shouldReceive($verb)
                 ->andReturnUsing(
-                    function (string $path, array $options) use (
+                    function (
+                        string $path,
+                        array $options
+                    ) use (
                         $expectedPath,
                         $controllerName,
                         $mapping,
@@ -421,12 +472,17 @@ class ApiResourceRegistrarTest extends TestCase
                     }
                 );
 
-            $registrar = new ApiResourceRegistrar($this->routerMock, $this->applicationMock, $this->applicationMock);
+            $registrar = new ApiResourceRegistrar($this->routerMock);
             $registrar->$verb($expectedPath, $controllerName, $action, null, $mapping);
         }
     }
 
-    protected function getVerbs()
+    /**
+     * Return available route verbs.
+     *
+     * @return array
+     */
+    protected function getVerbs(): array
     {
         return ['post', 'get', 'put', 'patch', 'delete'];
     }
