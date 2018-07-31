@@ -1,6 +1,6 @@
 <?php
 
-namespace Saritasa\Laravel\Controllers;
+namespace Saritasa\LaravelControllers;
 
 use Illuminate\Routing\ControllerDispatcher as LaravelControllerDispatcher;
 use ReflectionFunctionAbstract;
@@ -15,6 +15,7 @@ class ControllerDispatcher extends LaravelControllerDispatcher
      *
      * @param  array $parameters Already resolved route parameters
      * @param  ReflectionFunctionAbstract $reflector Current controller method reflector
+     *
      * @return array
      */
     public function resolveMethodDependencies(array $parameters, ReflectionFunctionAbstract $reflector): array

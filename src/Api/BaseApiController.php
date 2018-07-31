@@ -1,8 +1,7 @@
 <?php
 
-namespace Saritasa\Laravel\Controllers\Api;
+namespace Saritasa\LaravelControllers\Api;
 
-use App\Models\User;
 use Dingo\Api\Http\Request;
 use Dingo\Api\Http\Response;
 use Dingo\Api\Routing\Helpers;
@@ -17,8 +16,6 @@ use Saritasa\Transformers\IDataTransformer;
 
 /**
  * Base API controller, utilizing helpers from Dingo/API package.
- *
- * @property User $user
  */
 abstract class BaseApiController extends Controller
 {
@@ -48,9 +45,10 @@ abstract class BaseApiController extends Controller
      * Shortcut for work with Dingo/Api $this->response methods.
      *
      * @param mixed $data Model or collection to be returned in response
-     * @param IDataTransformer|null $transformer Transformer to use.
+     * @param IDataTransformer $transformer Transformer to use.
      * If omitted, default transformer for this controller will be used.
-     * * @return Response
+     *
+     * @return Response
      */
     protected function json($data, IDataTransformer $transformer = null): Response
     {
@@ -69,7 +67,7 @@ abstract class BaseApiController extends Controller
      * @param array $messages Messages to use for specified fields, if they fail validation
      * @param array $customAttributes How to name validated attributes in messages, visible to user
      *
-     * @throws ValidationException - when input data in request does not match expected rules
+     * @throws ValidationException when input data in request does not match expected rules
      *
      * @return void
      */

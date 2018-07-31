@@ -1,5 +1,5 @@
 <?php
-namespace Saritasa\Laravel\Controllers\Requests;
+namespace Saritasa\LaravelControllers\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

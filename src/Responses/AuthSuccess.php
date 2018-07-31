@@ -1,6 +1,6 @@
 <?php
 
-namespace Saritasa\Laravel\Controllers\Responses;
+namespace Saritasa\LaravelControllers\Responses;
 
 use Saritasa\Transformers\DtoModel;
 

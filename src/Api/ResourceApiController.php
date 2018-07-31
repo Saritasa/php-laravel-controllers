@@ -1,26 +1,53 @@
 <?php
 
-namespace Saritasa\Laravel\Controllers\Api;
+namespace Saritasa\LaravelControllers\Api;
 
 use Dingo\Api\Http\Request;
 use Dingo\Api\Http\Response;
 use Illuminate\Database\Eloquent\Model;
-use Saritasa\Contracts\IRepositoryFactory;
+use Illuminate\Validation\ValidationException;
 use Saritasa\DingoApi\Traits\PaginatedOutput;
-use Saritasa\DTO\SortOptions;
 use Saritasa\Enums\PagingType;
-use Saritasa\Exceptions\RepositoryException;
-use Saritasa\Laravel\Controllers\Contracts\IResourceController;
+use Saritasa\Exceptions\InvalidEnumValueException;
+use Saritasa\LaravelEntityServices\Contracts\IEntityServiceFactory;
+use Saritasa\LaravelEntityServices\Exceptions\EntityServiceException;
+use Saritasa\LaravelEntityServices\Exceptions\EntityServiceOperationException;
+use Saritasa\LaravelRepositories\DTO\SortOptions;
 use Saritasa\Transformers\IDataTransformer;
 
-class ResourceApiController extends BaseApiController implements IResourceController
+/**
+ * Default controller to handle CRUD operation with models.
+ */
+class ResourceApiController extends BaseApiController
 {
     use PaginatedOutput;
 
-    protected $repositoryFactory;
+    /**
+     * Entities services factory.
+     *
+     * @var IEntityServiceFactory
+     */
+    protected $entityServiceFactory;
 
+    /**
+     * Entity service to work with serve by this controller model.
+     *
+     * @var IEntityServiceFactory
+     */
+    protected $entityService;
+
+    /**
+     * Serve model class.
+     *
+     * @var string|null
+     */
     protected $modelClass = null;
 
+    /**
+     * Pagination type.
+     *
+     * @var string
+     */
     protected $paging = PagingType::NONE;
 
     /**
@@ -30,47 +57,49 @@ class ResourceApiController extends BaseApiController implements IResourceContro
      */
     protected $sortField = 'id';
 
-    public function __construct(IRepositoryFactory $repositoryFactory, IDataTransformer $transformer = null)
+    /**
+     * Default controller to handle CRUD operation with models.
+     *
+     * @param IEntityServiceFactory $entityServiceFactory Entities services factory
+     * @param IDataTransformer|null $transformer Default data transformer
+     *
+     * @throws EntityServiceException
+     */
+    public function __construct(IEntityServiceFactory $entityServiceFactory, IDataTransformer $transformer = null)
     {
         parent::__construct($transformer);
-        $this->repositoryFactory = $repositoryFactory;
-    }
-
-    public function setModelClass(string $modelClass): void
-    {
-        $this->modelClass = $modelClass;
+        $this->entityService = $entityServiceFactory->build($this->modelClass);
+        $this->entityServiceFactory = $entityServiceFactory;
     }
 
     /**
      * Returns models collection by given params.
      *
-     * @param Request $request Current request
+     * @param Request $request Request with pagination and sorting info
      *
      * @return Response
      *
-     * @throws \Throwable
+     * @throws InvalidEnumValueException
      */
     public function index(Request $request): Response
     {
-        $repository = $this->repositoryFactory->getRepository($this->modelClass);
-
-        $searchValues = $request->only($repository->searchableFields);
+        $searchValues = $request->only($this->entityService->getRepository()->searchableFields);
 
         switch ($this->paging) {
             case PagingType::PAGINATOR:
                 return $this->response->paginator(
-                    $repository->getPage($this->readPaging($request), $searchValues),
+                    $this->entityService->getRepository()->getPage($this->readPaging($request), $searchValues),
                     $this->transformer
                 );
             case PagingType::CURSOR:
                 return $this->response->item(
-                    $repository->getCursorPage($this->readCursor($request), $searchValues),
+                    $this->entityService->getRepository()->getCursorPage($this->readCursor($request), $searchValues),
                     $this->transformer
                 );
             default:
                 $sortOptions = new SortOptions($this->sortField);
                 return $this->response->collection(
-                    $repository->getWith([], [], $searchValues, $sortOptions),
+                    $this->entityService->getRepository()->getWith([], [], $searchValues, $sortOptions),
                     $this->transformer
                 );
         }
@@ -79,24 +108,22 @@ class ResourceApiController extends BaseApiController implements IResourceContro
     /**
      * Creates new model.
      *
-     * @param Request $request Current request
+     * @param Request $request Request with new model params
      *
      * @return Response
      *
-     * @throws RepositoryException
+     * @throws EntityServiceOperationException
+     * @throws ValidationException
      */
     public function create(Request $request): Response
     {
-        $repository = $this->repositoryFactory->getRepository($this->modelClass);
-        $this->validate($request, $repository->getModelValidationRules());
-        $model = $repository->create(new $this->modelClass($request->toArray()));
-        return $this->json($model, $this->transformer);
+        return $this->json($this->entityService->create($request->toArray()), $this->transformer);
     }
 
     /**
      * Shows entity.
      *
-     * @param Model $model
+     * @param Model $model Model to show
      *
      * @return Response
      */
@@ -108,18 +135,17 @@ class ResourceApiController extends BaseApiController implements IResourceContro
     /**
      * Updates entity.
      *
-     * @param Request $request Current request
+     * @param Request $request Request with update model params
      * @param Model $model Model to update
      *
      * @return Response
      *
-     * @throws RepositoryException
+     * @throws EntityServiceOperationException
+     * @throws ValidationException
      */
     public function update(Request $request, Model $model): Response
     {
-        $repository = $this->repositoryFactory->getRepository($this->modelClass);
-        $this->validate($request, $repository->getModelValidationRules());
-        $repository->save($model->fill($request->toArray()));
+        $this->entityService->update($model, $request->toArray());
         return $this->response->item($model, $this->transformer);
     }
 
@@ -130,11 +156,11 @@ class ResourceApiController extends BaseApiController implements IResourceContro
      *
      * @return Response
      *
-     * @throws RepositoryException
+     * @throws EntityServiceOperationException
      */
     public function destroy(Model $model): Response
     {
-        $this->repositoryFactory->getRepository($this->modelClass)->delete($model);
+        $this->entityService->delete($model);
         return $this->response->noContent();
     }
 }

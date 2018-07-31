@@ -1,6 +1,6 @@
 <?php
 
-namespace Saritasa\Laravel\Controllers\Api;
+namespace Saritasa\LaravelControllers\Api;
 
 use Dingo\Api\Http\Response;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -8,12 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Dingo\Api\Http\Request;
 use Illuminate\Support\Str;
-use Saritasa\Laravel\Controllers\Responses\Message;
+use Saritasa\LaravelControllers\Responses\ErrorMessage;
+use Saritasa\LaravelControllers\Responses\SuccessMessage;
 
 /**
  * This controller is responsible for handling password reset requests
  * Utilize native Laravel password management without UI, in API style
- * https://laravel.com/docs/5.4/passwords
+ * https://laravel.com/docs/5.6/passwords
  */
 class ResetPasswordApiController extends BaseApiController
 {
@@ -34,11 +35,12 @@ class ResetPasswordApiController extends BaseApiController
      * Get the response for a successful password reset.
      *
      * @param string  $response ID of language resource to send as response
+     *
      * @return Response
      */
-    protected function sendResetResponse($response)
+    protected function sendResetResponse($response): Response
     {
-        return $this->json(new Message(trans($response)));
+        return $this->json(new SuccessMessage(trans($response)));
     }
 
     /**
@@ -49,9 +51,9 @@ class ResetPasswordApiController extends BaseApiController
      *
      * @return Response
      */
-    protected function sendResetFailedResponse(Request $request, $message)
+    protected function sendResetFailedResponse(Request $request, $message): Response
     {
-        return $this->json(new Message($message));
+        return $this->json(new ErrorMessage($message));
     }
 
     /**
@@ -62,11 +64,8 @@ class ResetPasswordApiController extends BaseApiController
      *
      * @return void
      */
-    protected function resetPassword($user, $password)
+    protected function resetPassword($user, $password): void
     {
-        $user->forceFill([
-            'password' => $password,
-            'remember_token' => Str::random(60),
-        ])->save();
+        $user->forceFill(['password' => $password, 'remember_token' => Str::random(60),])->save();
     }
 }

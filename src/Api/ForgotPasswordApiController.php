@@ -1,11 +1,11 @@
 <?php
 
-namespace Saritasa\Laravel\Controllers\Api;
+namespace Saritasa\LaravelControllers\Api;
 
 use Dingo\Api\Http\Request;
 use Dingo\Api\Http\Response;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
-use Saritasa\Laravel\Controllers\Responses\Message;
+use Saritasa\LaravelControllers\Responses\SuccessMessage;
 use Saritasa\Transformers\BaseTransformer;
 
 /**
@@ -44,11 +44,12 @@ class ForgotPasswordApiController extends BaseApiController
      * Get the response for a successful password reset link.
      *
      * @param  string  $languageResourceId Resource ID of message to display to user
+     *
      * @return Response
      */
-    protected function sendResetLinkResponse($languageResourceId)
+    protected function sendResetLinkResponse($languageResourceId): Response
     {
-        return $this->json(new Message(trans($languageResourceId)));
+        return $this->json(new SuccessMessage(trans($languageResourceId)));
     }
 
     /**
@@ -56,9 +57,10 @@ class ForgotPasswordApiController extends BaseApiController
      *
      * @param  Request $request HTTP Request
      * @param  string  $languageResourceId Resource ID of message to display to user
+     *
      * @return void
      */
-    protected function sendResetLinkFailedResponse(Request $request, $languageResourceId)
+    protected function sendResetLinkFailedResponse(Request $request, $languageResourceId): void
     {
         $this->response->errorNotFound(trans($languageResourceId));
     }

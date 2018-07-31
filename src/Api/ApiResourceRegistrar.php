@@ -1,24 +1,36 @@
 <?php
 
-namespace Saritasa\Laravel\Controllers\Api;
+namespace Saritasa\LaravelControllers\Api;
 
 use Dingo\Api\Routing\Router;
-use Illuminate\Contracts\Foundation\Application;
 use InvalidArgumentException;
-use Saritasa\Laravel\Controllers\Contracts\IResourceController;
+use ReflectionException;
 
 /**
  * Wrapper for Dingo router, adds concise methods for API URLs registration.
  */
 final class ApiResourceRegistrar
 {
+    // Available options
     public const OPTION_ONLY = 'only';
     public const OPTION_EXPECT = 'expect';
+    public const OPTION_VERB = 'verb';
+    public const OPTION_ROUTE = 'route';
+    // Available verbs
     private const GET = 'get';
     private const POST = 'post';
     private const PUT = 'put';
     private const PATCH = 'patch';
     private const DELETE = 'delete';
+    // Available controller actions
+    public const ACTION_INDEX = 'index';
+    public const ACTION_SHOW = 'show';
+    public const ACTION_CREATE = 'create';
+    public const ACTION_UPDATE = 'update';
+    public const ACTION_DESTROY = 'destroy';
+    public const ACTION_COUNT = 'count';
+
+    private const ID_ROUTE_PARAMETER = '{id}';
 
     /**
      * Original Dingo/API router service.
@@ -27,19 +39,16 @@ final class ApiResourceRegistrar
      */
     private $api;
 
-    /**
-     * Application to build implementations.
-     *
-     * @var Application
-     */
-    private $app;
-
     private $default = [
-        'index' => ['verb' => self::GET, 'route' => ''],
-        'create' => ['verb' => self::POST, 'route' => ''],
-        'show' => ['verb' => self::GET, 'route' => '/{id}'],
-        'update' => ['verb' => self::PUT, 'route' => '/{id}'],
-        'destroy' => ['verb' => self::DELETE, 'route' => '/{id}']
+        self::ACTION_COUNT => [self::OPTION_VERB => self::GET, self::OPTION_ROUTE => '/count'],
+        self::ACTION_INDEX => [self::OPTION_VERB => self::GET, self::OPTION_ROUTE => ''],
+        self::ACTION_CREATE => [self::OPTION_VERB => self::POST, self::OPTION_ROUTE => ''],
+        self::ACTION_SHOW => [self::OPTION_VERB => self::GET, self::OPTION_ROUTE => '/' . self::ID_ROUTE_PARAMETER],
+        self::ACTION_UPDATE => [self::OPTION_VERB => self::PUT, self::OPTION_ROUTE => '/' . self::ID_ROUTE_PARAMETER],
+        self::ACTION_DESTROY => [
+            self::OPTION_VERB => self::DELETE,
+            self::OPTION_ROUTE => '/' . self::ID_ROUTE_PARAMETER
+        ],
     ];
 
     public const VERBS = [self::GET, self::POST, self::PUT, self::PATCH, self::DELETE];
@@ -48,22 +57,21 @@ final class ApiResourceRegistrar
      * Wrapper for Dingo router, adds concise methods for API URLs registration.
      *
      * @param Router $api Original Dingo/API router service to wrap
-     * @param Application $application
      */
-    public function __construct(Router $api, Application $application)
+    public function __construct(Router $api)
     {
         $this->api = $api;
-        $this->app = $application;
     }
 
     /**
      * Registers controller methods
      *
-     * index -   as GET /resourceName
-     * create -  as POST /resourceName
-     * show -    as GET /resourceName/{id}
-     * update -  as PUT /resourceName/{id}
+     * index   - as GET /resourceName
+     * create  - as POST /resourceName
+     * show    - as GET /resourceName/{id}
+     * update  - as PUT /resourceName/{id}
      * destroy - as DELETE /resourceName/{id}
+     * count   - as GET /resourceName/count
      *
      * @param string $resourceName URI of resource
      * @param string $controller FQDN Class name of Controller, which contains action method
@@ -73,7 +81,7 @@ final class ApiResourceRegistrar
      *
      * @return void
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function resource(
         string $resourceName,
@@ -90,18 +98,10 @@ final class ApiResourceRegistrar
         } elseif (isset($options[static::OPTION_EXPECT])) {
             $routes = array_diff_key($this->default, $this->asArray($options[static::OPTION_EXPECT]));
         }
-
         $mapping = [];
-
         if ($modelClass) {
             $modelName = lcfirst($modelName ?? $this->getShortClassName($modelClass));
             $mapping[$modelName] = $modelClass;
-            $controllerInstance = $this->app->make($controller);
-            if (!$controllerInstance instanceof IResourceController) {
-                throw new \Exception();
-            }
-            $controllerInstance->setModelClass($modelClass);
-            $this->app->instance($controller, $controllerInstance);
         }
 
         foreach (static::VERBS as $verb) {
@@ -111,20 +111,18 @@ final class ApiResourceRegistrar
                     $t = gettype($actions);
                     throw new InvalidArgumentException("{$options[$verb]} must contain string or array. $t was given");
                 }
-
                 foreach ($actions as $action => $i) {
-                    $routes[$action] = ['verb' => $verb, 'route' => "/$action"];
+                    $routes[$action] = [static::OPTION_VERB => $verb, static::OPTION_ROUTE => "/$action"];
                 }
             }
         }
 
         foreach ($routes as $action => $opt) {
-            $verb = $opt['verb'];
-            $route = $opt['route'];
+            $verb = $opt[static::OPTION_VERB];
+            $route = $opt[static::OPTION_ROUTE];
             if ($modelName) {
-                $route = str_replace('{id}', "{{$modelName}}", $opt['route']);
+                $route = str_replace('{id}', "{{$modelName}}", $opt[static::OPTION_ROUTE]);
             }
-
             $this->api->$verb($resourceName . $route, [
                 'as' => trim($resourceName . '.' . $action),
                 'uses' => $controller . '@' . $action,
@@ -244,7 +242,7 @@ final class ApiResourceRegistrar
      * @param string $modelClass Class name to resolve.
      *
      * @return string
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function getShortClassName(string $modelClass): string
     {
@@ -274,7 +272,6 @@ final class ApiResourceRegistrar
     ) {
         $pos = strrpos($path, '/', -1);
         $pathLastSegment = $pos ? substr($path, $pos + 1) : $path;
-
         if (!$action) {
             $action = $pathLastSegment;
         }
@@ -308,7 +305,6 @@ final class ApiResourceRegistrar
         if (is_array($value)) {
             return array_flip($value);
         }
-
         if (is_string($value)) {
             $keys = explode(',', $value);
             return array_flip($keys);

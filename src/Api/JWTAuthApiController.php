@@ -1,10 +1,10 @@
 <?php
 
-namespace Saritasa\Laravel\Controllers\Api;
+namespace Saritasa\LaravelControllers\Api;
 
 use Dingo\Api\Http\Response;
-use Saritasa\Laravel\Controllers\Requests\LoginRequest;
-use Saritasa\Laravel\Controllers\Responses\AuthSuccess;
+use Saritasa\LaravelControllers\Requests\LoginRequest;
+use Saritasa\LaravelControllers\Responses\AuthSuccess;
 use Saritasa\Transformers\IDataTransformer;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -69,10 +69,10 @@ class JWTAuthApiController extends BaseApiController
     {
         try {
             $this->jwtAuth->parseToken()->invalidate();
-            return $this->response->noContent();
         } catch (JWTException $exception) {
             $this->response->errorUnauthorized(trans('controllers::auth.jwt_refresh_error'));
         }
+        return $this->response->noContent();
     }
 
     /**
@@ -85,11 +85,9 @@ class JWTAuthApiController extends BaseApiController
     public function refreshToken(): Response
     {
         try {
-            $newToken = $this->jwtAuth->parseToken()->refresh();
+            return $this->json(new AuthSuccess($this->jwtAuth->parseToken()->refresh()));
         } catch (JWTException $e) {
             $this->response->errorUnauthorized(trans('controllers::auth.jwt_refresh_error'));
         }
-
-        return $this->json(new AuthSuccess($newToken));
     }
 }

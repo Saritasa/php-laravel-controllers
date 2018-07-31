@@ -12,12 +12,13 @@
     ],
     "require": {
         "php": ">=7.1",
+        "ext-json": "*",
         "dingo/api": "2.0.0-alpha1",
-        "illuminate/support": "5.*",
+        "illuminate/support": "^5.5",
         "saritasa/dingo-api-custom": "^2.0",
         "saritasa/transformers": "^1.0",
         "tymon/jwt-auth": "1.0.*@rc",
-        "saritasa/laravel-repositories": "dev-master"
+        "saritasa/laravel-entity-services": "^1.0"
     },
     "require-dev": {
         "mockery/mockery": "^1.0",
@@ -28,11 +29,11 @@
     "prefer-stable" : true,
     "autoload": {
         "psr-4" : {
-            "Saritasa\\Laravel\\Controllers\\": "src/"
+            "Saritasa\\LaravelControllers\\": "src/"
         }
     },
     "autoload-dev": {
-        "psr-4": { "Saritasa\\Laravel\\Controllers\\Tests\\": "tests/" }
+        "psr-4": { "Saritasa\\LaravelControllers\\Tests\\": "tests/" }
     },
     "config": {
         "preferred-install": "dist",
@@ -40,18 +41,12 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0.x-dev"
+            "dev-master": "3.0.x-dev"
         },
         "laravel": {
             "providers": [
-                "Saritasa\\Laravel\\Controllers\\Providers\\ControllersServiceProvider"
+                "Saritasa\\LaravelControllers\\ControllersServiceProvider"
             ]
         }
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/veeeeeRySeXy/php-laravel-repositories"
-        }
-    ]
+    }
 }

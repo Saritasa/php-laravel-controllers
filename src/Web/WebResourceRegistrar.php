@@ -1,10 +1,11 @@
 <?php
 
-namespace Saritasa\Laravel\Controllers\Web;
+namespace Saritasa\LaravelControllers\Web;
 
 use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Routing\Router;
 use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Wrapper for Illuminate router, adds concise methods for URLs registration.
@@ -72,7 +73,7 @@ final class WebResourceRegistrar
      *
      * @return void
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function resource(
         string $resourceName,
@@ -136,7 +137,7 @@ final class WebResourceRegistrar
      * @param string $modelClass Class name to resolve.
      *
      * @return string
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function getShortClassName(string $modelClass): string
     {

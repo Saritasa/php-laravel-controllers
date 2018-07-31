@@ -1,31 +1,38 @@
 <?php
 
-namespace Saritasa\Laravel\Controllers;
+namespace Saritasa\LaravelControllers;
 
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Routing\UrlRoutable;
-use Saritasa\Exceptions\ModelNotFoundException;
 use Illuminate\Routing\Router as LaravelRouter;
 use Illuminate\Support\Str;
 use Illuminate\Routing\Route;
 use ReflectionParameter;
-use Saritasa\Contracts\IRepositoryFactory;
-use Saritasa\Exceptions\RepositoryException;
+use Saritasa\LaravelRepositories\Contracts\IRepositoryFactory;
+use Saritasa\LaravelRepositories\Exceptions\ModelNotFoundException;
+use Saritasa\LaravelRepositories\Exceptions\RepositoryException;
 
 /**
  * Custom application router which use route mapping to resolve model binding.
  */
 class Router extends LaravelRouter
 {
+    protected const ROUTE_MAPPING_KEY = 'mapping';
+
+    /**
+     * Repositories storage.
+     *
+     * @var IRepositoryFactory
+     */
     protected $repositoryFactory;
 
     /**
      * Custom application router which use route mapping to resolve model binding.
      *
-     * @param IRepositoryFactory $repositoryFactory
-     * @param Dispatcher $dispatcher
-     * @param Container $container
+     * @param IRepositoryFactory $repositoryFactory Repositories storage
+     * @param Dispatcher $dispatcher Event dispatcher
+     * @param Container $container Dependency injection container
      */
     public function __construct(IRepositoryFactory $repositoryFactory, Dispatcher $dispatcher, Container $container)
     {
@@ -36,16 +43,16 @@ class Router extends LaravelRouter
     /**
      * Substitute the implicit Eloquent model bindings for the route.
      *
-     * @param Route $route Current route
+     * @param Route $route Route to resolve model bindings
      *
      * @return void
      *
      * @throws ModelNotFoundException
      * @throws RepositoryException
      */
-    public function substituteImplicitBindings($route)
+    public function substituteImplicitBindings($route): void
     {
-        $mapping = $route->getAction('mapping') ?? [];
+        $mapping = $route->getAction(static::ROUTE_MAPPING_KEY) ?? [];
         $parameters = $route->parameters();
 
         /**
@@ -76,6 +83,7 @@ class Router extends LaravelRouter
      *
      * @param string $name Router parameter to check
      * @param array $parameters Available parameters
+     *
      * @return string|null
      */
     protected function getParameterName(string $name, array $parameters): ?string

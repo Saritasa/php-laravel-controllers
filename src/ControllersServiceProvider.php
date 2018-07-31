@@ -1,17 +1,21 @@
 <?php
 
-namespace Saritasa\Laravel\Controllers\Providers;
+namespace Saritasa\LaravelControllers;
 
 use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Routing\Contracts\ControllerDispatcher as LaravelControllerDispatcher;
 use Illuminate\Support\ServiceProvider;
-use Saritasa\Laravel\Controllers\ControllerDispatcher;
-use Saritasa\Laravel\Controllers\Router;
 
+/**
+ * Controllers service provider.
+ */
 class ControllersServiceProvider extends ServiceProvider
 {
-    protected $defer = false;
-
+    /**
+     * Provider boot actions.
+     *
+     * @return void
+     */
     public function boot(): void
     {
         $this->replacesDefaultLaravelResolvers();
@@ -19,13 +23,10 @@ class ControllersServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'controllers');
     }
 
-    public function register()
-    {
-        $this->app->register(RevisionsServiceProvider::class);
-    }
-
     /**
      * Replaces laravel cores classes to custom realization.
+     *
+     * @return void
      */
     protected function replacesDefaultLaravelResolvers(): void
     {
