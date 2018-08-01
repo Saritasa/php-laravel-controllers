@@ -18,7 +18,7 @@
         "saritasa/dingo-api-custom": "^2.0",
         "saritasa/transformers": "^1.0",
         "tymon/jwt-auth": "1.0.*@rc",
-        "saritasa/laravel-entity-services": "^1.0"
+        "saritasa/laravel-entity-services": "^1.1"
     },
     "require-dev": {
         "mockery/mockery": "^1.0",

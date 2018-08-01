@@ -9,6 +9,7 @@ use Illuminate\Validation\ValidationException;
 use Saritasa\DingoApi\Traits\PaginatedOutput;
 use Saritasa\Enums\PagingType;
 use Saritasa\Exceptions\InvalidEnumValueException;
+use Saritasa\LaravelEntityServices\Contracts\IEntityService;
 use Saritasa\LaravelEntityServices\Contracts\IEntityServiceFactory;
 use Saritasa\LaravelEntityServices\Exceptions\EntityServiceException;
 use Saritasa\LaravelEntityServices\Exceptions\EntityServiceOperationException;
@@ -32,7 +33,7 @@ class ResourceApiController extends BaseApiController
     /**
      * Entity service to work with serve by this controller model.
      *
-     * @var IEntityServiceFactory
+     * @var IEntityService
      */
     protected $entityService;
 
@@ -83,7 +84,7 @@ class ResourceApiController extends BaseApiController
      */
     public function index(Request $request): Response
     {
-        $searchValues = $request->only($this->entityService->getRepository()->searchableFields);
+        $searchValues = $request->only($this->entityService->getRepository()->getSearchableFields());
 
         switch ($this->paging) {
             case PagingType::PAGINATOR:
