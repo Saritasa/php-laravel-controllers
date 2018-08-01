@@ -14,14 +14,9 @@ AuthJWTService, BaseMarkupController, IWebResourceController
 - Improve documentation.
 - Add more unit tests.
 
-2.1.0
+2.0.8
 -----
-Add model binding in ApiResourceRegistrar and WebResourceRegistrar
-Add custom implementation of Illuminate\Routing\Contracts\ControllerDispatcher
-Add custom implementation of Illuminate\Contracts\Routing\Registrar
-Improve unit tests
-Improve documentation.
-Deleted deprecated classes.
+Add [laravelcollective/html](https://github.com/LaravelCollective/html) as dependency
 
 2.0.7
 -----
