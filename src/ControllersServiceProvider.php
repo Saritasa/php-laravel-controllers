@@ -24,7 +24,7 @@ class ControllersServiceProvider extends ServiceProvider
     }
 
     /**
-     * Replaces laravel cores classes to custom realization.
+     * Replaces laravel cores classes to custom implementation.
      *
      * @return void
      */

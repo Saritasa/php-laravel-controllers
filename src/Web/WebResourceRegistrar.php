@@ -5,6 +5,7 @@ namespace Saritasa\LaravelControllers\Web;
 use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Routing\Router;
 use InvalidArgumentException;
+use ReflectionClass;
 use ReflectionException;
 
 /**
@@ -13,7 +14,7 @@ use ReflectionException;
 final class WebResourceRegistrar
 {
     public const OPTION_ONLY = 'only';
-    public const OPTION_EXPECT = 'expect';
+    public const OPTION_EXCEPT = 'except';
     private const GET = 'get';
     private const POST = 'post';
     private const PUT = 'put';
@@ -88,8 +89,8 @@ final class WebResourceRegistrar
             $routes = $this->default;
         } elseif (isset($options[static::OPTION_ONLY])) {
             $routes = array_intersect_key($this->default, $this->asMap($options[static::OPTION_ONLY]));
-        } elseif (isset($options[static::OPTION_EXPECT])) {
-            $routes = array_diff_key($this->default, $this->asMap($options[static::OPTION_EXPECT]));
+        } elseif (isset($options[static::OPTION_EXCEPT])) {
+            $routes = array_diff_key($this->default, $this->asMap($options[static::OPTION_EXCEPT]));
         }
 
         foreach (static::VERBS as $verb) {
@@ -141,7 +142,7 @@ final class WebResourceRegistrar
      */
     protected function getShortClassName(string $modelClass): string
     {
-        $reflectionClass = new \ReflectionClass($modelClass);
+        $reflectionClass = new ReflectionClass($modelClass);
         return $reflectionClass->getShortName();
     }
 
@@ -295,11 +296,12 @@ final class WebResourceRegistrar
         );
     }
 
-
     /**
      * Converts params to needed form.
+     * If params passed as string it will be convert to array using `,` delimiter.
+     * If params passed as a array it will be flipped.
      *
-     * @param array|string $value Params ro converts
+     * @param array|string $value Params to convert
      *
      * @return array|null
      */

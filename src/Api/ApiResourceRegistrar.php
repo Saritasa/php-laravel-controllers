@@ -13,7 +13,7 @@ final class ApiResourceRegistrar
 {
     // Available options
     public const OPTION_ONLY = 'only';
-    public const OPTION_EXPECT = 'expect';
+    public const OPTION_EXCEPT = 'except';
     public const OPTION_VERB = 'verb';
     public const OPTION_ROUTE = 'route';
     // Available verbs
@@ -95,8 +95,8 @@ final class ApiResourceRegistrar
             $routes = $this->default;
         } elseif (isset($options[static::OPTION_ONLY])) {
             $routes = array_intersect_key($this->default, $this->asArray($options[static::OPTION_ONLY]));
-        } elseif (isset($options[static::OPTION_EXPECT])) {
-            $routes = array_diff_key($this->default, $this->asArray($options[static::OPTION_EXPECT]));
+        } elseif (isset($options[static::OPTION_EXCEPT])) {
+            $routes = array_diff_key($this->default, $this->asArray($options[static::OPTION_EXCEPT]));
         }
         $mapping = [];
         if ($modelClass) {
@@ -295,8 +295,10 @@ final class ApiResourceRegistrar
 
     /**
      * Converts params to needed form.
+     * If params passed as string it will be convert to array using `,` delimiter.
+     * If params passed as a array it will be flipped.
      *
-     * @param array|string $value Params to converts
+     * @param array|string $value Params to convert
      *
      * @return array|null
      */

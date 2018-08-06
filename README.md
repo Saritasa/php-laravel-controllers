@@ -74,7 +74,7 @@ app('api.router')->version(config('api.version'), ['namespace' => 'Saritasa\Lara
  });  
 ```
 ### ResourceApiController
-Controller for typical CRUD operations when you don't need many custom logic.
+Controller for typical CRUD operations when you don't need many additional logic.
 For using this functionality you can just create controller and set needed model class in property $modelClass
 **Example**:
 ```php

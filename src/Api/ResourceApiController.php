@@ -17,28 +17,28 @@ use Saritasa\LaravelRepositories\DTO\SortOptions;
 use Saritasa\Transformers\IDataTransformer;
 
 /**
- * Default controller to handle CRUD operation with models.
+ * Default controller to handle CRUD operations with  managed models.
  */
 class ResourceApiController extends BaseApiController
 {
     use PaginatedOutput;
 
     /**
-     * Entities services factory.
+     * Factory that build entity services for managed model.
      *
      * @var IEntityServiceFactory
      */
     protected $entityServiceFactory;
 
     /**
-     * Entity service to work with serve by this controller model.
+     * Entity service to add CRUD operations with managed by this controller model.
      *
      * @var IEntityService
      */
     protected $entityService;
 
     /**
-     * Serve model class.
+     * Managed model class.
      *
      * @var string|null
      */
@@ -47,12 +47,14 @@ class ResourceApiController extends BaseApiController
     /**
      * Pagination type.
      *
+     * @see PagingType
+     *
      * @var string
      */
     protected $paging = PagingType::NONE;
 
     /**
-     * Field uses for sorting.
+     * Field used for sorting by default.
      *
      * @var string
      */
@@ -136,7 +138,7 @@ class ResourceApiController extends BaseApiController
     /**
      * Updates entity.
      *
-     * @param Request $request Request with update model params
+     * @param Request $request Request with model params to update
      * @param Model $model Model to update
      *
      * @return Response

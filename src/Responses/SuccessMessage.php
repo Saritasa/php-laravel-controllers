@@ -5,7 +5,7 @@ namespace Saritasa\LaravelControllers\Responses;
 use Saritasa\Transformers\DtoModel;
 
 /**
- * Success message for use in http responses.
+ * Success message for use in responses.
  */
 class SuccessMessage extends DtoModel
 {
@@ -17,9 +17,9 @@ class SuccessMessage extends DtoModel
     protected $message;
 
     /**
-     * Success message for use in http responses.
+     * Success message for use in responses.
      *
-     * @param string $message Success message test
+     * @param string $message Success message text
      */
     public function __construct(string $message)
     {

@@ -9,8 +9,8 @@ use Illuminate\Support\Str;
 use Saritasa\LaraveLControllers\BaseController;
 
 /**
- * This controller is responsible for handling password reset requests
- * https://laravel.com/docs/5.6/passwords
+ * This controller is responsible for handling password reset requests.
+ * https://laravel.com/docs/passwords
  */
 class ResetPasswordController extends BaseController
 {

@@ -9,7 +9,7 @@ use Saritasa\LaravelControllers\ControllerDispatcher;
 use Mockery\MockInterface;
 
 /**
- * Test that controller
+ * Test that controller dispatcher right resolved given route params.
  */
 class ControllerDispatcherTest extends TestCase
 {

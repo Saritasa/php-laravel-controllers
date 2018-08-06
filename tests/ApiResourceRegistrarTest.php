@@ -236,7 +236,7 @@ class ApiResourceRegistrarTest extends TestCase
         $resourceName = str_random();
         $controllerName = str_random();
         $options = [
-            ApiResourceRegistrar::OPTION_EXPECT => ['index', 'create', 'count'],
+            ApiResourceRegistrar::OPTION_EXCEPT => ['index', 'create', 'count'],
         ];
         $className = BaseController::class;
         $customName = lcfirst(str_random());

@@ -21,7 +21,7 @@ class Router extends LaravelRouter
     protected const ROUTE_MAPPING_KEY = 'mapping';
 
     /**
-     * Repositories storage.
+     * Factory for building specific repository for managed model.
      *
      * @var IRepositoryFactory
      */
@@ -56,7 +56,7 @@ class Router extends LaravelRouter
         $parameters = $route->parameters();
 
         /**
-         * Route parameter.
+         * Controller method parameter which candidate to resolve route parameters as model.
          *
          * @var ReflectionParameter $parameter
          */

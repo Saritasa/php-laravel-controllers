@@ -2,14 +2,13 @@
 
 namespace Saritasa\LaravelControllers\Responses;
 
-use Saritasa\Transformers\DtoModel;
+use Saritasa\Dto;
 
 /**
  * Auth success response message.
  */
-class AuthSuccess extends DtoModel
+class AuthSuccess extends Dto
 {
-
     /**
      * Authentication token
      *

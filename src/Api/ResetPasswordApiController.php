@@ -14,7 +14,7 @@ use Saritasa\LaravelControllers\Responses\SuccessMessage;
 /**
  * This controller is responsible for handling password reset requests
  * Utilize native Laravel password management without UI, in API style
- * https://laravel.com/docs/5.6/passwords
+ * https://laravel.com/docs/passwords
  */
 class ResetPasswordApiController extends BaseApiController
 {
@@ -34,7 +34,7 @@ class ResetPasswordApiController extends BaseApiController
     /**
      * Get the response for a successful password reset.
      *
-     * @param string  $response ID of language resource to send as response
+     * @param string $response ID of language resource to use as response
      *
      * @return Response
      */

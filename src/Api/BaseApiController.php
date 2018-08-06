@@ -2,15 +2,11 @@
 
 namespace Saritasa\LaravelControllers\Api;
 
-use Dingo\Api\Http\Request;
 use Dingo\Api\Http\Response;
 use Dingo\Api\Routing\Helpers;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Routing\Controller;
-use Saritasa\DingoApi\Exceptions\ValidationException;
 use Saritasa\Transformers\BaseTransformer;
 use Saritasa\Transformers\IDataTransformer;
 
@@ -19,7 +15,7 @@ use Saritasa\Transformers\IDataTransformer;
  */
 abstract class BaseApiController extends Controller
 {
-    use Helpers, AuthorizesRequests, ValidatesRequests;
+    use Helpers, AuthorizesRequests;
 
     /**
      * Default Fractal/Transformer instance to use
@@ -57,31 +53,5 @@ abstract class BaseApiController extends Controller
             return $this->response->paginator($data, $t);
         }
         return $this->response->item($data, $t);
-    }
-
-    /**
-     * Validates request and throws exception, if input data in request doesn't match expected rules.
-     *
-     * @param Request $request Dingo/Api request (unlike in generic Laravel Controller)
-     * @param array $rules Laravel-style rules for validation https://laravel.com/docs/validation
-     * @param array $messages Messages to use for specified fields, if they fail validation
-     * @param array $customAttributes How to name validated attributes in messages, visible to user
-     *
-     * @throws ValidationException when input data in request does not match expected rules
-     *
-     * @return void
-     */
-    public function validate(Request $request, array $rules, array $messages = [], array $customAttributes = []): void
-    {
-        /**
-         * Validator instance.
-         *
-         * @var Validator $validator
-         */
-        $validator = $this->getValidationFactory()->make($request->all(), $rules, $messages, $customAttributes);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator->errors());
-        }
     }
 }

@@ -26,7 +26,7 @@ class JWTAuthApiController extends BaseApiController
      * Authenticate API Controller. Uses JWT authentication.
      *
      * @param JWTAuth $jwtAuth Jwt guard
-     * @param IDataTransformer $transformer default transformer to apply to handled entity.
+     * @param IDataTransformer $transformer Default transformer to apply to handled entity
      */
     public function __construct(JWTAuth $jwtAuth, IDataTransformer $transformer = null)
     {

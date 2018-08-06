@@ -2,12 +2,12 @@
 
 namespace Saritasa\LaravelControllers\Responses;
 
-use Saritasa\Transformers\DtoModel;
+use Saritasa\Dto;
 
 /**
- * Error message for use in http responses.
+ * Error message for use in responses.
  */
-class ErrorMessage extends DtoModel
+class ErrorMessage extends Dto
 {
     /**
      * Error message text.
@@ -17,9 +17,9 @@ class ErrorMessage extends DtoModel
     protected $message;
 
     /**
-     * Error message for use in http responses.
+     * Error message for use in responses.
      *
-     * @param string $message Error message test
+     * @param string $message Error message text
      */
     public function __construct(string $message)
     {

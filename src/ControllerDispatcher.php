@@ -20,7 +20,7 @@ class ControllerDispatcher extends LaravelControllerDispatcher
      */
     public function resolveMethodDependencies(array $parameters, ReflectionFunctionAbstract $reflector): array
     {
-        $instanceCount = 0;
+        $instancesCount = 0;
 
         $values = array_values($parameters);
 
@@ -36,9 +36,9 @@ class ControllerDispatcher extends LaravelControllerDispatcher
             );
 
             if (!is_null($instance)) {
-                $instanceCount++;
+                $instancesCount++;
                 $this->spliceIntoParameters($parameters, $key, $instance);
-            } elseif (!isset($values[$key - $instanceCount]) && $parameter->isDefaultValueAvailable()) {
+            } elseif (!isset($values[$key - $instancesCount]) && $parameter->isDefaultValueAvailable()) {
                 $this->spliceIntoParameters($parameters, $key, $parameter->getDefaultValue());
             }
         }
