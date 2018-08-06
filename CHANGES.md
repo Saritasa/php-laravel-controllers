@@ -1,5 +1,20 @@
 # Changes History
 
+3.0.0
+-----
+- Change namespace from Saritasa\Laravel\Controllers to Saritasa\LaravelControllers
+- Add ability to bind models for controller on side of route creation
+- Update behavior of default laravel router that now using Repository layer to get entities
+from db when controller using model binding ability
+- Update behavior of default laravel controller dispatcher that now not overrides early resolved
+model bindings on
+- Remove IApiResourceController, UserApiController, MacroServiceProvider, RevisionsServiceProvider,
+AuthJWTService, BaseMarkupController, IWebResourceController
+- Improve application structure
+- Improve documentation
+- Add more unit tests
+- Switch minimum version of php to 7.1
+
 2.0.8
 -----
 Add [laravelcollective/html](https://github.com/LaravelCollective/html) as dependency

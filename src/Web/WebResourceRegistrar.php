@@ -1,48 +1,53 @@
 <?php
 
-namespace Saritasa\Laravel\Controllers\Web;
+namespace Saritasa\LaravelControllers\Web;
 
-use InvalidArgumentException;
-use Saritasa\Exceptions\ConfigurationException;
+use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Routing\Router;
+use InvalidArgumentException;
+use ReflectionClass;
+use ReflectionException;
 
 /**
  * Wrapper for Illuminate router, adds concise methods for URLs registration.
- *
- * @method void get(string $resource, string $controller, string $action = null, string $route = null)  New GET route
- * @method void post(string $resource, string $controller, string $action = null, string $route = null) New POST route
- * @method void patch(string $resource, string $controller, string $action = null, string $route = null) New PATCH route
- * @method void put(string $resource, string $controller, string $action = null, string $route = null)   New PUT route
- * @method void delete(string $resource, string $controller, string $action = null, string $route = null) New DELETE
- *                                                                                                        route
  */
-class WebResourceRegistrar
+final class WebResourceRegistrar
 {
+    public const OPTION_ONLY = 'only';
+    public const OPTION_EXCEPT = 'except';
+    private const GET = 'get';
+    private const POST = 'post';
+    private const PUT = 'put';
+    private const PATCH = 'patch';
+    private const DELETE = 'delete';
+
     /**
-     * @var Router Original Laravel router service
+     *  Original Laravel router service.
+     *
+     * @var Router
      */
     private $router;
 
     private $default = [
-        'index' => ['verb' => 'get', 'route' => ''],
-        'indexData' => ['verb' => 'get', 'route' => '', 'ajax' => true],
-        'create' => ['verb' => 'get', 'route' => '/create'],
-        'store' => ['verb' => 'post', 'route' => '', 'ajax' => true],
-        'show' => ['verb' => 'get', 'route' => '/{id}'],
-        'read' => ['verb' => 'get', 'route' => '/{id}', 'ajax' => true],
-        'edit' => ['verb' => 'get', 'route' => '/{id}/edit'],
-        'update' => ['verb' => 'put', 'route' => '/{id}', 'ajax' => true],
-        'destroy' => ['verb' => 'delete', 'route' => '/{id}', 'ajax' => true]
+        'index' => ['verb' => self::GET, 'route' => ''],
+        'indexData' => ['verb' => self::GET, 'route' => '', 'ajax' => true],
+        'create' => ['verb' => self::GET, 'route' => '/create'],
+        'store' => ['verb' => self::POST, 'route' => '', 'ajax' => true],
+        'show' => ['verb' => self::GET, 'route' => '/{id}'],
+        'read' => ['verb' => self::GET, 'route' => '/{id}', 'ajax' => true],
+        'edit' => ['verb' => self::GET, 'route' => '/{id}/edit'],
+        'update' => ['verb' => self::PUT, 'route' => '/{id}', 'ajax' => true],
+        'destroy' => ['verb' => self::DELETE, 'route' => '/{id}', 'ajax' => true]
     ];
 
-    const VERBS = ['get', 'post', 'put', 'patch', 'delete'];
+    public const VERBS = [self::GET, self::POST, self::PUT, self::PATCH, self::DELETE];
 
     /**
      * Wrapper for Illuminate router, adds concise methods for URLs registration.
      *
-     * @param Router $router Original Laravel router service to wrap
+     * @param Registrar $router Original Laravel router service to wrap
      */
-    public function __construct(Router $router)
+    public function __construct(Registrar $router)
     {
         $this->router = $router;
     }
@@ -64,17 +69,28 @@ class WebResourceRegistrar
      * @param string $resourceName URI of resource
      * @param string $controller FQDN Class name of Controller, which contains action method
      * @param array $options options, passed to router on route registration
+     * @param string|null $modelClass Model class to resolve binding
+     * @param string|null $modelName Model parameter name
+     *
+     * @return void
+     *
+     * @throws ReflectionException
      */
-    public function resource(string $resourceName, string $controller, array $options = [])
-    {
+    public function resource(
+        string $resourceName,
+        string $controller,
+        array $options = [],
+        ?string $modelClass = null,
+        ?string $modelName = null
+    ): void {
         $controller = $this->removeNamespace($controller);
         $routes = [];
-        if (!$options || !count($options)) {
+        if (count($options) === 0) {
             $routes = $this->default;
-        } elseif (isset($options['only'])) {
-            $routes = array_intersect_key($this->default, $this->asMap($options['only']));
-        } elseif (isset($options['except'])) {
-            $routes = array_diff_key($this->default, $this->asMap($options['except']));
+        } elseif (isset($options[static::OPTION_ONLY])) {
+            $routes = array_intersect_key($this->default, $this->asMap($options[static::OPTION_ONLY]));
+        } elseif (isset($options[static::OPTION_EXCEPT])) {
+            $routes = array_diff_key($this->default, $this->asMap($options[static::OPTION_EXCEPT]));
         }
 
         foreach (static::VERBS as $verb) {
@@ -82,22 +98,33 @@ class WebResourceRegistrar
                 $actions = $this->asArray($options[$verb]);
                 if (!is_array($actions)) {
                     $t = gettype($actions);
-                    throw new InvalidArgumentException("\$options['$verb'] must contain string or array. $t was given");
+                    throw new InvalidArgumentException("{$options[$verb]} must contain string or array. $t was given");
                 }
 
                 foreach ($actions as $action) {
-                    $routes[$action] = ['verb' => $verb, 'route' => '/'.$action];
+                    $routes[$action] = ['verb' => $verb, 'route' => "/$action"];
                 }
             }
         }
 
+        $mapping = [];
+
+        if ($modelClass) {
+            $modelName = lcfirst($modelName ?? $this->getShortClassName($modelClass));
+            $mapping[$modelName] = $modelClass;
+        }
+
         foreach ($routes as $action => $opt) {
             $verb = $opt['verb'];
-            $route = $resourceName.$opt['route'];
+            $route = $resourceName . $opt['route'];
             $routeOptions = [
-                'as' => trim($resourceName.'.'.$action, '/'),
-                'uses' => $controller.'@'.$action
+                'as' => trim($resourceName . '.' . $action, '/'),
+                'uses' => $controller . '@' . $action,
+                'mapping' => $mapping,
             ];
+            if ($modelName) {
+                $route = str_replace('{id}', "{{$modelName}}", $route);
+            }
             if (isset($opt['ajax']) && $opt['ajax'] === true) {
                 $routeOptions['prefix'] = 'ajax';
             }
@@ -105,28 +132,148 @@ class WebResourceRegistrar
         }
     }
 
-    public function __call($name, $arguments)
+    /**
+     * Resolve model class name. Ex: App\Models\User -> User.
+     *
+     * @param string $modelClass Class name to resolve.
+     *
+     * @return string
+     * @throws ReflectionException
+     */
+    protected function getShortClassName(string $modelClass): string
     {
-        if (in_array($name, static::VERBS)) {
-            array_splice($arguments, 0, 0, [$name]);
-            return call_user_func_array([$this, 'action'], $arguments);
-        }
-        throw new ConfigurationException("Unknown HTTP verb $name used for route $arguments[0]");
+        $reflectionClass = new ReflectionClass($modelClass);
+        return $reflectionClass->getShortName();
     }
 
     /**
+     * Add get route.
+     *
+     * @param string $path URL path
+     * @param string $controller Class, containing action method
+     * @param string|null $action Method, which will be executed on route hit
+     * @param string|null $route Route name
+     * @param array $mapping Model bindings mapping
+     *
+     * @return void
+     */
+    public function get(
+        string $path,
+        string $controller,
+        ?string $action = null,
+        ?string $route = null,
+        array $mapping = []
+    ): void {
+        $this->action(static::GET, $path, $controller, $action, $route, $mapping);
+    }
+
+    /**
+     * Add post route.
+     *
+     * @param string $path URL path
+     * @param string $controller Class, containing action method
+     * @param string|null $action Method, which will be executed on route hit
+     * @param string|null $route Route name
+     * @param array $mapping Model bindings mapping
+     *
+     * @return void
+     */
+    public function post(
+        string $path,
+        string $controller,
+        ?string $action = null,
+        ?string $route = null,
+        array $mapping = []
+    ): void {
+        $this->action(static::POST, $path, $controller, $action, $route, $mapping);
+    }
+
+    /**
+     * Add patch route.
+     *
+     * @param string $path URL path
+     * @param string $controller Class, containing action method
+     * @param string|null $action Method, which will be executed on route hit
+     * @param string|null $route Route name
+     * @param array $mapping Model bindings mapping
+     *
+     * @return void
+     */
+    public function patch(
+        string $path,
+        string $controller,
+        ?string $action = null,
+        ?string $route = null,
+        array $mapping = []
+    ): void {
+        $this->action(static::PATCH, $path, $controller, $action, $route, $mapping);
+    }
+
+    /**
+     * Add put route.
+     *
+     * @param string $path URL path
+     * @param string $controller Class, containing action method
+     * @param string|null $action Method, which will be executed on route hit
+     * @param string|null $route Route name
+     * @param array $mapping Model bindings mapping
+     *
+     * @return void
+     */
+    public function put(
+        string $path,
+        string $controller,
+        ?string $action = null,
+        ?string $route = null,
+        array $mapping = []
+    ): void {
+        $this->action(static::PUT, $path, $controller, $action, $route, $mapping);
+    }
+
+    /**
+     * Add delete route.
+     *
+     * @param string $path URL path
+     * @param string $controller Class, containing action method
+     * @param string|null $action Method, which will be executed on route hit
+     * @param string|null $route Route name
+     * @param array $mapping Model bindings mapping
+     *
+     * @return void
+     */
+    public function delete(
+        string $path,
+        string $controller,
+        ?string $action = null,
+        ?string $route = null,
+        array $mapping = []
+    ): void {
+        $this->action(static::DELETE, $path, $controller, $action, $route, $mapping);
+    }
+
+    /**
+     * Actually called method, when user calls verb methods.
+     *
      * @param string $verb - one of GET / POST / PUT / PATCH / DELETE
      * @param string $path - URL path
      * @param string $controller Class, containing action method
      * @param string|null $action method, which will be executed on route hit
      * @param string|null $route - route name
+     * @param array $mapping Model bindings mapping
+     *
      * @return mixed
      */
-    private function action(string $verb, string $path, string $controller, string $action = null, string $route = null)
-    {
+    private function action(
+        string $verb,
+        string $path,
+        string $controller,
+        string $action = null,
+        string $route = null,
+        array $mapping = []
+    ) {
         $controller = $this->removeNamespace($controller);
         $pos = strrpos($path, '/', -1);
-        $pathLastSegment = $pos ? substr($path, $pos+1) : $path;
+        $pathLastSegment = $pos ? substr($path, $pos + 1) : $path;
 
         if (!$action) {
             $action = $pathLastSegment;
@@ -135,7 +282,7 @@ class WebResourceRegistrar
             $route = strtolower(str_replace('/', '.', $path));
             // Small piece of magic: make auto-named routes look nicer
             if ($pathLastSegment != $action) {
-                if (strrpos($route, '.'.$pathLastSegment, -1) === false) {
+                if (strrpos($route, '.' . $pathLastSegment, -1) === false) {
                     $route = "$route.$action";
                 } else {
                     $route = str_replace('.' . $pathLastSegment, '.' . $action, $route);
@@ -143,10 +290,22 @@ class WebResourceRegistrar
             }
             $route = trim(strtolower($route), '.');
         }
-        return $this->router->$verb($path, ['uses' => $controller.'@'.$action, 'as' => $route]);
+        return $this->router->$verb(
+            $path,
+            ['uses' => $controller . '@' . $action, 'as' => $route, 'mapping' => $mapping]
+        );
     }
 
-    private function asArray($value): array
+    /**
+     * Converts params to needed form.
+     * If params passed as string it will be convert to array using `,` delimiter.
+     * If params passed as a array it will be flipped.
+     *
+     * @param array|string $value Params to convert
+     *
+     * @return array|null
+     */
+    private function asArray($value): ?array
     {
         if (is_array($value)) {
             return $value;
@@ -161,19 +320,36 @@ class WebResourceRegistrar
         return null;
     }
 
-    private function asMap($value): array
+    /**
+     * Flip given parameter if it array.
+     * Converts to array and then flip parameter if it string.
+     *
+     * @param string|array $value Parameter to flip
+     * @return array|null
+     */
+    private function asMap($value): ?array
     {
         $arr = is_array($value) ? $value : $this->asArray($value);
-        return $arr == null ? null: array_flip($arr);
+
+        return $arr ? array_flip($arr) : null;
     }
 
-    private function removeNamespace(string $controllerClass)
+    /**
+     * Removes namespace from given class.
+     *
+     * @param string $controllerClass Class to remove namespace
+     *
+     * @return string
+     */
+    private function removeNamespace(string $controllerClass): string
     {
         $controllerClass = trim($controllerClass, '\t\n\0\\');
-        $bsIndex = strrpos($controllerClass, '\\') ;
+
+        $bsIndex = strrpos($controllerClass, '\\');
         if ($bsIndex !== false) {
-            return substr($controllerClass, $bsIndex+1);
+            return substr($controllerClass, $bsIndex + 1);
         }
+
         return $controllerClass;
     }
 }

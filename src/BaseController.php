@@ -1,6 +1,6 @@
 <?php
 
-namespace Saritasa\Laravel\Controllers;
+namespace Saritasa\LaravelControllers;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Foundation\Validation\ValidatesRequests;

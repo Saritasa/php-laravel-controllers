@@ -3,6 +3,7 @@
     <description>The for Saritasa package</description>
 
     <file>src</file>
+    <file>tests</file>
 
     <exclude-pattern>*.json</exclude-pattern>
     <exclude-pattern>*.xml</exclude-pattern>
@@ -10,7 +11,10 @@
     <arg name="colors"/>
     <arg value="p"/>
 
-    <rule ref="PSR2"/>
+    <rule ref="PSR2">
+        <exclude-pattern>*/src/Api/ApiResourceRegistrar.php</exclude-pattern>
+        <exclude-pattern>*/src/Web/WebResourceRegistrar.php</exclude-pattern>
+    </rule>
     <rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
         <exclude-pattern>*/database/*</exclude-pattern>
     </rule>
@@ -19,7 +23,9 @@
     <rule ref="Generic.Commenting.DocComment.SpacingBeforeTags" />
     <rule ref="MySource.Commenting.FunctionComment.InvalidReturn" />
     <rule ref="MySource.Commenting.FunctionComment.MissingParamComment" />
-    <rule ref="MySource.Commenting.FunctionComment.TypeHintMissing" />
+    <rule ref="MySource.Commenting.FunctionComment.TypeHintMissing">
+        <exclude-pattern>*/src/Router.php</exclude-pattern>
+    </rule>
     <rule ref="Generic.Arrays.DisallowLongArraySyntax" />
     <rule ref="Generic.Classes.DuplicateClassName" />
     <rule ref="Generic.CodeAnalysis.EmptyStatement" />

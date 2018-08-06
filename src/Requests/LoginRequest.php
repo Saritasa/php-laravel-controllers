@@ -1,5 +1,5 @@
 <?php
-namespace Saritasa\Laravel\Controllers\Requests;
+namespace Saritasa\LaravelControllers\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -13,9 +13,8 @@ class LoginRequest extends FormRequest
      *
      * @return boolean
      */
-    public function authorize()
+    public function authorize(): bool
     {
-        // Allows all users access
         return true;
     }
 
@@ -24,7 +23,7 @@ class LoginRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'email'    => 'required|email',

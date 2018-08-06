@@ -1,12 +1,14 @@
 <?php
 
-namespace Saritasa\Laravel\Controllers\Responses;
+namespace Saritasa\LaravelControllers\Responses;
 
-use Saritasa\Transformers\DtoModel;
+use Saritasa\Dto;
 
-class AuthSuccess extends DtoModel
+/**
+ * Auth success response message.
+ */
+class AuthSuccess extends Dto
 {
-
     /**
      * Authentication token
      *
@@ -14,8 +16,13 @@ class AuthSuccess extends DtoModel
      */
     protected $token;
 
+    /**
+     * Auth success response message.
+     *
+     * @param string $token User token
+     */
     public function __construct(string $token)
     {
-        parent::__construct([ 'token' => $token]);
+        parent::__construct(['token' => $token]);
     }
 }
