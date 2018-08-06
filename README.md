@@ -11,12 +11,12 @@ Controllers for common UI and endpoints in Laravel,
 like API authentication, password change, login page, etc.    
     
 ## Laravel 5.5  
-  Install the ```saritasa/laravel-controllers``` package:    
+Install the ```saritasa/laravel-controllers``` package:    
     
 ```bash $ composer require saritasa/laravel-controllers  
 ```  
-  ## Available controllers    
- There are 2 types of controllers:    
+ ## Available controllers    
+There are 2 types of controllers:    
 * **Web** - interactive UI for user - traditional Laravel controllers.    
   Many of them just provide out-of-the-box Laravel functionality,    
   using built-in traits.    
@@ -32,7 +32,7 @@ Controllers, described below, exist, but you  must register routes for them manu
 Recommended to use as base controller for other API controllers.    
     
 #### Methods    
- * function json($data, IDataTransformer $transformer = null): Response    
+* function json($data, IDataTransformer $transformer = null): Response    
 * function validate(Request $request, array $rules, array $messages = [], array $customAttributes = [])    
     
 **Example**:    
@@ -51,10 +51,10 @@ class UserApiController extends BaseApiController
 		 return $this->json($user);
 	  }
 }
- ```    
+```    
  ### JWTAuthApiController Authenticate API Controller. Uses JWT authentication    
 Utilizes [Dingo\Api JWT Auth](https://github.com/dingo/api/wiki/Authentication#json-web-tokens-jwt)    
- settings and underlying [tymon\jwt-auth](https://github.com/tymondesigns/jwt-auth)    
+settings and underlying [tymon\jwt-auth](https://github.com/tymondesigns/jwt-auth)    
     
 **Example**: routes\api.php:    
 ```php
@@ -63,7 +63,7 @@ app('api.router')->version(config('api.version'), ['namespace' => 'Saritasa\Lara
  // Authentication $api->post('auth', 'AuthController@login');   // Login $api->put('auth', 'AuthController@refreshToken'); // Refresh expired token                
  $api->delete('auth', 'AuthController@logout')->middleware('api.auth'); // Logout  
  });
- ```  
+```  
 ### ResourceApiController  
 Controller for typical CRUD operations when you don't need many additional logic.  
 For using this functionality you can just create controller and set needed model class in property $modelClass  
@@ -79,7 +79,7 @@ class CustomApiController extends ResourceApiController
     protected $modelClass = App\Models\User::class;  
  }
  ```  
-  ### ForgotPasswordApiController, ResetPasswordApiController These controllers are responsible for handling password reset emails.    
+### ForgotPasswordApiController, ResetPasswordApiController These controllers are responsible for handling password reset emails.    
 Utilize native Laravel password management without UI, in JSON API.    
     
 **Example**: routes\api.php:    
@@ -92,38 +92,38 @@ function (\Dingo\Api\Routing\Router $api) { $api->post('auth/password/reset', 'F
  ```php
  $registrar->get('users', ApiController::class, 'list'); 
 ```    
- In this case ApiController::list will be calling with default dependency injection.    
+In this case ApiController::list will be calling with default dependency injection.    
     
 ### Route with parameters
 ```php    
  // Controller exmaple class ApiController {    
  public function show(int $id) { }}    
  // Route example $registrar->get('users/{id}', ApiController::class, 'show');
- ```
- In this case ApiController::show will receive directly parameter from url. Ex: /user/5    
+```
+In this case ApiController::show will receive directly parameter from url. Ex: /user/5    
     
 ### Route with binding on controller side
 ```php
 // Controller exmaple class ApiController {    
  public function show(User $user) { }}    
  // Route example $registrar->get('users/{user}', ApiController::class, 'show');
- ```
-  In this case ApiController::show try to find Model user by id and if not exists throws ModelNotFoundException.    
+```
+In this case ApiController::show try to find Model user by id and if not exists throws ModelNotFoundException.    
     
 ### Route with binding on route side
 ```php
 // Controller exmaple class ApiController {    
  public function show(Model $user) { }}    
  // Route example $registrar->get('users/{user}', ApiController::class, 'show', null, ['user' => User::class]);
- ```
- In this case no matter what type hint in controller, container will be trying to give object of class that you pass in router registrar.
+```
+In this case no matter what type hint in controller, container will be trying to give object of class that you pass in router registrar.
 So if method has type hinting of class which not a parent for given in router, TypeError will be thrown.    
     
 #### Note: In 2 last cases classes which uses for model bindings must implement Illuminate\Contracts\Routing\UrlRoutable otherwise this parameters    
 will be ignored.    
     
 ## Contributing    
- 1. Create fork, checkout it    
+1. Create fork, checkout it    
 2. Develop locally as usual. **Code must follow [PSR-1](http://www.php-fig.org/psr/psr-1/), [PSR-2](http://www.php-fig.org/psr/psr-2/)** -    
     run [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer) to ensure, that code follows style guides    
 3. **Cover added functionality with unit tests** and run [PHPUnit](https://phpunit.de/) to make sure, that all tests pass    
@@ -132,7 +132,7 @@ will be ignored.
 6. When ready, create pull request    
     
 ### Make shortcuts    
- If you have [GNU Make](https://www.gnu.org/software/make/) installed, you can use following shortcuts:    
+If you have [GNU Make](https://www.gnu.org/software/make/) installed, you can use following shortcuts:    
     
 * ```make cs``` (instead of ```php vendor/bin/phpcs```) -    
     run static code analysis with [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)    
@@ -147,7 +147,7 @@ will be ignored.
     project will be assembled, checked with linter and tested with one single command    
     
 ## Resources    
- * [Bug Tracker](http://github.com/saritasa/php-laravel-controllers/issues)    
+* [Bug Tracker](http://github.com/saritasa/php-laravel-controllers/issues)    
 * [Code](http://github.com/saritasa/php-laravel-controllers)    
 * [Changes History](CHANGES.md)    
 * [Authors](http://github.com/saritasa/php-laravel-controllers/contributors)
