@@ -2,12 +2,13 @@
 
 namespace Saritasa\LaravelControllers\Responses;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Saritasa\Dto;
 
 /**
  * Error message for use in responses.
  */
-class ErrorMessage extends Dto
+class ErrorMessage extends Dto implements Arrayable
 {
     /**
      * Error message text.

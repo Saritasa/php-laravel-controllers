@@ -2,12 +2,13 @@
 
 namespace Saritasa\LaravelControllers\Responses;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Saritasa\Transformers\DtoModel;
 
 /**
  * Success message for use in responses.
  */
-class SuccessMessage extends DtoModel
+class SuccessMessage extends DtoModel implements Arrayable
 {
     /**
      * Success message text.

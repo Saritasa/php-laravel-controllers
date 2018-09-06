@@ -2,12 +2,13 @@
 
 namespace Saritasa\LaravelControllers\Responses;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Saritasa\Dto;
 
 /**
  * Auth success response message.
  */
-class AuthSuccess extends Dto
+class AuthSuccess extends Dto implements Arrayable
 {
     /**
      * Authentication token
