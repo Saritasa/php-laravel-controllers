@@ -22,7 +22,7 @@ final class WebResourceRegistrar
     private const DELETE = 'delete';
 
     /**
-     *  Original Laravel router service.
+     * Original Laravel router service.
      *
      * @var Router
      */
@@ -37,7 +37,7 @@ final class WebResourceRegistrar
         'read' => ['verb' => self::GET, 'route' => '/{id}', 'ajax' => true],
         'edit' => ['verb' => self::GET, 'route' => '/{id}/edit'],
         'update' => ['verb' => self::PUT, 'route' => '/{id}', 'ajax' => true],
-        'destroy' => ['verb' => self::DELETE, 'route' => '/{id}', 'ajax' => true]
+        'destroy' => ['verb' => self::DELETE, 'route' => '/{id}', 'ajax' => true],
     ];
 
     public const VERBS = [self::GET, self::POST, self::PUT, self::PATCH, self::DELETE];
@@ -53,7 +53,7 @@ final class WebResourceRegistrar
     }
 
     /**
-     * Registers controller methods
+     * Registers controller methods.
      *
      * index -   as GET /resourceName - page, that displays list of resource entities
      * indexData as GET /resourceName (for AJAX requests only) - gets data for index page
@@ -138,6 +138,7 @@ final class WebResourceRegistrar
      * @param string $modelClass Class name to resolve.
      *
      * @return string
+     *
      * @throws ReflectionException
      */
     protected function getShortClassName(string $modelClass): string
@@ -267,8 +268,8 @@ final class WebResourceRegistrar
         string $verb,
         string $path,
         string $controller,
-        string $action = null,
-        string $route = null,
+        ?string $action = null,
+        ?string $route = null,
         array $mapping = []
     ) {
         $controller = $this->removeNamespace($controller);
@@ -325,6 +326,7 @@ final class WebResourceRegistrar
      * Converts to array and then flip parameter if it string.
      *
      * @param string|array $value Parameter to flip
+     *
      * @return array|null
      */
     private function asMap($value): ?array

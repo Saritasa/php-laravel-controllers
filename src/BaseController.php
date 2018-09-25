@@ -2,15 +2,16 @@
 
 namespace Saritasa\LaravelControllers;
 
-use Illuminate\Routing\Controller;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Routing\Controller;
 
 /**
- * Custom base controller for Saritasa application
- * Authorizes requests and validates requests
+ * Custom base controller for Saritasa application.
+ * Authorizes requests and validates requests.
  */
 class BaseController extends Controller
 {
-    use AuthorizesRequests, ValidatesRequests;
+    use AuthorizesRequests;
+    use ValidatesRequests;
 }

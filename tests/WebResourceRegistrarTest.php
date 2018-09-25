@@ -3,6 +3,7 @@
 namespace Saritasa\LaravelControllers\Tests;
 
 use Illuminate\Contracts\Routing\Registrar;
+use InvalidArgumentException;
 use Mockery;
 use Mockery\MockInterface;
 use ReflectionClass;
@@ -46,15 +47,15 @@ class WebResourceRegistrarTest extends TestCase
 
         $this->routerMock->shouldReceive('get')
             ->andReturnUsing(
-                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                function (string $resource, array $options) use ($resourceName, $controllerName): void {
                     $this->assertEquals($resourceName, $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.index",
                         'uses' => "$controllerName@index",
-                        'mapping' => []
+                        'mapping' => [],
                     ], $options);
                 },
-                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                function (string $resource, array $options) use ($resourceName, $controllerName): void {
                     $this->assertEquals("$resourceName", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.indexData",
@@ -63,7 +64,7 @@ class WebResourceRegistrarTest extends TestCase
                         'prefix' => 'ajax',
                     ], $options);
                 },
-                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                function (string $resource, array $options) use ($resourceName, $controllerName): void {
                     $this->assertEquals("$resourceName/create", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.create",
@@ -71,15 +72,15 @@ class WebResourceRegistrarTest extends TestCase
                         'mapping' => [],
                     ], $options);
                 },
-                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                function (string $resource, array $options) use ($resourceName, $controllerName): void {
                     $this->assertEquals("$resourceName/{id}", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.show",
                         'uses' => "$controllerName@show",
-                        'mapping' => []
+                        'mapping' => [],
                     ], $options);
                 },
-                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                function (string $resource, array $options) use ($resourceName, $controllerName): void {
                     $this->assertEquals("$resourceName/{id}", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.read",
@@ -88,7 +89,7 @@ class WebResourceRegistrarTest extends TestCase
                         'prefix' => 'ajax',
                     ], $options);
                 },
-                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                function (string $resource, array $options) use ($resourceName, $controllerName): void {
                     $this->assertEquals("$resourceName/{id}/edit", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.edit",
@@ -99,7 +100,7 @@ class WebResourceRegistrarTest extends TestCase
             );
         $this->routerMock->shouldReceive('post')
             ->andReturnUsing(
-                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                function (string $resource, array $options) use ($resourceName, $controllerName): void {
                     $this->assertEquals($resourceName, $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.store",
@@ -111,7 +112,7 @@ class WebResourceRegistrarTest extends TestCase
             );
         $this->routerMock->shouldReceive('put')
             ->andReturnUsing(
-                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                function (string $resource, array $options) use ($resourceName, $controllerName): void {
                     $this->assertEquals("$resourceName/{id}", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.update",
@@ -123,7 +124,7 @@ class WebResourceRegistrarTest extends TestCase
             );
         $this->routerMock->shouldReceive('delete')
             ->andReturnUsing(
-                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                function (string $resource, array $options) use ($resourceName, $controllerName): void {
                     $this->assertEquals("$resourceName/{id}", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.destroy",
@@ -155,12 +156,12 @@ class WebResourceRegistrarTest extends TestCase
 
         $this->routerMock->shouldReceive('get')
             ->andReturnUsing(
-                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                function (string $resource, array $options) use ($resourceName, $controllerName): void {
                     $this->assertEquals("$resourceName/{id}", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.show",
                         'uses' => "$controllerName@show",
-                        'mapping' => []
+                        'mapping' => [],
                     ], $options);
                 }
             );
@@ -197,13 +198,13 @@ class WebResourceRegistrarTest extends TestCase
                     $controllerName,
                     $shortName,
                     $className
-                ) {
+                ): void {
                     $this->assertEquals("$resourceName/{{$shortName}}", $resource);
 
                     $this->assertEquals([
                         'as' => "$resourceName.show",
                         'uses' => "$controllerName@show",
-                        'mapping' => [$shortName => $className]
+                        'mapping' => [$shortName => $className],
                     ], $options);
                 }
             );
@@ -218,7 +219,7 @@ class WebResourceRegistrarTest extends TestCase
                     $controllerName,
                     $shortName,
                     $className
-                ) {
+                ): void {
                     $this->assertEquals("$resourceName/{{$shortName}}", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.update",
@@ -238,7 +239,7 @@ class WebResourceRegistrarTest extends TestCase
                     $controllerName,
                     $shortName,
                     $className
-                ) {
+                ): void {
                     $this->assertEquals("$resourceName/{{$shortName}}", $resource);
                     $this->assertEquals(
                         [
@@ -270,7 +271,7 @@ class WebResourceRegistrarTest extends TestCase
         $options = [
             'get' => false,
         ];
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $registrar = new WebResourceRegistrar($this->routerMock);
         $registrar->resource($resourceName, $controllerName, $options);
     }
@@ -299,12 +300,12 @@ class WebResourceRegistrarTest extends TestCase
                     $mapping,
                     $action,
                     $routeName
-                ) {
+                ): void {
                     $this->assertEquals($expectedPath, $path);
                     $this->assertEquals([
                         'as' => $routeName,
                         'uses' => "$controllerName@$action",
-                        'mapping' => $mapping
+                        'mapping' => $mapping,
                     ], $options);
                 }
             );
@@ -336,12 +337,12 @@ class WebResourceRegistrarTest extends TestCase
                         $controllerName,
                         $mapping,
                         $routeName
-                    ) {
+                    ): void {
                         $this->assertEquals($expectedPath, $path);
                         $this->assertEquals([
                             'as' => $routeName,
                             'uses' => "$controllerName@$expectedPath",
-                            'mapping' => $mapping
+                            'mapping' => $mapping,
                         ], $options);
                     }
                 );
@@ -375,12 +376,12 @@ class WebResourceRegistrarTest extends TestCase
                         $mapping,
                         $action,
                         $route
-                    ) {
+                    ): void {
                         $this->assertEquals($expectedPath, $path);
                         $this->assertEquals([
                             'as' => $route,
                             'uses' => "$controllerName@$action",
-                            'mapping' => $mapping
+                            'mapping' => $mapping,
                         ], $options);
                     }
                 );
@@ -414,12 +415,12 @@ class WebResourceRegistrarTest extends TestCase
                         $mapping,
                         $action,
                         $route
-                    ) {
+                    ): void {
                         $this->assertEquals($expectedPath, $path);
                         $this->assertEquals([
                             'as' => $route,
                             'uses' => "$controllerName@$action",
-                            'mapping' => $mapping
+                            'mapping' => $mapping,
                         ], $options);
                     }
                 );

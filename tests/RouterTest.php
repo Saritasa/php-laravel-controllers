@@ -5,14 +5,14 @@ namespace Saritasa\LaravelControllers\Tests;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Routing\UrlRoutable;
-use Illuminate\Database\Eloquent\Model;
-use Mockery;
-use Saritasa\LaravelRepositories\Contracts\IRepository;
-use Saritasa\LaravelRepositories\Exceptions\ModelNotFoundException;
 use Illuminate\Routing\Route;
+use Mockery;
 use Mockery\MockInterface;
-use Saritasa\LaravelRepositories\Contracts\IRepositoryFactory;
+use ReflectionClass;
 use Saritasa\LaravelControllers\Router;
+use Saritasa\LaravelRepositories\Contracts\IRepository;
+use Saritasa\LaravelRepositories\Contracts\IRepositoryFactory;
+use Saritasa\LaravelRepositories\Exceptions\ModelNotFoundException;
 use Saritasa\LaravelRepositories\Exceptions\RepositoryException;
 
 /**
@@ -137,7 +137,7 @@ class RouterTest extends TestCase
                 $actualModel
             ) use (
                 $expectedModel
-            ) {
+            ): void {
                 $this->assertEquals('name', $name);
                 $this->assertEquals($expectedModel, $actualModel);
             });
@@ -197,7 +197,7 @@ class RouterTest extends TestCase
         $firstParameter = Mocks::mockReflectionParameter('name')
         ->shouldAllowMockingProtectedMethods();
         $className = str_random();
-        $reflectionClass = Mockery::mock(\ReflectionClass::class);
+        $reflectionClass = Mockery::mock(ReflectionClass::class);
         $reflectionClass->shouldReceive('getName')->withArgs([])->andReturn($className);
         $firstParameter->shouldReceive('getClass')
             ->withArgs([])
@@ -235,7 +235,7 @@ class RouterTest extends TestCase
                 $actualModel
             ) use (
                 $expectedModel
-            ) {
+            ): void {
                 $this->assertEquals('name', $name);
                 $this->assertEquals($expectedModel, $actualModel);
             });

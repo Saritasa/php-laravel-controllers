@@ -2,11 +2,11 @@
 
 namespace Saritasa\LaravelControllers\Api;
 
+use Dingo\Api\Http\Request;
 use Dingo\Api\Http\Response;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\ResetsPasswords;
-use Dingo\Api\Http\Request;
 use Illuminate\Support\Str;
 use Saritasa\LaravelControllers\Responses\ErrorMessage;
 use Saritasa\LaravelControllers\Responses\SuccessMessage;
@@ -18,17 +18,6 @@ use Saritasa\LaravelControllers\Responses\SuccessMessage;
  */
 class ResetPasswordApiController extends BaseApiController
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Password Reset Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller is responsible for handling password reset requests
-    | and uses a simple trait to include this behavior. You're free to
-    | explore this trait and override any methods you wish to tweak.
-    |
-    */
-
     use ResetsPasswords;
 
     /**
@@ -38,7 +27,7 @@ class ResetPasswordApiController extends BaseApiController
      *
      * @return Response
      */
-    protected function sendResetResponse($response): Response
+    protected function sendResetResponse(string $response): Response
     {
         return $this->json(new SuccessMessage(trans($response)));
     }

@@ -4,6 +4,7 @@ namespace Saritasa\LaravelControllers\Api;
 
 use Dingo\Api\Routing\Router;
 use InvalidArgumentException;
+use ReflectionClass;
 use ReflectionException;
 
 /**
@@ -47,7 +48,7 @@ final class ApiResourceRegistrar
         self::ACTION_UPDATE => [self::OPTION_VERB => self::PUT, self::OPTION_ROUTE => '/' . self::ID_ROUTE_PARAMETER],
         self::ACTION_DESTROY => [
             self::OPTION_VERB => self::DELETE,
-            self::OPTION_ROUTE => '/' . self::ID_ROUTE_PARAMETER
+            self::OPTION_ROUTE => '/' . self::ID_ROUTE_PARAMETER,
         ],
     ];
 
@@ -64,7 +65,7 @@ final class ApiResourceRegistrar
     }
 
     /**
-     * Registers controller methods
+     * Registers controller methods.
      *
      * index   - as GET /resourceName
      * create  - as POST /resourceName
@@ -76,8 +77,8 @@ final class ApiResourceRegistrar
      * @param string $resourceName URI of resource
      * @param string $controller FQDN Class name of Controller, which contains action method
      * @param array $options options, passed to router on route registration
-     * @param string $modelClass Model to resolve binding
-     * @param string $modelName Model parameter name
+     * @param string|null $modelClass Model to resolve binding
+     * @param string|null $modelName Model parameter name
      *
      * @return void
      *
@@ -87,8 +88,8 @@ final class ApiResourceRegistrar
         string $resourceName,
         string $controller,
         array $options = [],
-        string $modelClass = null,
-        string $modelName = null
+        ?string $modelClass = null,
+        ?string $modelName = null
     ): void {
         $routes = [];
         if (count($options) === 0) {
@@ -242,11 +243,12 @@ final class ApiResourceRegistrar
      * @param string $modelClass Class name to resolve.
      *
      * @return string
+     *
      * @throws ReflectionException
      */
     protected function getShortClassName(string $modelClass): string
     {
-        $reflectionClass = new \ReflectionClass($modelClass);
+        $reflectionClass = new ReflectionClass($modelClass);
         return $reflectionClass->getShortName();
     }
 

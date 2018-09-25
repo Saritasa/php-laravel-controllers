@@ -3,9 +3,9 @@
 namespace Saritasa\LaravelControllers\Tests;
 
 use Dingo\Api\Routing\Router;
+use InvalidArgumentException;
 use Mockery;
 use Mockery\MockInterface;
-use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
 use Saritasa\LaravelControllers\Api\ApiResourceRegistrar;
@@ -47,61 +47,61 @@ class ApiResourceRegistrarTest extends TestCase
 
         $this->routerMock->shouldReceive('get')
             ->andReturnUsing(
-                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                function (string $resource, array $options) use ($resourceName, $controllerName): void {
                     $this->assertEquals("$resourceName/count", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.count",
                         'uses' => "$controllerName@count",
-                        'mapping' => []
+                        'mapping' => [],
                     ], $options);
                 },
-                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                function (string $resource, array $options) use ($resourceName, $controllerName): void {
                     $this->assertEquals($resourceName, $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.index",
                         'uses' => "$controllerName@index",
-                        'mapping' => []
+                        'mapping' => [],
                     ], $options);
                 },
-                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                function (string $resource, array $options) use ($resourceName, $controllerName): void {
                     $this->assertEquals("$resourceName/{id}", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.show",
                         'uses' => "$controllerName@show",
-                        'mapping' => []
+                        'mapping' => [],
                     ], $options);
                 }
             );
         $this->routerMock->shouldReceive('post')
             ->andReturnUsing(
-                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                function (string $resource, array $options) use ($resourceName, $controllerName): void {
                     $this->assertEquals($resourceName, $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.create",
                         'uses' => "$controllerName@create",
-                        'mapping' => []
+                        'mapping' => [],
                     ], $options);
                 }
             );
         $this->routerMock->shouldReceive('put')
             ->andReturnUsing(
-                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                function (string $resource, array $options) use ($resourceName, $controllerName): void {
                     $this->assertEquals("$resourceName/{id}", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.update",
                         'uses' => "$controllerName@update",
-                        'mapping' => []
+                        'mapping' => [],
                     ], $options);
                 }
             );
         $this->routerMock->shouldReceive('delete')
             ->andReturnUsing(
-                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                function (string $resource, array $options) use ($resourceName, $controllerName): void {
                     $this->assertEquals("$resourceName/{id}", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.destroy",
                         'uses' => "$controllerName@destroy",
-                        'mapping' => []
+                        'mapping' => [],
                     ], $options);
                 }
             );
@@ -111,7 +111,7 @@ class ApiResourceRegistrarTest extends TestCase
     }
 
     /**
-     * Test crfeation of resource with passing additional options.
+     * Test creation of resource with passing additional options.
      *
      * @return void
      *
@@ -127,12 +127,12 @@ class ApiResourceRegistrarTest extends TestCase
 
         $this->routerMock->shouldReceive('get')
             ->andReturnUsing(
-                function (string $resource, array $options) use ($resourceName, $controllerName) {
+                function (string $resource, array $options) use ($resourceName, $controllerName): void {
                     $this->assertEquals("$resourceName/{id}", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.show",
                         'uses' => "$controllerName@show",
-                        'mapping' => []
+                        'mapping' => [],
                     ], $options);
                 }
             );
@@ -168,12 +168,12 @@ class ApiResourceRegistrarTest extends TestCase
                     $controllerName,
                     $shortName,
                     $className
-                ) {
+                ): void {
                     $this->assertEquals("$resourceName/{{$shortName}}", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.show",
                         'uses' => "$controllerName@show",
-                        'mapping' => [$shortName => $className]
+                        'mapping' => [$shortName => $className],
                     ], $options);
                 }
             );
@@ -188,12 +188,12 @@ class ApiResourceRegistrarTest extends TestCase
                     $controllerName,
                     $shortName,
                     $className
-                ) {
+                ): void {
                     $this->assertEquals("$resourceName/{{$shortName}}", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.update",
                         'uses' => "$controllerName@update",
-                        'mapping' => [$shortName => $className]
+                        'mapping' => [$shortName => $className],
                     ], $options);
                 }
             );
@@ -207,13 +207,13 @@ class ApiResourceRegistrarTest extends TestCase
                     $controllerName,
                     $shortName,
                     $className
-                ) {
+                ): void {
                     $this->assertEquals("$resourceName/{{$shortName}}", $resource);
                     $this->assertEquals(
                         [
                         'as' => "$resourceName.destroy",
                         'uses' => "$controllerName@destroy",
-                        'mapping' => [$shortName => $className]
+                        'mapping' => [$shortName => $className],
                         ],
                         $options
                     );
@@ -251,12 +251,12 @@ class ApiResourceRegistrarTest extends TestCase
                     $controllerName,
                     $customName,
                     $className
-                ) {
+                ): void {
                     $this->assertEquals("$resourceName/{{$customName}}", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.show",
                         'uses' => "$controllerName@show",
-                        'mapping' => [$customName => $className]
+                        'mapping' => [$customName => $className],
                     ], $options);
                 }
             );
@@ -271,12 +271,12 @@ class ApiResourceRegistrarTest extends TestCase
                     $controllerName,
                     $customName,
                     $className
-                ) {
+                ): void {
                     $this->assertEquals("$resourceName/{{$customName}}", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.update",
                         'uses' => "$controllerName@update",
-                        'mapping' => [$customName => $className]
+                        'mapping' => [$customName => $className],
                     ], $options);
                 }
             );
@@ -290,12 +290,12 @@ class ApiResourceRegistrarTest extends TestCase
                     $controllerName,
                     $customName,
                     $className
-                ) {
+                ): void {
                     $this->assertEquals("$resourceName/{{$customName}}", $resource);
                     $this->assertEquals([
                         'as' => "$resourceName.destroy",
                         'uses' => "$controllerName@destroy",
-                        'mapping' => [$customName => $className]
+                        'mapping' => [$customName => $className],
                     ], $options);
                 }
             );
@@ -347,12 +347,12 @@ class ApiResourceRegistrarTest extends TestCase
                     $mapping,
                     $action,
                     $routeName
-                ) {
+                ): void {
                     $this->assertEquals($expectedPath, $path);
                     $this->assertEquals([
                         'as' => $routeName,
                         'uses' => "$controllerName@$action",
-                        'mapping' => $mapping
+                        'mapping' => $mapping,
                     ], $options);
                 }
             );
@@ -384,12 +384,12 @@ class ApiResourceRegistrarTest extends TestCase
                         $controllerName,
                         $mapping,
                         $routeName
-                    ) {
+                    ): void {
                         $this->assertEquals($expectedPath, $path);
                         $this->assertEquals([
                             'as' => $routeName,
                             'uses' => "$controllerName@$expectedPath",
-                            'mapping' => $mapping
+                            'mapping' => $mapping,
                         ], $options);
                     }
                 );
@@ -423,12 +423,12 @@ class ApiResourceRegistrarTest extends TestCase
                         $mapping,
                         $action,
                         $route
-                    ) {
+                    ): void {
                         $this->assertEquals($expectedPath, $path);
                         $this->assertEquals([
                             'as' => $route,
                             'uses' => "$controllerName@$action",
-                            'mapping' => $mapping
+                            'mapping' => $mapping,
                         ], $options);
                     }
                 );
@@ -462,12 +462,12 @@ class ApiResourceRegistrarTest extends TestCase
                         $mapping,
                         $action,
                         $route
-                    ) {
+                    ): void {
                         $this->assertEquals($expectedPath, $path);
                         $this->assertEquals([
                             'as' => $route,
                             'uses' => "$controllerName@$action",
-                            'mapping' => $mapping
+                            'mapping' => $mapping,
                         ], $options);
                     }
                 );

@@ -68,7 +68,7 @@ class ResourceApiController extends BaseApiController
      *
      * @throws EntityServiceException
      */
-    public function __construct(IEntityServiceFactory $entityServiceFactory, IDataTransformer $transformer = null)
+    public function __construct(IEntityServiceFactory $entityServiceFactory, ?IDataTransformer $transformer = null)
     {
         parent::__construct($transformer);
         $this->entityService = $entityServiceFactory->build($this->modelClass);

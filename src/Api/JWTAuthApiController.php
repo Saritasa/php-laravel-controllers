@@ -28,7 +28,7 @@ class JWTAuthApiController extends BaseApiController
      * @param JWTAuth $jwtAuth Jwt guard
      * @param IDataTransformer $transformer Default transformer to apply to handled entity
      */
-    public function __construct(JWTAuth $jwtAuth, IDataTransformer $transformer = null)
+    public function __construct(JWTAuth $jwtAuth, ?IDataTransformer $transformer = null)
     {
         $this->jwtAuth = $jwtAuth;
         parent::__construct($transformer);
@@ -50,11 +50,11 @@ class JWTAuthApiController extends BaseApiController
             if (!$token = $this->jwtAuth->attempt($credentials)) {
                 $this->response->errorNotFound(trans('controllers::auth.failed'));
             }
+
+            return $this->json(new AuthSuccess($token));
         } catch (JWTException $e) {
             $this->response->errorInternal(trans('controllers::auth.jwt_error'));
         }
-
-        return $this->json(new AuthSuccess($token));
     }
 
     /**

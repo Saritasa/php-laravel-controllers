@@ -1,10 +1,11 @@
 <?php
+
 namespace Saritasa\LaravelControllers\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Validate login request
+ * Validate login request.
  */
 class LoginRequest extends FormRequest
 {

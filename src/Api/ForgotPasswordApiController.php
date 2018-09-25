@@ -16,17 +16,6 @@ use Saritasa\Transformers\BaseTransformer;
  */
 class ForgotPasswordApiController extends BaseApiController
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Password Reset Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller is responsible for handling password reset emails and
-    | includes a trait which assists in sending these notifications from
-    | your application to your users. Feel free to explore this trait.
-    |
-    */
-
     use SendsPasswordResetEmails;
 
     /**
@@ -43,7 +32,7 @@ class ForgotPasswordApiController extends BaseApiController
     /**
      * Get the response for a successful password reset link.
      *
-     * @param  string  $languageResourceId Resource ID of message to display to user
+     * @param string $languageResourceId Resource ID of message to display to user
      *
      * @return Response
      */
@@ -55,8 +44,8 @@ class ForgotPasswordApiController extends BaseApiController
     /**
      * Get the response for a failed password reset link.
      *
-     * @param  Request $request HTTP Request
-     * @param  string  $languageResourceId Resource ID of message to display to user
+     * @param Request $request HTTP Request
+     * @param string $languageResourceId Resource ID of message to display to user
      *
      * @return void
      */

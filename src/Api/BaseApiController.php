@@ -15,7 +15,8 @@ use Saritasa\Transformers\IDataTransformer;
  */
 abstract class BaseApiController extends Controller
 {
-    use Helpers, AuthorizesRequests;
+    use Helpers;
+    use AuthorizesRequests;
 
     /**
      * Default Fractal/Transformer instance to use
@@ -27,14 +28,14 @@ abstract class BaseApiController extends Controller
     /**
      * Base API controller, utilizing helpers from Dingo/API package.
      *
-     * @param IDataTransformer $transformer default transformer to apply to handled entity.
+     * @param IDataTransformer|null $transformer Default transformer to apply to handled entity.
      * If not provided, BaseTransformer is used
      *
      * @see BaseTransformer - default transformer
      */
-    public function __construct(IDataTransformer $transformer = null)
+    public function __construct(?IDataTransformer $transformer = null)
     {
-        $this->transformer = $transformer ?: new BaseTransformer();
+        $this->transformer = $transformer ?? new BaseTransformer();
     }
 
     /**
@@ -46,7 +47,7 @@ abstract class BaseApiController extends Controller
      *
      * @return Response
      */
-    protected function json($data, IDataTransformer $transformer = null): Response
+    protected function json($data, ?IDataTransformer $transformer = null): Response
     {
         $t = $transformer ?: $this->transformer;
         if ($data instanceof Paginator) {

@@ -3,10 +3,10 @@
 namespace Saritasa\LaravelControllers\Tests;
 
 use Mockery;
+use Mockery\MockInterface;
 use ReflectionFunctionAbstract;
 use ReflectionParameter;
 use Saritasa\LaravelControllers\ControllerDispatcher;
-use Mockery\MockInterface;
 
 /**
  * Test that controller dispatcher right resolved given route params.
@@ -51,7 +51,7 @@ class ControllerDispatcherTest extends TestCase
         $parameters = ['id' => true];
 
         $this->reflectionFunction->shouldReceive('getParameters')->andReturn([
-            Mocks::mockReflectionParameter('id')
+            Mocks::mockReflectionParameter('id'),
         ]);
 
         $actualParameters = $this->dispatcher->resolveMethodDependencies($parameters, $this->reflectionFunction);
