@@ -77,8 +77,8 @@ class ApiResourceRegistrarTest extends TestCase
                 function (string $resource, array $options) use ($resourceName, $controllerName): void {
                     $this->assertEquals($resourceName, $resource);
                     $this->assertEquals([
-                        'as' => "$resourceName.create",
-                        'uses' => "$controllerName@create",
+                        'as' => "$resourceName.store",
+                        'uses' => "$controllerName@store",
                         'mapping' => [],
                     ], $options);
                 }
@@ -236,7 +236,7 @@ class ApiResourceRegistrarTest extends TestCase
         $resourceName = str_random();
         $controllerName = str_random();
         $options = [
-            ApiResourceRegistrar::OPTION_EXCEPT => ['index', 'create', 'count'],
+            ApiResourceRegistrar::OPTION_EXCEPT => ['index', 'store', 'count'],
         ];
         $className = BaseController::class;
         $customName = lcfirst(str_random());
