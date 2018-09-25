@@ -26,7 +26,7 @@ final class ApiResourceRegistrar
     // Available controller actions
     public const ACTION_INDEX = 'index';
     public const ACTION_SHOW = 'show';
-    public const ACTION_CREATE = 'create';
+    public const ACTION_CREATE = 'store';
     public const ACTION_UPDATE = 'update';
     public const ACTION_DESTROY = 'destroy';
     public const ACTION_COUNT = 'count';
