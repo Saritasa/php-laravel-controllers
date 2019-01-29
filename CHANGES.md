@@ -1,5 +1,9 @@
 # Changes History
 
+3.0.1
+-----
+Switched to Dingo/Api 2.0 beta (which contains bugfix in authentication)
+
 3.0.0
 -----
 - Change namespace from Saritasa\Laravel\Controllers to Saritasa\LaravelControllers
