@@ -1,8 +1,8 @@
 # Laravel Controllers    
- [![Build Status](https://travis-ci.org/Saritasa/php-laravel-controllers.svg?branch=master)](https://travis-ci.org/Saritasa/php-laravel-controllers)    
-[![codecov](https://codecov.io/gh/Saritasa/php-laravel-controllers/branch/master/graph/badge.svg)](https://codecov.io/gh/Saritasa/php-laravel-controllers)    
-[![Release](https://img.shields.io/github/release/saritasa/php-laravel-controllers.svg)](https://github.com/Saritasa/php-laravel-controllers/releases)    
-[![PHPv](https://img.shields.io/packagist/php-v/saritasa/laravel-controllers.svg)](http://www.php.net)    
+ [![Build Status](https://travis-ci.org/Saritasa/php-laravel-controllers.svg?branch=master)](https://travis-ci.org/Saritasa/php-laravel-controllers) 
+[![codecov](https://codecov.io/gh/Saritasa/php-laravel-controllers/branch/master/graph/badge.svg)](https://codecov.io/gh/Saritasa/php-laravel-controllers) 
+[![Release](https://img.shields.io/github/release/saritasa/php-laravel-controllers.svg)](https://github.com/Saritasa/php-laravel-controllers/releases) 
+[![PHPv](https://img.shields.io/packagist/php-v/saritasa/laravel-controllers.svg)](http://www.php.net) 
 [![Downloads](https://img.shields.io/packagist/dt/saritasa/laravel-controllers.svg)](https://packagist.org/packages/saritasa/laravel-controllers)    
     
 Controllers for common UI and endpoints in Laravel,    
