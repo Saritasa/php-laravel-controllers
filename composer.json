@@ -13,7 +13,7 @@
     "require": {
         "php": ">=7.1",
         "ext-json": "*",
-        "dingo/api": "2.0.0-alpha1",
+        "dingo/api": "2.0.*@beta",
         "illuminate/support": "^5.5",
         "saritasa/dingo-api-custom": "^2.0",
         "saritasa/transformers": "^1.0",
