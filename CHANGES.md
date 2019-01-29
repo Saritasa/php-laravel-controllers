@@ -1,8 +1,16 @@
 # Changes History
 
-3.0.1
+3.0.3
 -----
 Switched to Dingo/Api 2.0 beta (which contains bugfix in authentication)
+
+3.0.2
+-----
+Fixed controller method/route name when defined resource with ApiResourceRegistrar from create to store.
+
+3.0.1
+-----
+- Fixed issue with missing Arrayable contract at Responses DTO models.
 
 3.0.0
 -----
