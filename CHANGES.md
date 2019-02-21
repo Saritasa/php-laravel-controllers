@@ -1,5 +1,9 @@
 # Changes History
 
+3.0.4
+-----
+Fix the paths of the resource files.
+
 3.0.3
 -----
 Switched to Dingo/Api 2.0 beta (which contains bugfix in authentication)
