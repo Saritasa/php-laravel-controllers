@@ -19,8 +19,8 @@ class ControllersServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->replacesDefaultLaravelResolvers();
-        $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'controllers');
-        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'controllers');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'controllers');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'controllers');
     }
 
     /**
