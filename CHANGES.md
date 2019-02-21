@@ -1,5 +1,9 @@
 # Changes History
 
+2.0.9
+-----
+Fix the paths of the resource files.
+
 2.0.8
 -----
 Add [laravelcollective/html](https://github.com/LaravelCollective/html) as dependency

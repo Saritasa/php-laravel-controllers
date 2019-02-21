@@ -10,8 +10,8 @@ class ControllersServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'controllers');
-        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'controllers');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'controllers');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'controllers');
     }
 
     public function register()
