@@ -72,7 +72,18 @@ class Router extends LaravelRouter
             }
 
             $modelClass = $mapping[$parameterName] ?? $parameter->getClass()->getName();
-            $model = $this->repositoryFactory->getRepository($modelClass)->findOrFail($parameterValue);
+            /**
+             * Empty url routable model to het route key name.
+             *
+             * @var UrlRoutable $emptyModel
+             */
+            $emptyModel = new $modelClass();
+            $repository = $this->repositoryFactory->getRepository($modelClass);
+            $model = $repository->findWhere([$emptyModel->getRouteKeyName() => $parameterValue]);
+
+            if (!$model) {
+                throw new ModelNotFoundException($repository, $parameterValue);
+            }
 
             $route->setParameter($parameterName, $model);
         }
