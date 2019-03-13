@@ -125,10 +125,15 @@ class RouterTest extends TestCase
             ->withArgs([TestModel::class])
             ->andReturn($repositoryMock);
 
-        $repositoryMock->shouldReceive('findOrFail')
-            ->withArgs([$nameParameter])
-            ->andReturnUsing(function (string $value) {
-                return new TestModel(['id' => $value]);
+        $repositoryMock->shouldReceive('findWhere')
+            ->andReturnUsing(function (array $filters) {
+                $testModel = new TestModel();
+                $this->assertEquals(1, count($filters));
+                $this->assertEquals($testModel->getRouteKeyName(), key($filters));
+
+                $testModel->setAttribute($testModel->getRouteKeyName(), $filters[$testModel->getRouteKeyName()]);
+
+                return $testModel;
             });
 
         $this->route->shouldReceive('setParameter')
@@ -156,7 +161,7 @@ class RouterTest extends TestCase
     public function testExceptionWillThrownIfModelNotFound(): void
     {
         $firstParameter = Mocks::mockReflectionParameter('Name');
-        $className = str_random();
+        $className = TestModel::class;
         $this->route->shouldReceive('getAction')->withArgs(['mapping'])->andReturn([
             'name' => $className,
         ]);
@@ -170,11 +175,8 @@ class RouterTest extends TestCase
             ->withArgs([UrlRoutable::class])
             ->andReturn([$firstParameter]);
 
-
         $repositoryMock = Mocks::mockRepository($className);
-        $repositoryMock->shouldReceive('findOrFail')
-            ->withArgs([$nameParameter])
-            ->andThrow(new ModelNotFoundException($repositoryMock, $nameParameter));
+        $repositoryMock->shouldReceive('findWhere')->andReturnNull();
         $this->repositoryFactoryMock
             ->shouldReceive('getRepository')
             ->withArgs([$className])
@@ -196,7 +198,7 @@ class RouterTest extends TestCase
     {
         $firstParameter = Mocks::mockReflectionParameter('name')
         ->shouldAllowMockingProtectedMethods();
-        $className = str_random();
+        $className = TestModel::class;
         $reflectionClass = Mockery::mock(ReflectionClass::class);
         $reflectionClass->shouldReceive('getName')->withArgs([])->andReturn($className);
         $firstParameter->shouldReceive('getClass')
@@ -223,10 +225,15 @@ class RouterTest extends TestCase
             ->withArgs([$className])
             ->andReturn($repositoryMock);
 
-        $repositoryMock->shouldReceive('findOrFail')
-            ->withArgs([$nameParameter])
-            ->andReturnUsing(function (string $value) {
-                return new TestModel(['id' => $value]);
+        $repositoryMock->shouldReceive('findWhere')
+            ->andReturnUsing(function (array $filters) {
+                $testModel = new TestModel();
+                $this->assertEquals(1, count($filters));
+                $this->assertEquals($testModel->getRouteKeyName(), key($filters));
+
+                $testModel->setAttribute($testModel->getRouteKeyName(), $filters[$testModel->getRouteKeyName()]);
+
+                return $testModel;
             });
 
         $this->route->shouldReceive('setParameter')
