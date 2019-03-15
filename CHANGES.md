@@ -1,5 +1,9 @@
 # Changes History
 
+3.0.5
+-----
+Fix issue when rotatable model has key different from `id` 
+
 3.0.4
 -----
 Fix the paths of the resource files.
