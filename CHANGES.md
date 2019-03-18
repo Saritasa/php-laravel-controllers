@@ -1,5 +1,9 @@
 # Changes History
 
+3.1.0
+- Update versions of dependent packages
+- Added compatibility with laravel 5.8
+
 3.0.4
 -----
 Fix the paths of the resource files.
