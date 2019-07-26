@@ -1,6 +1,11 @@
 # Changes History
 
+3.1.1
+-----
+Fix logout error message
+
 3.1.0
+-----
 - Update versions of dependent packages
 - Added compatibility with laravel 5.8
 
