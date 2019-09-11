@@ -4,6 +4,7 @@ namespace Saritasa\LaravelControllers\Api;
 
 use Dingo\Api\Http\Request;
 use Dingo\Api\Http\Response;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Saritasa\DingoApi\Traits\PaginatedOutput;
@@ -14,6 +15,9 @@ use Saritasa\LaravelEntityServices\Contracts\IEntityServiceFactory;
 use Saritasa\LaravelEntityServices\Exceptions\EntityServiceException;
 use Saritasa\LaravelEntityServices\Exceptions\EntityServiceOperationException;
 use Saritasa\LaravelRepositories\DTO\SortOptions;
+use Saritasa\LaravelRepositories\Exceptions\BadCriteriaException;
+use Saritasa\LaravelRepositories\Exceptions\ModelNotFoundException;
+use Saritasa\LaravelRepositories\Exceptions\RepositoryException;
 use Saritasa\Transformers\IDataTransformer;
 
 /**
@@ -67,6 +71,7 @@ class ResourceApiController extends BaseApiController
      * @param IDataTransformer|null $transformer Default data transformer
      *
      * @throws EntityServiceException
+     * @throws BindingResolutionException
      */
     public function __construct(IEntityServiceFactory $entityServiceFactory, ?IDataTransformer $transformer = null)
     {
@@ -83,6 +88,7 @@ class ResourceApiController extends BaseApiController
      * @return Response
      *
      * @throws InvalidEnumValueException
+     * @throws BadCriteriaException
      */
     public function index(Request $request): Response
     {
@@ -126,12 +132,15 @@ class ResourceApiController extends BaseApiController
     /**
      * Shows entity.
      *
-     * @param Model $model Model to show
+     * @param int $id
      *
      * @return Response
+     * @throws ModelNotFoundException
+     * @throws RepositoryException
      */
-    public function show(Model $model): Response
+    public function show(int $id): Response
     {
+        $model = $this->entityService->getRepository()->findOrFail($id);
         return $this->response->item($model, $this->transformer);
     }
 
@@ -139,15 +148,18 @@ class ResourceApiController extends BaseApiController
      * Updates entity.
      *
      * @param Request $request Request with model params to update
-     * @param Model $model Model to update
-     *
+     * @param int $id
      * @return Response
      *
+     * @throws EntityServiceException
      * @throws EntityServiceOperationException
+     * @throws ModelNotFoundException
+     * @throws RepositoryException
      * @throws ValidationException
      */
-    public function update(Request $request, Model $model): Response
+    public function update(Request $request, int $id): Response
     {
+        $model = $this->entityService->getRepository()->findOrFail($id);
         $this->entityService->update($model, $request->toArray());
         return $this->response->item($model, $this->transformer);
     }
@@ -160,6 +172,7 @@ class ResourceApiController extends BaseApiController
      * @return Response
      *
      * @throws EntityServiceOperationException
+     * @throws EntityServiceException
      */
     public function destroy(Model $model): Response
     {
