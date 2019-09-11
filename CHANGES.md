@@ -1,5 +1,9 @@
 # Changes History
 
+3.2.0
+-----
+Fix show, update, delete methods in ResourceApiController - user repository to load models, rather than binding
+
 3.1.1
 -----
 Fix logout error message

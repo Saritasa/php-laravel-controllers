@@ -132,7 +132,7 @@ class ResourceApiController extends BaseApiController
     /**
      * Shows entity.
      *
-     * @param int $id
+     * @param int $id Entity ID
      *
      * @return Response
      * @throws ModelNotFoundException
@@ -148,7 +148,7 @@ class ResourceApiController extends BaseApiController
      * Updates entity.
      *
      * @param Request $request Request with model params to update
-     * @param int $id
+     * @param int $id Entity ID
      * @return Response
      *
      * @throws EntityServiceException
@@ -167,15 +167,16 @@ class ResourceApiController extends BaseApiController
     /**
      * Destroys entity.
      *
-     * @param Model $model Model to delete
+     * @param int $id Entity ID
      *
      * @return Response
      *
      * @throws EntityServiceOperationException
      * @throws EntityServiceException
      */
-    public function destroy(Model $model): Response
+    public function destroy(int $id): Response
     {
+        $model = $this->entityService->getRepository()->findOrFail($id);
         $this->entityService->delete($model);
         return $this->response->noContent();
     }
