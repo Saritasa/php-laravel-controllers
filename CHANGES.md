@@ -2,7 +2,7 @@
 
 3.3.0
 -----
-Declare compatibility with Laravel 6
+Compatibility with Laravel 6
 
 3.2.0
 -----
