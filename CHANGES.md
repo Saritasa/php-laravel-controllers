@@ -1,5 +1,9 @@
 # Changes History
 
+3.3.0
+-----
+Declare compatibility with Laravel 6
+
 3.2.0
 -----
 Fix show, update, delete methods in ResourceApiController - user repository to load models, rather than binding
