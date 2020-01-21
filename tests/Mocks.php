@@ -23,7 +23,10 @@ class Mocks
     public static function mockTranslator(string $message): MockInterface
     {
         $translator = Mockery::mock(Translator::class);
-        $translator->shouldReceive('get')->withAnyArgs()->andReturn($message);
+        $translator->allows([
+            'trans' => $message,
+            'get' => $message,
+        ]);
         app()->instance('translator', $translator);
         return $translator;
     }
