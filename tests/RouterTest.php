@@ -6,6 +6,7 @@ use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Routing\UrlRoutable;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Str;
 use Mockery;
 use Mockery\MockInterface;
 use ReflectionClass;
@@ -118,7 +119,7 @@ class RouterTest extends TestCase
 
         $expectedModel = new TestModel(['id' => $nameParameter]);
 
-        $repositoryMock = Mocks::mockRepository(str_random());
+        $repositoryMock = Mocks::mockRepository(Str::random());
 
         $this->repositoryFactoryMock
             ->shouldReceive('getRepository')

@@ -3,6 +3,7 @@
 namespace Saritasa\LaravelControllers\Tests;
 
 use Illuminate\Contracts\Routing\Registrar;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Mockery;
 use Mockery\MockInterface;
@@ -42,7 +43,7 @@ class WebResourceRegistrarTest extends TestCase
      */
     public function testCreateDefaultResource(): void
     {
-        $resourceName = str_random();
+        $resourceName = Str::random();
         $controllerName = 'controller';
 
         $this->routerMock->shouldReceive('get')
@@ -148,7 +149,7 @@ class WebResourceRegistrarTest extends TestCase
      */
     public function testCreateResourceWithOptions(): void
     {
-        $resourceName = str_random();
+        $resourceName = Str::random();
         $controllerName = 'controller';
         $options = [
             'only' => 'show',
@@ -179,7 +180,7 @@ class WebResourceRegistrarTest extends TestCase
      */
     public function testCreateResourceWithModelBindingDefaultName(): void
     {
-        $resourceName = str_random();
+        $resourceName = Str::random();
         $controllerName = 'controller';
         $options = [
             'only' => ['show', 'update', 'destroy'],
@@ -266,8 +267,8 @@ class WebResourceRegistrarTest extends TestCase
      */
     public function testExceptionWillThrownWithBadOptions(): void
     {
-        $resourceName = str_random();
-        $controllerName = str_random();
+        $resourceName = Str::random();
+        $controllerName = Str::random();
         $options = [
             'get' => false,
         ];
@@ -283,11 +284,11 @@ class WebResourceRegistrarTest extends TestCase
      */
     public function testActionMethodWithAllParams(): void
     {
-        $expectedPath = str_random();
+        $expectedPath = Str::random();
         $controllerName = 'controller';
-        $mapping = [str_random() => str_random()];
-        $action = str_random();
-        $routeName = str_random();
+        $mapping = [Str::random() => Str::random()];
+        $action = Str::random();
+        $routeName = Str::random();
 
         $this->routerMock->shouldReceive('get')
             ->andReturnUsing(
@@ -321,10 +322,10 @@ class WebResourceRegistrarTest extends TestCase
      */
     public function testActionsWithEmptyAction(): void
     {
-        $expectedPath = str_random();
+        $expectedPath = Str::random();
         $controllerName = 'controller';
-        $mapping = [str_random() => str_random()];
-        $routeName = str_random();
+        $mapping = [Str::random() => Str::random()];
+        $routeName = Str::random();
 
         foreach ($this->getVerbs() as $verb) {
             $this->routerMock->shouldReceive($verb)
@@ -360,9 +361,9 @@ class WebResourceRegistrarTest extends TestCase
     public function testActionWithEmptyRoute(): void
     {
         $controllerName = 'controller';
-        $mapping = [str_random() => str_random()];
-        $action = str_random();
-        $expectedPath = str_random();
+        $mapping = [Str::random() => Str::random()];
+        $action = Str::random();
+        $expectedPath = Str::random();
         $route = strtolower($expectedPath . '.' . $action);
         foreach ($this->getVerbs() as $verb) {
             $this->routerMock->shouldReceive($verb)
@@ -399,8 +400,8 @@ class WebResourceRegistrarTest extends TestCase
     public function testActionWithEmptyRouteAndAction(): void
     {
         $controllerName = 'controller';
-        $mapping = [str_random() => str_random()];
-        $expectedPath = str_random();
+        $mapping = [Str::random() => Str::random()];
+        $expectedPath = Str::random();
         $action = $expectedPath;
         $route = strtolower($action);
         foreach ($this->getVerbs() as $verb) {

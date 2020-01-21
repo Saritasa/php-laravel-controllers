@@ -3,6 +3,7 @@
 namespace Saritasa\LaravelControllers\Tests;
 
 use Dingo\Api\Routing\Router;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Mockery;
 use Mockery\MockInterface;
@@ -42,8 +43,8 @@ class ApiResourceRegistrarTest extends TestCase
      */
     public function testCreateDefaultResource(): void
     {
-        $resourceName = str_random();
-        $controllerName = str_random();
+        $resourceName = Str::random();
+        $controllerName = Str::random();
 
         $this->routerMock->shouldReceive('get')
             ->andReturnUsing(
@@ -119,8 +120,8 @@ class ApiResourceRegistrarTest extends TestCase
      */
     public function testCreateResourceWithOptions(): void
     {
-        $resourceName = str_random();
-        $controllerName = str_random();
+        $resourceName = Str::random();
+        $controllerName = Str::random();
         $options = [
             'only' => 'show',
         ];
@@ -150,8 +151,8 @@ class ApiResourceRegistrarTest extends TestCase
      */
     public function testCreateResourceWithModelBindingDefaultName(): void
     {
-        $resourceName = str_random();
-        $controllerName = str_random();
+        $resourceName = Str::random();
+        $controllerName = Str::random();
         $options = [
             ApiResourceRegistrar::OPTION_ONLY => ['show', 'update', 'destroy',],
         ];
@@ -233,13 +234,13 @@ class ApiResourceRegistrarTest extends TestCase
      */
     public function testCreateResourceWithModelBindingWithCustomName(): void
     {
-        $resourceName = str_random();
-        $controllerName = str_random();
+        $resourceName = Str::random();
+        $controllerName = Str::random();
         $options = [
             ApiResourceRegistrar::OPTION_EXCEPT => ['index', 'store', 'count'],
         ];
         $className = BaseController::class;
-        $customName = lcfirst(str_random());
+        $customName = lcfirst(Str::random());
 
         $this->routerMock->shouldReceive('get')
             ->andReturnUsing(
@@ -313,8 +314,8 @@ class ApiResourceRegistrarTest extends TestCase
      */
     public function testExceptionWillThrownWithBadOptions(): void
     {
-        $resourceName = str_random();
-        $controllerName = str_random();
+        $resourceName = Str::random();
+        $controllerName = Str::random();
         $options = [
             'get' => false,
         ];
@@ -330,11 +331,11 @@ class ApiResourceRegistrarTest extends TestCase
      */
     public function testActionMethodWithAllParams(): void
     {
-        $expectedPath = str_random();
-        $controllerName = str_random();
-        $mapping = [str_random() => str_random()];
-        $action = str_random();
-        $routeName = str_random();
+        $expectedPath = Str::random();
+        $controllerName = Str::random();
+        $mapping = [Str::random() => Str::random()];
+        $action = Str::random();
+        $routeName = Str::random();
 
         $this->routerMock->shouldReceive('get')
             ->andReturnUsing(
@@ -368,10 +369,10 @@ class ApiResourceRegistrarTest extends TestCase
      */
     public function testActionsWithEmptyAction(): void
     {
-        $expectedPath = str_random();
-        $controllerName = str_random();
-        $mapping = [str_random() => str_random()];
-        $routeName = str_random();
+        $expectedPath = Str::random();
+        $controllerName = Str::random();
+        $mapping = [Str::random() => Str::random()];
+        $routeName = Str::random();
 
         foreach ($this->getVerbs() as $verb) {
             $this->routerMock->shouldReceive($verb)
@@ -406,10 +407,10 @@ class ApiResourceRegistrarTest extends TestCase
      */
     public function testActionWithEmptyRoute(): void
     {
-        $controllerName = str_random();
-        $mapping = [str_random() => str_random()];
-        $action = str_random();
-        $expectedPath = str_random();
+        $controllerName = Str::random();
+        $mapping = [Str::random() => Str::random()];
+        $action = Str::random();
+        $expectedPath = Str::random();
         $route = strtolower($expectedPath . '.' . $action);
         foreach ($this->getVerbs() as $verb) {
             $this->routerMock->shouldReceive($verb)
@@ -445,9 +446,9 @@ class ApiResourceRegistrarTest extends TestCase
      */
     public function testActionWithEmptyRouteAndAction(): void
     {
-        $controllerName = str_random();
-        $mapping = [str_random() => str_random()];
-        $expectedPath = str_random();
+        $controllerName = Str::random();
+        $mapping = [Str::random() => Str::random()];
+        $expectedPath = Str::random();
         $action = $expectedPath;
         $route = strtolower($action);
         foreach ($this->getVerbs() as $verb) {

@@ -4,6 +4,7 @@ namespace Saritasa\LaravelControllers\Tests;
 
 use Dingo\Api\Http\Response;
 use Dingo\Api\Http\Response\Factory as ResponseFactory;
+use Illuminate\Support\Str;
 use Mockery;
 use Mockery\MockInterface;
 use Saritasa\LaravelControllers\Api\JWTAuthApiController;
@@ -54,12 +55,12 @@ class JWTAuthApiControllerTest extends TestCase
     public function testLoginSuccess(): void
     {
         $credentials = [
-            'email' => str_random(),
-            'password' => str_random(),
+            'email' => Str::random(),
+            'password' => Str::random(),
         ];
         $loginRequestMock = $this->makeLoginRequestMock($credentials);
 
-        $token = str_random();
+        $token = Str::random();
         $this->jwtAuthMock
             ->shouldReceive('attempt')
             ->andReturnUsing(function (array $passedCredentials) use (
@@ -93,11 +94,11 @@ class JWTAuthApiControllerTest extends TestCase
      */
     public function testLoginError(): void
     {
-        $message = str_random();
+        $message = Str::random();
         Mocks::mockTranslator($message);
         $credentials = [
-            'email' => str_random(),
-            'password' => str_random(),
+            'email' => Str::random(),
+            'password' => Str::random(),
         ];
         $loginRequestMock = $this->makeLoginRequestMock($credentials);
         $responseFactoryMock = Mockery::mock(ResponseFactory::class);
@@ -124,11 +125,11 @@ class JWTAuthApiControllerTest extends TestCase
      */
     public function testLoginConvertsJwtExceptionInHttpException(): void
     {
-        $message = str_random();
+        $message = Str::random();
         Mocks::mockTranslator($message);
         $credentials = [
-            'email' => str_random(),
-            'password' => str_random(),
+            'email' => Str::random(),
+            'password' => Str::random(),
         ];
 
         $loginRequestMock = $this->makeLoginRequestMock($credentials);
@@ -180,7 +181,7 @@ class JWTAuthApiControllerTest extends TestCase
      */
     public function testRefreshTokenSuccess(): void
     {
-        $newToken = str_random();
+        $newToken = Str::random();
         $this->jwtAuthMock->shouldReceive('parseToken')->withArgs([])->andReturnSelf();
         $this->jwtAuthMock->shouldReceive('refresh')->withArgs([])->andReturn($newToken);
 
@@ -208,7 +209,7 @@ class JWTAuthApiControllerTest extends TestCase
      */
     public function testRefreshTokenConvertsJwtExceptionInHttpException(): void
     {
-        $message = str_random();
+        $message = Str::random();
         Mocks::mockTranslator($message);
 
         $responseFactoryMock = Mockery::mock(ResponseFactory::class);
