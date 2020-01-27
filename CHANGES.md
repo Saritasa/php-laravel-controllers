@@ -1,5 +1,11 @@
 # Changes History
 
+3.3.1
+-----
+- Update the signature of the Saritasa\LaravelControllers\Api\ForgotPasswordApiController::sendResetLinkResponse method
+to match the new signature of the Illuminate\Foundation\Auth\SendsPasswordResetEmails trait
+- Set the minimal version of the Laravel to 5.7
+
 3.3.0
 -----
 Compatibility with Laravel 6

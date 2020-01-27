@@ -13,7 +13,7 @@
     "require": {
         "php": ">=7.1",
         "ext-json": "*",
-        "illuminate/support": "^5.5 || ^6.0",
+        "illuminate/support": "^5.7 || ^6.0",
         "saritasa/transformers": "^1.0",
         "tymon/jwt-auth": "1.0.0-rc.5",
         "saritasa/laravel-entity-services": "^1.3"

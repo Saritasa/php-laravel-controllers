@@ -32,11 +32,12 @@ class ForgotPasswordApiController extends BaseApiController
     /**
      * Get the response for a successful password reset link.
      *
+     * @param Request $request HTTP Request
      * @param string $languageResourceId Resource ID of message to display to user
      *
      * @return Response
      */
-    protected function sendResetLinkResponse($languageResourceId): Response
+    protected function sendResetLinkResponse(Request $request, $languageResourceId): Response
     {
         return $this->json(new SuccessMessage(trans($languageResourceId)));
     }
