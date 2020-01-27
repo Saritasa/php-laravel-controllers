@@ -8,10 +8,11 @@
 Controllers for common UI and endpoints in Laravel,    
 like API authentication, password change, login page, etc.    
     
-## Laravel 5.5/6.0  
+## Laravel 5.5+/6.0  
 Install the ```saritasa/laravel-controllers``` package:    
     
-```bash $ composer require saritasa/laravel-controllers  
+```bash
+$ composer require saritasa/laravel-controllers  
 ```  
  ## Available controllers    
 There are 2 types of controllers:    
