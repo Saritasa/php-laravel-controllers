@@ -1,5 +1,12 @@
 # Changes History
 
+3.3.2
+-----
+- Update the signature of the Saritasa\LaravelControllers\Api\ResetPasswordApiController::sendResetResponse method
+to match the new signature of the Illuminate\Foundation\Auth\ResetsPasswords trait
+- Update the response of the Saritasa\LaravelControllers\Api\ResetPasswordApiController::sendResetFailedResponse method
+to display message instead of message token
+
 3.3.1
 -----
 - Update the signature of the Saritasa\LaravelControllers\Api\ForgotPasswordApiController::sendResetLinkResponse method

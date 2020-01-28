@@ -23,11 +23,12 @@ class ResetPasswordApiController extends BaseApiController
     /**
      * Get the response for a successful password reset.
      *
+     * @param Request $request HTTP Request instance
      * @param string $response ID of language resource to use as response
      *
      * @return Response
      */
-    protected function sendResetResponse(string $response): Response
+    protected function sendResetResponse(Request $request, string $response): Response
     {
         return $this->json(new SuccessMessage(trans($response)));
     }
@@ -42,7 +43,7 @@ class ResetPasswordApiController extends BaseApiController
      */
     protected function sendResetFailedResponse(Request $request, $message): Response
     {
-        return $this->json(new ErrorMessage($message));
+        return $this->json(new ErrorMessage(trans($message)));
     }
 
     /**
