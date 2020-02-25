@@ -124,7 +124,7 @@ class ResourceApiController extends BaseApiController
      * @throws EntityServiceOperationException
      * @throws ValidationException
      */
-    public function create(Request $request): Response
+    public function store(Request $request): Response
     {
         return $this->json($this->entityService->create($request->toArray()), $this->transformer);
     }
