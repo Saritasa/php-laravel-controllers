@@ -1,5 +1,9 @@
 # Changes History
 
+3.3.3
+-----
+If token refresh failed return 403 code, not 401 - to prevent infinite refresh loop easier
+
 3.3.2
 -----
 - Update the signature of the Saritasa\LaravelControllers\Api\ResetPasswordApiController::sendResetResponse method
