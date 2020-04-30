@@ -1,8 +1,12 @@
 # Changes History
 
-3.3.3
+3.3.4
 -----
 If token refresh failed return 403 code, not 401 - to prevent infinite refresh loop easier
+
+3.3.3
+-----
+Fix issue with wrong method name `create` instead `store` in ResourceApiController
 
 3.3.2
 -----
