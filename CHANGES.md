@@ -1,5 +1,9 @@
 # Changes History
 
+3.3.5
+-----
+Require release tymon/jwt-auth version instead of RC
+
 3.3.4
 -----
 If token refresh failed return 403 code, not 401 - to prevent infinite refresh loop easier
