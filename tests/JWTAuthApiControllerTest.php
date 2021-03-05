@@ -215,7 +215,7 @@ class JWTAuthApiControllerTest extends TestCase
         $responseFactoryMock = Mockery::mock(ResponseFactory::class);
         $exception = new HttpException(100, $message);
 
-        $responseFactoryMock->shouldReceive('errorUnauthorized')->withArgs([$message])->andThrow($exception);
+        $responseFactoryMock->shouldReceive('errorForbidden')->withArgs([$message])->andThrow($exception);
         $this->jwtAuthMock->shouldReceive('parseToken')->withArgs([])->andReturnSelf();
         $this->jwtAuthMock->shouldReceive('refresh')->withArgs([])->andThrow(new JWTException());
 
