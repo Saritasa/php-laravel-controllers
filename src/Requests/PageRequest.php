@@ -2,6 +2,7 @@
 
 namespace Saritasa\LaravelControllers\Requests;
 
+use Illuminate\Foundation\Http\FormRequest;
 use Saritasa\DingoApi\Paging\PagingInfo;
 
 /**
@@ -10,7 +11,7 @@ use Saritasa\DingoApi\Paging\PagingInfo;
  * @property-read int $page
  * @property-read int $per_page
  */
-class PageRequest extends Request
+class PageRequest extends FormRequest
 {
     public const PER_PAGE = 'per_page';
     public const PAGE = 'page';

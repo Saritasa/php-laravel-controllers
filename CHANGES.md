@@ -1,5 +1,11 @@
 # Changes History
 
+4.0.0
+-----
++ Add PageRequest, ChangePassword request
++ Depend on [saritasa/laravel-fluent-validation](https://github.com/Saritasa/php-laravel-fluent-validation) and [saritasa/dingo-api-custom](https://github.com/Saritasa/php-dingo-api-custom)
++ Remove ApiResourceRegistrar and WebResourceRegistrar (standard router is enough)
+
 3.3.5
 -----
 Require release tymon/jwt-auth version instead of RC

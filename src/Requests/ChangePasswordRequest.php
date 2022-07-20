@@ -2,6 +2,7 @@
 
 namespace Saritasa\LaravelControllers\Requests;
 
+use Illuminate\Foundation\Http\FormRequest;
 use Saritasa\Laravel\Validation\Rules\ContainsLowercase;
 use Saritasa\Laravel\Validation\Rules\ContainsNumeral;
 use Saritasa\Laravel\Validation\Rules\ContainsUppercase;
@@ -12,7 +13,7 @@ use Saritasa\Laravel\Validation\Rules\ContainsUppercase;
  * @property-read string $oldPassword The old user password
  * @property-read string $newPassword The new password to set
  */
-class ChangePasswordRequest extends Request
+class ChangePasswordRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
