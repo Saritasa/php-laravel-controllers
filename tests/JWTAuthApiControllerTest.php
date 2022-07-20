@@ -206,6 +206,7 @@ class JWTAuthApiControllerTest extends TestCase
      * Test convert of JWT exception in http when refresh token error.
      *
      * @return void
+     * @dis
      */
     public function testRefreshTokenConvertsJwtExceptionInHttpException(): void
     {

@@ -33,23 +33,23 @@ Recommended to use as base controller for other API controllers.
     
 #### Methods    
 * function json($data, IDataTransformer $transformer = null): Response    
-* function validate(Request $request, array $rules, array $messages = [], array $customAttributes = [])    
     
 **Example**:    
 ```php
 class UserApiController extends BaseApiController
 {    
-    public function __construct(UserTransformer $userTransformer)  
-	 {      
-		 parent::__construct($userTransformer);  
-	 }
-	 public function editUserProfile(Request $request, User $user): Response  
-	 {
-		 $this->validate($request, $user->getRuels());
-		 $user->fill($request->all());
-		 $user->save();
-		 return $this->json($user);
-	  }
+  public function __construct(UserTransformer $userTransformer)
+  {      
+    parent::__construct($userTransformer);  
+  }
+
+  public function editUserProfile(Request $request, User $user): Response  
+  {
+    $this->validate($request, $user->getRuels());
+    $user->fill($request->all());
+    $user->save();
+    return $this->json($user);
+  }
 }
 ```    
  ### JWTAuthApiController Authenticate API Controller. Uses JWT authentication    
@@ -59,77 +59,23 @@ settings and underlying [tymon\jwt-auth](https://github.com/tymondesigns/jwt-aut
 **Example**: routes\api.php:    
 ```php
 app('api.router')->version(config('api.version'), ['namespace' => 'Saritasa\Laravel\Controllers\Api'],    
- function (\Dingo\Api\Routing\Router $api) {  
- // Authentication $api->post('auth', 'AuthController@login');   // Login $api->put('auth', 'AuthController@refreshToken'); // Refresh expired token                
- $api->delete('auth', 'AuthController@logout')->middleware('api.auth'); // Logout  
- });
+  function (\Dingo\Api\Routing\Router $api) {  
+    // Authentication $api->post('auth', 'AuthController@login');   // Login $api->put('auth', 'AuthController@refreshToken'); // Refresh expired token                
+    $api->delete('auth', 'AuthController@logout')->middleware('api.auth'); // Logout  
+  });
 ```  
-### ResourceApiController  
-Controller for typical CRUD operations when you don't need many additional logic.  
-For using this functionality you can just create controller and set needed model class in property $modelClass  
-**Example**:  
-```php  
-class CustomApiController extends ResourceApiController
-{    
-    /**
-    * Define model class that is managed by this controller.
-    *
-    * @var string
-    */
-    protected $modelClass = App\Models\User::class;  
- }
- ```  
+
 ### ForgotPasswordApiController, ResetPasswordApiController These controllers are responsible for handling password reset emails.    
 Utilize native Laravel password management without UI, in JSON API.    
     
 **Example**: routes\api.php:    
 ```php
-app('api.router')->version(config('api.version'), ['namespace' => 'Saritasa\Laravel\Controllers\Api'],    
-function (\Dingo\Api\Routing\Router $api) { $api->post('auth/password/reset', 'ForgotPasswordApiController@sendResetLinkEmail'); $api->put('auth/password/reset', 'ResetPasswordApiController@reset');});
+app('api.router')->version(config('api.version'), ['namespace' => 'Saritasa\Laravel\Controllers\Api'],
+  function (\Dingo\Api\Routing\Router $api) {
+    $api->post('auth/password/reset', 'ForgotPasswordApiController@sendResetLinkEmail');
+    $api->put('auth/password/reset', 'ResetPasswordApiController@reset');
+  });
 ```    
- ## Routes registration examples:    
- ### Simple route
- ```php
- $registrar->get('users', ApiController::class, 'list'); 
-```    
-In this case ApiController::list will be calling with default dependency injection.    
-    
-### Route with parameters
-```php    
- // Controller example
- class ApiController {    
- 	public function show(int $id) {}
- }    
- // Route example
- $registrar->get('users/{id}', ApiController::class, 'show');
-```
-In this case ApiController::show will receive directly parameter from url. Ex: /user/5    
-    
-### Route with binding on controller side
-```php
-// Controller example
-class ApiController {    
- 	public function show(User $user) {}
-}    
- // Route example
- $registrar->get('users/{user}', ApiController::class, 'show');
-```
-In this case ApiController::show try to find Model user by id and if not exists throws ModelNotFoundException.    
-    
-### Route with binding on route side
-```php
-// Controller example
-class ApiController {    
- 	public function show(Model $user) {}
-}    
- // Route example
- $registrar->get('users/{user}', ApiController::class, 'show', null, ['user' => User::class]);
-```
-In this case no matter what type hint in controller, container will be trying to give object of class that you pass in router registrar.
-So if method has type hinting of class which not a parent for given in router, TypeError will be thrown.    
-    
-#### Note: In 2 last cases classes which uses for model bindings must implement Illuminate\Contracts\Routing\UrlRoutable otherwise this parameters    
-will be ignored.    
     
 ## Contributing    
 1. Create fork, checkout it    
