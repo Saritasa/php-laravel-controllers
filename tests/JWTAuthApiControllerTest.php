@@ -210,7 +210,6 @@ class JWTAuthApiControllerTest extends TestCase
      */
     public function testRefreshTokenConvertsJwtExceptionInHttpException(): void
     {
-        $this->markTestIncomplete('Fix later');
         $message = Str::random();
         Mocks::mockTranslator($message);
 
