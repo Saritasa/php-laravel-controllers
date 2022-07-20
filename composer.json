@@ -14,9 +14,10 @@
         "php": ">=7.1",
         "ext-json": "*",
         "illuminate/support": "^5.7 || ^6.0",
+        "saritasa/laravel-entity-services": "^1.3",
+        "saritasa/laravel-fluent-validation": "^1.2",
         "saritasa/transformers": "^1.0",
-        "tymon/jwt-auth": "^1.0",
-        "saritasa/laravel-entity-services": "^1.3"
+        "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
         "mockery/mockery": "^1.1",
