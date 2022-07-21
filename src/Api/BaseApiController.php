@@ -7,6 +7,7 @@ use Dingo\Api\Routing\Helpers;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Collection;
 use Saritasa\Transformers\BaseTransformer;
 use Saritasa\Transformers\IDataTransformer;
 
@@ -42,7 +43,7 @@ abstract class BaseApiController extends Controller
      * Shortcut for work with Dingo/Api $this->response methods.
      *
      * @param mixed $data Model or collection to be returned in response
-     * @param IDataTransformer $transformer Transformer to use.
+     * @param IDataTransformer|null $transformer Transformer to use.
      * If omitted, default transformer for this controller will be used.
      *
      * @return Response
@@ -52,6 +53,9 @@ abstract class BaseApiController extends Controller
         $t = $transformer ?: $this->transformer;
         if ($data instanceof Paginator) {
             return $this->response->paginator($data, $t);
+        }
+        if ($data instanceof Collection) {
+            return $this->response->collection($data, $t);
         }
         return $this->response->item($data, $t);
     }
