@@ -1,5 +1,9 @@
 # Changes History
 
+4.0.1
+-----
+Remove custom router and resolvers
+
 4.0.0
 -----
 + Add PageRequest, ChangePassword request
