@@ -1,5 +1,9 @@
 # Changes History
 
+4.0.2
+-----
+Fix default transformer registration - BaseTransformer is used
+
 4.0.1
 -----
 Remove custom router and resolvers

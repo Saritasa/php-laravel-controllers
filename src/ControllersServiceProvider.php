@@ -3,6 +3,8 @@
 namespace Saritasa\LaravelControllers;
 
 use Illuminate\Support\ServiceProvider;
+use Saritasa\LaravelControllers\Api\BaseApiController;
+use Saritasa\Transformers\IDataTransformer;
 
 /**
  * Controllers service provider.
@@ -18,5 +20,6 @@ class ControllersServiceProvider extends ServiceProvider
     {
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'controllers');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'controllers');
+        $this->app->bindIf(IDataTransformer::class, BaseApiController::class);
     }
 }
