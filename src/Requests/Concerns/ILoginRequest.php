@@ -7,5 +7,10 @@ namespace Saritasa\LaravelControllers\Requests\Concerns;
  */
 interface ILoginRequest
 {
-
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules(): array;
 }
