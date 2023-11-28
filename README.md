@@ -65,6 +65,16 @@ app('api.router')->version(config('api.version'), ['namespace' => 'Saritasa\Lara
   });
 ```  
 
+```php
+class AuthApiController extends JWTAuthApiController
+{
+    public function login(ILoginRequest $request): Response
+    {
+        return parent::login($request);
+    }
+}
+```
+
 ### ForgotPasswordApiController, ResetPasswordApiController These controllers are responsible for handling password reset emails.    
 Utilize native Laravel password management without UI, in JSON API.    
     
