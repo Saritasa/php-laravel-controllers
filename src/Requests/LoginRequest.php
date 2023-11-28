@@ -3,11 +3,12 @@
 namespace Saritasa\LaravelControllers\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Saritasa\LaravelControllers\Requests\Concerns\ILoginRequest;
 
 /**
  * Validate login request.
  */
-class LoginRequest extends FormRequest
+class LoginRequest extends FormRequest implements ILoginRequest
 {
     /**
      * Allow all users access here.
