@@ -66,6 +66,35 @@ app('api.router')->version(config('api.version'), ['namespace' => 'Saritasa\Lara
 ```  
 
 ```php
+<?php
+
+class LoginRequest extends FormRequest implements ILoginRequest
+{
+    /**
+     * Allow all users access here.
+     * 
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rules(): array
+    {
+        return [
+            'email' => 'required|string',
+            'password' => 'required|string',
+        ];
+    }
+}
+
+```
+
+```php
 class AuthApiController extends JWTAuthApiController
 {
     public function login(ILoginRequest $request): Response
