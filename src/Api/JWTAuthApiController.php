@@ -3,7 +3,7 @@
 namespace Saritasa\LaravelControllers\Api;
 
 use Dingo\Api\Http\Response;
-use Saritasa\LaravelControllers\Requests\LoginRequest;
+use Saritasa\LaravelControllers\Requests\Concerns\ILoginRequest;
 use Saritasa\LaravelControllers\Responses\AuthSuccess;
 use Saritasa\Transformers\IDataTransformer;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -37,13 +37,13 @@ class JWTAuthApiController extends BaseApiController
     /**
      * Authenticate user by `email` and `password`.
      *
-     * @param LoginRequest $request HTTP Request
+     * @param ILoginRequest $request HTTP Request
      *
      * @return Response
      *
      * @throws HttpException
      */
-    public function login(LoginRequest $request): Response
+    public function login(ILoginRequest $request): Response
     {
         $credentials = $request->only('email', 'password');
         try {
