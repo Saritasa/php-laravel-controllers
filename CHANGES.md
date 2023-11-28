@@ -1,6 +1,6 @@
 # Changes History
 
-4.0.3
+4.1.0
 -----
 Add ILoginRequest interface to provider customizable login validation rules
 
