@@ -65,28 +65,24 @@ app('api.router')->version(config('api.version'), ['namespace' => 'Saritasa\Lara
   });
 ```  
 
+### Customize login request
 ```php
 <?php
 
+namespace App\Http\Requests\Auth;
+
+use Illuminate\Foundation\Http\FormRequest;
+use Saritasa\LaravelControllers\Requests\Concerns\ILoginRequest;
+
 class LoginRequest extends FormRequest implements ILoginRequest
 {
-    /**
-     * Allow all users access here.
-     * 
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     /**
      * @inheritDoc
      */
     public function rules(): array
     {
         return [
-            'email' => 'required|string',
+            'username' => 'required|string',
             'password' => 'required|string',
         ];
     }
@@ -95,7 +91,7 @@ class LoginRequest extends FormRequest implements ILoginRequest
 ```
 
 ```php
-class AuthApiController extends JWTAuthApiController
+class JWTAuthApiController extends BaseApiController
 {
     public function login(ILoginRequest $request): Response
     {
