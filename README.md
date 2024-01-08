@@ -65,6 +65,54 @@ app('api.router')->version(config('api.version'), ['namespace' => 'Saritasa\Lara
   });
 ```  
 
+### Customize login request
+In some case, we're using `email` field for login with `email` or `username` in application. So, the `email` field should validation by `required` and `string` rule.
+Or you want to use `username` instead of `email`.
+
+### How to bind ILoginRequest with custom request class
+```php
+<?php
+
+namespace App\Providers;
+
+use App\Http\Requests\Auth\LoginRequest;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\ServiceProvider;
+use Saritasa\LaravelControllers\Requests\Concerns\ILoginRequest;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot()
+    {
+        $this->app->bind(ILoginRequest::class, LoginRequest::class);
+    }
+}
+```
+
+```php
+<?php
+
+namespace App\Http\Requests\Auth;
+
+use Illuminate\Foundation\Http\FormRequest;
+use Saritasa\LaravelControllers\Requests\Concerns\ILoginRequest;
+
+class LoginRequest extends FormRequest implements ILoginRequest
+{
+    /**
+     * @inheritDoc
+     */
+    public function rules(): array
+    {
+        return [
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ];
+    }
+}
+
+```
+
 ### ForgotPasswordApiController, ResetPasswordApiController These controllers are responsible for handling password reset emails.    
 Utilize native Laravel password management without UI, in JSON API.    
     

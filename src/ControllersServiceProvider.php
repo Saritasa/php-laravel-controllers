@@ -4,6 +4,7 @@ namespace Saritasa\LaravelControllers;
 
 use Illuminate\Support\ServiceProvider;
 use Saritasa\LaravelControllers\Api\BaseApiController;
+use Saritasa\LaravelControllers\Requests\Concerns\ILoginRequest;
 use Saritasa\Transformers\IDataTransformer;
 
 /**
@@ -21,5 +22,6 @@ class ControllersServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'controllers');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'controllers');
         $this->app->bindIf(IDataTransformer::class, BaseApiController::class);
+        $this->app->bindIf(ILoginRequest::class, BaseApiController::class);
     }
 }

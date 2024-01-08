@@ -1,5 +1,9 @@
 # Changes History
 
+4.1.0
+-----
+Add ILoginRequest interface to provider customizable login validation rules
+
 4.0.2
 -----
 Fix default transformer registration - BaseTransformer is used
