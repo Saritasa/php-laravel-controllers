@@ -3,6 +3,7 @@
 5.0.0
 -----
 * Update to Laravel 9, 10
+* Drop PHP 7.x support
 * Throw away dingo/api package
 * Use tymon/jwt-auth 2.0
 * Get rid of BaseApiController
