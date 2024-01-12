@@ -10,7 +10,7 @@ use Saritasa\LaravelControllers\Responses\AuthSuccess;
 use Saritasa\LaravelControllers\Responses\ResponsesTrait;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\JWTGuard;
+use Tymon\JWTAuth\JWTAuth;
 
 /**
  * Authenticate API Controller. Uses JWT authentication.
@@ -22,14 +22,14 @@ class JWTAuthApiController extends Controller
     /**
      * Jwt auth service.
      *
-     * @var JWTGuard
+     * @var JWTAuth
      */
     protected $jwtAuth;
 
     /**
      * Authenticate API Controller. Uses JWT authentication.
      */
-    public function __construct(JWTGuard $jwtAuth)
+    public function __construct(JWTAuth $jwtAuth)
     {
         $this->jwtAuth = $jwtAuth;
     }
