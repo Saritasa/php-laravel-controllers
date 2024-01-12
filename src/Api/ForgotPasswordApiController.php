@@ -2,11 +2,12 @@
 
 namespace Saritasa\LaravelControllers\Api;
 
-use Dingo\Api\Http\Request;
-use Dingo\Api\Http\Response;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Controller;
 use Saritasa\LaravelControllers\Responses\SuccessMessage;
-use Saritasa\Transformers\BaseTransformer;
 
 /**
  * This controller is responsible for handling password reset emails
@@ -14,18 +15,16 @@ use Saritasa\Transformers\BaseTransformer;
  * Utilize native Laravel password management without UI, in API style
  * https://laravel.com/docs/5.4/passwords
  */
-class ForgotPasswordApiController extends BaseApiController
+class ForgotPasswordApiController extends Controller
 {
     use SendsPasswordResetEmails;
 
     /**
      * Create a new controller instance.
-     *
-     * @param BaseTransformer $baseTransformer To use as default controller responses transformer
      */
-    public function __construct(BaseTransformer $baseTransformer)
+    public function __construct()
     {
-        parent::__construct($baseTransformer);
+        parent::__construct();
         $this->middleware('guest');
     }
 
@@ -39,7 +38,7 @@ class ForgotPasswordApiController extends BaseApiController
      */
     protected function sendResetLinkResponse(Request $request, $languageResourceId): Response
     {
-        return $this->json(new SuccessMessage(trans($languageResourceId)));
+        return new JsonResponse(new SuccessMessage(trans($languageResourceId)));
     }
 
     /**

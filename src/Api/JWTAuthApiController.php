@@ -2,36 +2,36 @@
 
 namespace Saritasa\LaravelControllers\Api;
 
-use Dingo\Api\Http\Response;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Controller;
 use Saritasa\LaravelControllers\Requests\Concerns\ILoginRequest;
 use Saritasa\LaravelControllers\Responses\AuthSuccess;
-use Saritasa\Transformers\IDataTransformer;
+use Saritasa\LaravelControllers\Responses\ResponsesTrait;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\JWTAuth;
+use Tymon\JWTAuth\JWTGuard;
 
 /**
  * Authenticate API Controller. Uses JWT authentication.
  */
-class JWTAuthApiController extends BaseApiController
+class JWTAuthApiController extends Controller
 {
+    use ResponsesTrait;
+
     /**
      * Jwt auth service.
      *
-     * @var JWTAuth
+     * @var JWTGuard
      */
     protected $jwtAuth;
 
     /**
      * Authenticate API Controller. Uses JWT authentication.
-     *
-     * @param JWTAuth $jwtAuth Jwt guard
-     * @param IDataTransformer $transformer Default transformer to apply to handled entity
      */
-    public function __construct(JWTAuth $jwtAuth, ?IDataTransformer $transformer = null)
+    public function __construct(JWTGuard $jwtAuth)
     {
         $this->jwtAuth = $jwtAuth;
-        parent::__construct($transformer);
     }
 
     /**
@@ -39,21 +39,21 @@ class JWTAuthApiController extends BaseApiController
      *
      * @param ILoginRequest $request HTTP Request
      *
-     * @return Response
+     * @return JsonResponse
      *
      * @throws HttpException
      */
-    public function login(ILoginRequest $request): Response
+    public function login(ILoginRequest $request): JsonResponse
     {
         $credentials = $request->only('email', 'password');
         try {
             if (!$token = $this->jwtAuth->attempt($credentials)) {
-                $this->response->errorNotFound(trans('controllers::auth.failed'));
+                return $this->errorNotFound(trans('controllers::auth.failed'));
             }
 
-            return $this->json(new AuthSuccess($token));
+            return new JsonResponse(new AuthSuccess($token));
         } catch (JWTException $e) {
-            $this->response->errorInternal(trans('controllers::auth.jwt_error'));
+            return $this->errorInternal(trans('controllers::auth.jwt_error'));
         }
     }
 
@@ -68,11 +68,11 @@ class JWTAuthApiController extends BaseApiController
     public function logout(): Response
     {
         try {
-            $this->jwtAuth->parseToken()->invalidate();
+            $this->jwtAuth->invalidate();
         } catch (JWTException $exception) {
-            $this->response->errorUnauthorized(trans('controllers::auth.jwt_blacklist_error'));
+            $this->errorUnauthorized(trans('controllers::auth.jwt_blacklist_error'));
         }
-        return $this->response->noContent();
+        return $this->responseNoContent();
     }
 
     /**
@@ -82,12 +82,12 @@ class JWTAuthApiController extends BaseApiController
      *
      * @throws HttpException
      */
-    public function refreshToken(): Response
+    public function refreshToken(): JsonResponse
     {
         try {
-            return $this->json(new AuthSuccess($this->jwtAuth->parseToken()->refresh()));
+            return $this->json(new AuthSuccess($this->jwtAuth->refresh()));
         } catch (JWTException $e) {
-            $this->response->errorForbidden(trans('controllers::auth.jwt_refresh_error'));
+            return $this->errorForbidden(trans('controllers::auth.jwt_refresh_error'));
         }
     }
 }

@@ -22,7 +22,10 @@ class TestCase extends PhpUnitTestCase
     {
         $app = require __DIR__.'/../vendor/autoload.php';
 
-        $app->make(Kernel::class)->bootstrap();
+        $kernel = $app->make(Kernel::class);
+        $kernel->bootstrap();
+
+        $laravelApp = $kernel->app;
 
         return $app;
     }

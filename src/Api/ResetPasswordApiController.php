@@ -2,11 +2,12 @@
 
 namespace Saritasa\LaravelControllers\Api;
 
-use Dingo\Api\Http\Request;
-use Dingo\Api\Http\Response;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\ResetsPasswords;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
 use Saritasa\LaravelControllers\Responses\ErrorMessage;
 use Saritasa\LaravelControllers\Responses\SuccessMessage;
@@ -16,7 +17,7 @@ use Saritasa\LaravelControllers\Responses\SuccessMessage;
  * Utilize native Laravel password management without UI, in API style
  * https://laravel.com/docs/passwords
  */
-class ResetPasswordApiController extends BaseApiController
+class ResetPasswordApiController extends Controller
 {
     use ResetsPasswords;
 
@@ -28,7 +29,7 @@ class ResetPasswordApiController extends BaseApiController
      *
      * @return Response
      */
-    protected function sendResetResponse(Request $request, string $response): Response
+    protected function sendResetResponse(Request $request, string $response): JsonResponse
     {
         return $this->json(new SuccessMessage(trans($response)));
     }
@@ -41,7 +42,7 @@ class ResetPasswordApiController extends BaseApiController
      *
      * @return Response
      */
-    protected function sendResetFailedResponse(Request $request, $message): Response
+    protected function sendResetFailedResponse(Request $request, $message): JsonResponse
     {
         return $this->json(new ErrorMessage(trans($message)));
     }

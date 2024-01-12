@@ -1,5 +1,14 @@
 # Changes History
 
+5.0.0
+-----
+* Update to Laravel 9, 10
+* Throw away dingo/api package
+* Use tymon/jwt-auth 2.0
+* Get rid of BaseApiController
+* Add `Saritasa\LaravelControllers\Responses\ResponsesTrait`
+* Accomodate `PagingInfo` class from saritasa/dingo-api-custom
+
 4.1.0
 -----
 Add ILoginRequest interface to provider customizable login validation rules

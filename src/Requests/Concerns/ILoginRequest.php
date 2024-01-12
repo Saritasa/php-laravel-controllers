@@ -4,6 +4,8 @@ namespace Saritasa\LaravelControllers\Requests\Concerns;
 
 /**
  * The interface to provider customizable for login request.
+ *
+ * @method array only(string... $fields)
  */
 interface ILoginRequest
 {

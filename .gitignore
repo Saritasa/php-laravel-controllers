@@ -3,3 +3,4 @@ package.xml
 /vendor
 .idea
 *.cache
+*.bak

@@ -9,7 +9,7 @@
 Controllers for common UI and endpoints in Laravel,    
 like API authentication, password change, login page, etc.    
     
-## Laravel 5.7+/6.0  
+## Laravel 9.x/10.x  
 Install the ```saritasa/laravel-controllers``` package:    
     
 ```bash
@@ -27,9 +27,6 @@ There are 2 types of controllers:
   and custom extensions for it: [saritasa/dingo-api-custom](https://github.com/Saritasa/php-dingo-api-custom)    
     
 Controllers, described below, exist, but you  must register routes for them manually    
-    
-### BaseApiController Base API controller, utilizing helpers from Dingo/API package.    
-Recommended to use as base controller for other API controllers.    
     
 #### Methods    
 * function json($data, IDataTransformer $transformer = null): Response    

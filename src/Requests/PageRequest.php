@@ -3,7 +3,7 @@
 namespace Saritasa\LaravelControllers\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Saritasa\DingoApi\Paging\PagingInfo;
+use Saritasa\LaravelControllers\Paging\PagingInfo;
 
 /**
  * Contains information about page number and items per page count.

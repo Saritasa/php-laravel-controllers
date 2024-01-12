@@ -2,8 +2,7 @@
 
 namespace Saritasa\LaravelControllers\Tests;
 
-use Dingo\Api\Http\Response;
-use Dingo\Api\Http\Response\Factory as ResponseFactory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Mockery;
 use Mockery\MockInterface;
@@ -12,7 +11,7 @@ use Saritasa\LaravelControllers\Requests\LoginRequest;
 use Saritasa\LaravelControllers\Responses\AuthSuccess;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\JWTAuth;
+use Tymon\JWTAuth\JWTGuard;
 
 /**
  * Jwt api controller test.
@@ -22,7 +21,7 @@ class JWTAuthApiControllerTest extends TestCase
     /**
      * JWT auth mock.
      *
-     * @var MockInterface|JWTAuth
+     * @var MockInterface|JWTGuard
      */
     protected $jwtAuthMock;
 
@@ -41,7 +40,7 @@ class JWTAuthApiControllerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->jwtAuthMock = Mockery::mock(JWTAuth::class);
+        $this->jwtAuthMock = Mockery::mock(JWTGuard::class);
         $this->jwtApiController = Mockery::mock(JWTAuthApiController::class, [$this->jwtAuthMock])
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
@@ -71,7 +70,7 @@ class JWTAuthApiControllerTest extends TestCase
                 return $token;
             });
         $authSuccess = new AuthSuccess($token);
-        $expectedResult = new Response(json_encode(['token' => $token]));
+        $expectedResult = new JsonResponse(json_encode(['token' => $token]));
 
         $this->jwtApiController
             ->shouldReceive('json')
