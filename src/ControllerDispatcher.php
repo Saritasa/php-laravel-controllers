@@ -4,6 +4,7 @@ namespace Saritasa\LaravelControllers;
 
 use Illuminate\Routing\ControllerDispatcher as LaravelControllerDispatcher;
 use ReflectionFunctionAbstract;
+use stdClass;
 
 /**
  * Resolver of controller dependencies.
@@ -32,7 +33,8 @@ class ControllerDispatcher extends LaravelControllerDispatcher
 
             $instance = $this->transformDependency(
                 $parameter,
-                $parameters
+                $parameters,
+                new stdClass()
             );
 
             if (!is_null($instance)) {

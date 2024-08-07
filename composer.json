@@ -11,12 +11,12 @@
         }
     ],
     "require": {
-        "php": ">=7.1",
+        "php": ">=8.0",
         "ext-json": "*",
-        "illuminate/support": "^5.7 || ^6.0",
-        "saritasa/transformers": "^1.0",
-        "tymon/jwt-auth": "^1.0",
-        "saritasa/laravel-entity-services": "^1.3"
+        "illuminate/support": ">=5.7 <12.0",
+        "saritasa/transformers": "1.2.2",
+        "php-open-source-saver/jwt-auth": "^2.3",
+        "saritasa/laravel-entity-services": "^2.0"
     },
     "require-dev": {
         "mockery/mockery": "^1.1",

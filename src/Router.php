@@ -71,7 +71,7 @@ class Router extends LaravelRouter
                 continue;
             }
 
-            $modelClass = $mapping[$parameterName] ?? $parameter->getClass()->getName();
+            $modelClass = $mapping[$parameterName] ?? $parameter->getType()->getName();
             /**
              * Empty url routable model to het route key name.
              *

@@ -1,5 +1,11 @@
 # Changes History
 
+3.3.5.1
+-----
++ Declare compatibility with Laravel 11
++ Changed tymon/jwt-auth to php-open-source-saver/jwt-auth
++ Updated saritasa/laravel-entity-services to new major version
+
 3.3.5
 -----
 Require release tymon/jwt-auth version instead of RC

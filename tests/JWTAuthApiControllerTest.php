@@ -11,8 +11,8 @@ use Saritasa\LaravelControllers\Api\JWTAuthApiController;
 use Saritasa\LaravelControllers\Requests\LoginRequest;
 use Saritasa\LaravelControllers\Responses\AuthSuccess;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\JWTAuth;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
+use PHPOpenSourceSaver\JWTAuth\JWTAuth;
 
 /**
  * Jwt api controller test.

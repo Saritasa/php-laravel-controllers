@@ -7,8 +7,8 @@ use Saritasa\LaravelControllers\Requests\LoginRequest;
 use Saritasa\LaravelControllers\Responses\AuthSuccess;
 use Saritasa\Transformers\IDataTransformer;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\JWTAuth;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
+use PHPOpenSourceSaver\JWTAuth\JWTAuth;
 
 /**
  * Authenticate API Controller. Uses JWT authentication.
