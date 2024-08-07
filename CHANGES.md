@@ -1,6 +1,6 @@
 # Changes History
 
-3.3.5.1
+3.4.0
 -----
 + Declare compatibility with Laravel 11
 + Changed tymon/jwt-auth to php-open-source-saver/jwt-auth
